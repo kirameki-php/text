@@ -3,13 +3,22 @@
 namespace Kirameki\Text;
 
 use Kirameki\Utils\Str;
-use Stringable as StringableInterface;
+use Stringable as BaseInterface;
 use function basename;
 use function dirname;
 use function sprintf;
 
-class Stringable implements StringableInterface
+class Stringable implements BaseInterface
 {
+    /**
+     * @param string $value
+     * @return static
+     */
+    public static function from(string $value): static
+    {
+        return new static($value);
+    }
+
     /**
      * @param string $value
      */

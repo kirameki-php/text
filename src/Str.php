@@ -12,6 +12,6 @@ class Str extends Base
      */
     public static function of(string $string): Stringable
     {
-        return new Stringable($string);
+        return Stringable::from($string);
     }
 }
