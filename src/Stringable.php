@@ -207,7 +207,7 @@ class Stringable implements BaseInterface
 
     /**
      * @param int<1, max> $levels
-     * @return $this
+     * @return static
      */
     public function dirname(int $levels = 1): static
     {

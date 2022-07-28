@@ -172,6 +172,15 @@ class StringableTest extends BaseTestCase
         self::assertFalse($stringable->containsPattern('/[0-9]+/'));
     }
 
+    public function test_cut(): void
+    {
+        $stringable = Stringable::from('あいう');
+        $after = $stringable->cut(7, '...');
+
+        self::assertInstanceOf(Stringable::class, $after);
+        self::assertSame('あい...', $after->toString());
+    }
+
     public function test_decapitalize(): void
     {
         $stringable = Stringable::from('FOO Bar');
@@ -189,4 +198,93 @@ class StringableTest extends BaseTestCase
         self::assertInstanceOf(Stringable::class, $after);
         self::assertSame('foo bar', $after->toString());
     }
+
+    public function test_dirname(): void
+    {
+        $stringable = Stringable::from('/test/path/of.php');
+        $after1 = $stringable->dirname();
+        $after2 = $stringable->dirname(2);
+
+        self::assertInstanceOf(Stringable::class, $after1);
+        self::assertInstanceOf(Stringable::class, $after2);
+        self::assertSame('/test/path', $after1->toString());
+        self::assertSame('/test', $after2->toString());
+    }
+
+    public function test_doesNotEndWith(): void
+    {
+        $stringable = Stringable::from('/test/path/of.php');
+
+        self::assertTrue($stringable->doesNotEndWith('/test'));
+        self::assertFalse($stringable->doesNotEndWith('.php'));
+    }
+
+    public function test_doesNotStartWith(): void
+    {
+        $stringable = Stringable::from('/test/path/of.php');
+
+        self::assertFalse($stringable->doesNotStartWith('/test'));
+        self::assertTrue($stringable->doesNotStartWith('.php'));
+    }
+
+    public function test_endsWith(): void
+    {
+        $stringable = Stringable::from('/test/path/of.php');
+
+        self::assertFalse($stringable->endsWith('/test'));
+        self::assertTrue($stringable->endsWith('.php'));
+    }
+
+    public function test_firstIndexOf(): void
+    {
+        $stringable = Stringable::from('aabbcc');
+
+        self::assertSame(2, $stringable->firstIndexOf('b'));
+    }
+
+    public function test_insert(): void
+    {
+        $stringable = Stringable::from('aaa');
+        $after = $stringable->insert('b', 1);
+
+        self::assertSame('abaa', $after->toString());
+    }
+
+    public function test_isBlank(): void
+    {
+        self::assertTrue(Stringable::from('')->isBlank());
+        self::assertFalse(Stringable::from('a')->isBlank());
+        self::assertFalse(Stringable::from("\n")->isBlank());
+    }
+
+    public function test_isNotBlank(): void
+    {
+        self::assertFalse(Stringable::from('')->isNotBlank());
+        self::assertTrue(Stringable::from('a')->isNotBlank());
+        self::assertTrue(Stringable::from("\n")->isNotBlank());
+    }
+
+    public function test_kebabCase(): void
+    {
+        $stringable = Stringable::from('foo barBaz');
+        $after = $stringable->kebabCase();
+
+        self::assertInstanceOf(Stringable::class, $after);
+        self::assertSame('foo-bar-baz', $after->toString());
+    }
+
+    public function test_lastIndexOf(): void
+    {
+        $stringable = Stringable::from('aabbcc');
+
+        self::assertSame(3, $stringable->lastIndexOf('b'));
+    }
+
+    public function test_length(): void
+    {
+        $stringable = Stringable::from('あいう');
+
+        self::assertSame(3, $stringable->length());
+    }
+
 }
