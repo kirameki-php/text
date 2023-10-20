@@ -2,7 +2,6 @@
 
 namespace Kirameki\Text;
 
-use Kirameki\Utils\Str;
 use Stringable as BaseInterface;
 use function basename;
 use function dirname;

@@ -4,13 +4,16 @@
   "type": "library",
   "license": "MIT",
   "require": {
-    "php": ">=8.1",
-    "kirameki/utils": "dev-main"
+    "php": ">= 8.2",
+    "ext-bcmath": "*",
+    "ext-intl": "*",
+    "ext-mbstring": "*"
   },
   "require-dev": {
-    "phpstan/phpstan": "^1",
-    "phpunit/phpunit": "^9",
-    "symfony/var-dumper": "^6"
+    "kirameki/dumper": "dev-main",
+    "phpstan/phpstan": "^1.10",
+    "phpunit/phpunit": "~10.0",
+    "roave/security-advisories": "dev-latest"
   },
   "autoload": {
     "psr-4": {
@@ -25,14 +28,13 @@
   "config": {
     "discard-changes": true,
     "preferred-install": "dist",
-    "sort-packages": true,
-    "allow-plugins": {
-      "phpstan/extension-installer": true
-    }
+    "sort-packages": true
   },
   "minimum-stability": "dev",
   "prefer-stable": true,
   "scripts": {
+    "test": "vendor/bin/phpunit --coverage-html coverage",
+    "ci-test": "vendor/bin/phpunit --coverage-clover ./coverage.xml",
     "analyze": "vendor/bin/phpstan analyse --memory-limit 1G"
   }
 }

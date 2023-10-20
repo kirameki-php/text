@@ -1,13 +1,9 @@
 # Framework
-composer.lock
-coverage
-vendor
+/composer.lock
+/vendor
+
+# PHPUnit
+/coverage
 
 # OS related files
 .DS_Store
-
-# PHPUnit
-.phpunit.result.cache
-
-# IDE
-.idea/workspace.xml
