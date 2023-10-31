@@ -31,6 +31,7 @@ use function mb_strtoupper;
 use function preg_match;
 use function preg_match_all;
 use function preg_replace;
+use function preg_replace_callback;
 use function str_contains;
 use function str_repeat;
 use function str_replace;
@@ -932,6 +933,21 @@ class Str
     }
 
     /**
+     * @param string $text
+     * @param int|float|string ...$replace
+     * @return string
+     */
+    public function interpolate(string $text, int|float|string ...$replace): string
+    {
+        return preg_replace_callback('/(?<slashes>\\\\*)\{(?<var>\w+)}/', function ($m) use ($replace) {
+            // even number of backslashes means it's escaped
+            return strlen($m['slashes']) % 2 === 0
+                ? $replace[$m['var']] ?? $m[0]
+                : $m[0];
+        }, $text) ?? '';
+    }
+
+    /**
      * Determine whether a given string is blank.
      *
      * Example:
@@ -1051,7 +1067,7 @@ class Str
      * The pattern to search for. Must be a valid regex.
      * @return string
      */
-    public static function matchFirst(string $string, string $pattern): ?string
+    public static function matchFirst(string $string, string $pattern): string
     {
         $match = static::matchFirstOrNull($string, $pattern);
         if ($match === null) {

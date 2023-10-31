@@ -49,6 +49,9 @@
       <path value="$PROJECT_DIR$/vendor/webmozart/assert" />
       <path value="$PROJECT_DIR$/vendor/phpstan/phpstan" />
       <path value="$PROJECT_DIR$/vendor/kirameki/utils" />
+      <path value="$PROJECT_DIR$/vendor/south-pointe/ansi" />
+      <path value="$PROJECT_DIR$/vendor/kirameki/dumper" />
+      <path value="$PROJECT_DIR$/vendor/kirameki/core" />
     </include_path>
   </component>
   <component name="PhpProjectSharedConfiguration" php_language_level="8.2" />

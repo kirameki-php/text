@@ -5,6 +5,9 @@
       <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" packagePrefix="Kirameki\Text\" />
       <sourceFolder url="file://$MODULE_DIR$/tests" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/tests/src" isTestSource="true" packagePrefix="Tests\Kirameki\Text\" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/kirameki/core" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/kirameki/dumper" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/south-pointe/ansi" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
