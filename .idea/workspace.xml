@@ -5,12 +5,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="7b1512e5-5751-4256-a349-1207d1ae7dd3" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/php.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/php.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/text.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/text.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/composer.json" beforeDir="false" afterPath="$PROJECT_DIR$/composer.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Str.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Str.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Str.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Unicode.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Stringable.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Stringable.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/src/StrTest.php" beforeDir="false" afterPath="$PROJECT_DIR$/tests/src/UnicodeTest.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

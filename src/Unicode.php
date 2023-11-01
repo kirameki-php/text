@@ -48,7 +48,7 @@ use const STR_PAD_BOTH;
 use const STR_PAD_LEFT;
 use const STR_PAD_RIGHT;
 
-class Str
+class Unicode
 {
     final public const EMPTY = '';
 

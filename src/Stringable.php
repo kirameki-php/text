@@ -31,7 +31,7 @@ class Stringable implements BaseInterface
      */
     public function after(string $search): static
     {
-        return new static(Str::after($this->value, $search));
+        return new static(Unicode::after($this->value, $search));
     }
 
     /**
@@ -40,7 +40,7 @@ class Stringable implements BaseInterface
      */
     public function afterIndex(int $position): static
     {
-        return new static(Str::afterIndex($this->value, $position));
+        return new static(Unicode::afterIndex($this->value, $position));
     }
 
     /**
@@ -49,7 +49,7 @@ class Stringable implements BaseInterface
      */
     public function afterLast(string $search): static
     {
-        return new static(Str::afterLast($this->value, $search));
+        return new static(Unicode::afterLast($this->value, $search));
     }
 
     /**
@@ -58,7 +58,7 @@ class Stringable implements BaseInterface
      */
     public function append(string ...$string): static
     {
-        return new static(Str::concat($this->value, ...$string));
+        return new static(Unicode::concat($this->value, ...$string));
     }
 
     /**
@@ -86,7 +86,7 @@ class Stringable implements BaseInterface
      */
     public function before(string $search): static
     {
-        return new static(Str::before($this->value, $search));
+        return new static(Unicode::before($this->value, $search));
     }
 
     /**
@@ -95,7 +95,7 @@ class Stringable implements BaseInterface
      */
     public function beforeIndex(int $position): static
     {
-        return new static(Str::beforeIndex($this->value, $position));
+        return new static(Unicode::beforeIndex($this->value, $position));
     }
 
     /**
@@ -104,7 +104,7 @@ class Stringable implements BaseInterface
      */
     public function beforeLast(string $search): static
     {
-        return new static(Str::beforeLast($this->value, $search));
+        return new static(Unicode::beforeLast($this->value, $search));
     }
 
     /**
@@ -114,7 +114,7 @@ class Stringable implements BaseInterface
      */
     public function between(string $from, string $to): static
     {
-        return new static(Str::between($this->value, $from, $to));
+        return new static(Unicode::between($this->value, $from, $to));
     }
 
     /**
@@ -122,7 +122,7 @@ class Stringable implements BaseInterface
      */
     public function bytes(): int
     {
-        return Str::bytes($this->value);
+        return Unicode::bytes($this->value);
     }
 
     /**
@@ -130,7 +130,7 @@ class Stringable implements BaseInterface
      */
     public function camelCase(): static
     {
-        return new static(Str::camelCase($this->value));
+        return new static(Unicode::camelCase($this->value));
     }
 
     /**
@@ -138,7 +138,7 @@ class Stringable implements BaseInterface
      */
     public function capitalize(): static
     {
-        return new static(Str::capitalize($this->value));
+        return new static(Unicode::capitalize($this->value));
     }
 
     /**
@@ -147,7 +147,7 @@ class Stringable implements BaseInterface
      */
     public function contains(string $needle): bool
     {
-        return Str::contains($this->value, $needle);
+        return Unicode::contains($this->value, $needle);
     }
 
     /**
@@ -156,7 +156,7 @@ class Stringable implements BaseInterface
      */
     public function containsAll(array $needles): bool
     {
-        return Str::containsAll($this->value, $needles);
+        return Unicode::containsAll($this->value, $needles);
     }
 
     /**
@@ -165,7 +165,7 @@ class Stringable implements BaseInterface
      */
     public function containsAny(array $needles): bool
     {
-        return Str::containsAny($this->value, $needles);
+        return Unicode::containsAny($this->value, $needles);
     }
 
     /**
@@ -174,7 +174,7 @@ class Stringable implements BaseInterface
      */
     public function containsPattern(string $pattern): bool
     {
-        return Str::containsPattern($this->value, $pattern);
+        return Unicode::containsPattern($this->value, $pattern);
     }
     /**
      * @param int $position
@@ -183,7 +183,7 @@ class Stringable implements BaseInterface
      */
     public function cut(int $position, string $ellipsis = ''): static
     {
-        return new static(Str::cut($this->value, $position, $ellipsis));
+        return new static(Unicode::cut($this->value, $position, $ellipsis));
     }
 
     /**
@@ -191,7 +191,7 @@ class Stringable implements BaseInterface
      */
     public function decapitalize(): static
     {
-        return new static(Str::decapitalize($this->value));
+        return new static(Unicode::decapitalize($this->value));
     }
 
     /**
@@ -201,7 +201,7 @@ class Stringable implements BaseInterface
      */
     public function delete(string $search, ?int $limit = null): static
     {
-        return new static(Str::delete($this->value, $search, $limit ?? -1));
+        return new static(Unicode::delete($this->value, $search, $limit ?? -1));
     }
 
     /**
@@ -219,7 +219,7 @@ class Stringable implements BaseInterface
      */
     public function doesNotEndWith(string|iterable $needle): bool
     {
-        return Str::doesNotEndWith($this->value, $needle);
+        return Unicode::doesNotEndWith($this->value, $needle);
     }
 
     /**
@@ -228,7 +228,7 @@ class Stringable implements BaseInterface
      */
     public function doesNotStartWith(string|iterable $needle): bool
     {
-        return Str::doesNotStartWith($this->value, $needle);
+        return Unicode::doesNotStartWith($this->value, $needle);
     }
 
     /**
@@ -237,7 +237,7 @@ class Stringable implements BaseInterface
      */
     public function endsWith(string|iterable $needle): bool
     {
-        return Str::endsWith($this->value, $needle);
+        return Unicode::endsWith($this->value, $needle);
     }
 
     /**
@@ -247,7 +247,7 @@ class Stringable implements BaseInterface
      */
     public function firstIndexOf(string $needle, int $offset = 0): ?int
     {
-        return Str::firstIndexOf($this->value, $needle, $offset);
+        return Unicode::firstIndexOf($this->value, $needle, $offset);
     }
 
     /**
@@ -257,7 +257,7 @@ class Stringable implements BaseInterface
      */
     public function insert(string $insert, int $position): static
     {
-        return new static(Str::insert($this->value, $insert, $position));
+        return new static(Unicode::insert($this->value, $insert, $position));
     }
 
     /**
@@ -265,7 +265,7 @@ class Stringable implements BaseInterface
      */
     public function isBlank(): bool
     {
-        return Str::isBlank($this->value);
+        return Unicode::isBlank($this->value);
     }
 
     /**
@@ -273,7 +273,7 @@ class Stringable implements BaseInterface
      */
     public function isNotBlank(): bool
     {
-        return Str::isNotBlank($this->value);
+        return Unicode::isNotBlank($this->value);
     }
 
     /**
@@ -281,7 +281,7 @@ class Stringable implements BaseInterface
      */
     public function kebabCase(): static
     {
-        return new static(Str::kebabCase($this->value));
+        return new static(Unicode::kebabCase($this->value));
     }
 
     /**
@@ -291,7 +291,7 @@ class Stringable implements BaseInterface
      */
     public function lastIndexOf(string $needle, int $offset = 0): ?int
     {
-        return Str::lastIndexOf($this->value, $needle, $offset);
+        return Unicode::lastIndexOf($this->value, $needle, $offset);
     }
 
     /**
@@ -299,7 +299,7 @@ class Stringable implements BaseInterface
      */
     public function length(): int
     {
-        return Str::length($this->value);
+        return Unicode::length($this->value);
     }
 
     /**
@@ -308,7 +308,7 @@ class Stringable implements BaseInterface
      */
     public function match(string $pattern): array
     {
-        return Str::match($this->value, $pattern);
+        return Unicode::match($this->value, $pattern);
     }
 
     /**
@@ -317,7 +317,7 @@ class Stringable implements BaseInterface
      */
     public function matchAll(string $pattern): array
     {
-        return Str::matchAll($this->value, $pattern);
+        return Unicode::matchAll($this->value, $pattern);
     }
 
     /**
@@ -326,7 +326,7 @@ class Stringable implements BaseInterface
      */
     public function notContains(string $needle): bool
     {
-        return Str::notContains($this->value, $needle);
+        return Unicode::notContains($this->value, $needle);
     }
 
     /**
@@ -336,7 +336,7 @@ class Stringable implements BaseInterface
      */
     public function padBoth(int $length, string $pad = ' '): static
     {
-        return new static(Str::padBoth($this->value, $length, $pad));
+        return new static(Unicode::padBoth($this->value, $length, $pad));
     }
 
     /**
@@ -346,7 +346,7 @@ class Stringable implements BaseInterface
      */
     public function padLeft(int $length, string $pad = ' '): static
     {
-        return new static(Str::padLeft($this->value, $length, $pad));
+        return new static(Unicode::padLeft($this->value, $length, $pad));
     }
 
     /**
@@ -356,7 +356,7 @@ class Stringable implements BaseInterface
      */
     public function padRight(int $length, string $pad = ' '): static
     {
-        return new static(Str::padRight($this->value, $length, $pad));
+        return new static(Unicode::padRight($this->value, $length, $pad));
     }
 
     /**
@@ -364,7 +364,7 @@ class Stringable implements BaseInterface
      */
     public function pascalCase(): static
     {
-        $this->value = Str::pascalCase($this->value);
+        $this->value = Unicode::pascalCase($this->value);
         return $this;
     }
 
@@ -375,7 +375,7 @@ class Stringable implements BaseInterface
     public function prepend(string ...$string): static
     {
         $string[] = $this->value;
-        return new static(Str::concat(...$string));
+        return new static(Unicode::concat(...$string));
     }
 
     /**
@@ -384,7 +384,7 @@ class Stringable implements BaseInterface
      */
     public function repeat(int $times): static
     {
-        return new static(Str::repeat($this->value, $times));
+        return new static(Unicode::repeat($this->value, $times));
     }
 
     /**
@@ -394,7 +394,7 @@ class Stringable implements BaseInterface
      */
     public function replace(string $search, string $replace): static
     {
-        return new static(Str::replace($this->value, $search, $replace));
+        return new static(Unicode::replace($this->value, $search, $replace));
     }
 
     /**
@@ -404,7 +404,7 @@ class Stringable implements BaseInterface
      */
     public function replaceFirst(string $search, string $replace): static
     {
-        return new static(Str::replaceFirst($this->value, $search, $replace));
+        return new static(Unicode::replaceFirst($this->value, $search, $replace));
     }
 
     /**
@@ -414,7 +414,7 @@ class Stringable implements BaseInterface
      */
     public function replaceLast(string $search, string $replace): static
     {
-        return new static(Str::replaceLast($this->value, $search, $replace));
+        return new static(Unicode::replaceLast($this->value, $search, $replace));
     }
 
     /**
@@ -425,7 +425,7 @@ class Stringable implements BaseInterface
      */
     public function replaceMatch(string $pattern, string $replace, ?int $limit = null): static
     {
-        return new static(Str::replaceMatch($this->value, $pattern, $replace, $limit ?? -1));
+        return new static(Unicode::replaceMatch($this->value, $pattern, $replace, $limit ?? -1));
     }
 
     /**
@@ -433,7 +433,7 @@ class Stringable implements BaseInterface
      */
     public function reverse(): static
     {
-        return new static(Str::reverse($this->value));
+        return new static(Unicode::reverse($this->value));
     }
 
     /**
@@ -441,7 +441,7 @@ class Stringable implements BaseInterface
      */
     public function snakeCase(): static
     {
-        return new static(Str::snakeCase($this->value));
+        return new static(Unicode::snakeCase($this->value));
     }
 
     /**
@@ -451,7 +451,7 @@ class Stringable implements BaseInterface
      */
     public function split(string $separator, ?int $limit = null): array
     {
-        return Str::split($this->value, $separator, $limit);
+        return Unicode::split($this->value, $separator, $limit);
     }
 
     /**
@@ -460,7 +460,7 @@ class Stringable implements BaseInterface
      */
     public function startsWith(string|iterable $needle): bool
     {
-        return Str::startsWith($this->value, $needle);
+        return Unicode::startsWith($this->value, $needle);
     }
 
     /**
@@ -470,7 +470,7 @@ class Stringable implements BaseInterface
      */
     public function substring(int $offset, ?int $length = null): static
     {
-        return new static(Str::substring($this->value, $offset, $length));
+        return new static(Unicode::substring($this->value, $offset, $length));
     }
 
     /**
@@ -478,7 +478,7 @@ class Stringable implements BaseInterface
      */
     public function toLower(): static
     {
-        return new static(Str::toLower($this->value));
+        return new static(Unicode::toLower($this->value));
     }
 
     /**
@@ -486,7 +486,7 @@ class Stringable implements BaseInterface
      */
     public function toUpper(): static
     {
-        return new static(Str::toUpper($this->value));
+        return new static(Unicode::toUpper($this->value));
     }
 
     /**
@@ -503,7 +503,7 @@ class Stringable implements BaseInterface
      */
     public function trim(string $characters = '\s'): static
     {
-        return new static(Str::trim($this->value, $characters));
+        return new static(Unicode::trim($this->value, $characters));
     }
 
     /**
@@ -512,7 +512,7 @@ class Stringable implements BaseInterface
      */
     public function trimStart(string $characters = '\s'): static
     {
-        return new static(Str::trimStart($this->value, $characters));
+        return new static(Unicode::trimStart($this->value, $characters));
     }
 
     /**
@@ -521,7 +521,7 @@ class Stringable implements BaseInterface
      */
     public function trimEnd(string $characters = '\s'): static
     {
-        return new static(Str::trimEnd($this->value, $characters));
+        return new static(Unicode::trimEnd($this->value, $characters));
     }
 
     /**
