@@ -2,12 +2,12 @@
 
 namespace Kirameki\Text;
 
-use Stringable as BaseInterface;
+use Stringable;
 use function basename;
 use function dirname;
 use function sprintf;
 
-class Stringable implements BaseInterface
+class StringBuilder implements Stringable
 {
     /**
      * @param string $value
@@ -29,18 +29,9 @@ class Stringable implements BaseInterface
      * @param string $search
      * @return static
      */
-    public function after(string $search): static
+    public function afterFirst(string $search): static
     {
-        return new static(Unicode::after($this->value, $search));
-    }
-
-    /**
-     * @param int $position
-     * @return static
-     */
-    public function afterIndex(int $position): static
-    {
-        return new static(Unicode::afterIndex($this->value, $position));
+        return new static(Unicode::afterFirst($this->value, $search));
     }
 
     /**
@@ -84,18 +75,9 @@ class Stringable implements BaseInterface
      * @param string $search
      * @return static
      */
-    public function before(string $search): static
+    public function beforeFirst(string $search): static
     {
-        return new static(Unicode::before($this->value, $search));
-    }
-
-    /**
-     * @param int $position
-     * @return static
-     */
-    public function beforeIndex(int $position): static
-    {
-        return new static(Unicode::beforeIndex($this->value, $position));
+        return new static(Unicode::beforeFirst($this->value, $search));
     }
 
     /**
@@ -120,17 +102,9 @@ class Stringable implements BaseInterface
     /**
      * @return int
      */
-    public function bytes(): int
+    public function byteLength(): int
     {
-        return Unicode::bytes($this->value);
-    }
-
-    /**
-     * @return static
-     */
-    public function camelCase(): static
-    {
-        return new static(Unicode::camelCase($this->value));
+        return Unicode::byteLength($this->value);
     }
 
     /**
@@ -195,22 +169,21 @@ class Stringable implements BaseInterface
     }
 
     /**
-     * @param string $search
-     * @param int|null $limit
-     * @return static
-     */
-    public function delete(string $search, ?int $limit = null): static
-    {
-        return new static(Unicode::delete($this->value, $search, $limit ?? -1));
-    }
-
-    /**
      * @param int<1, max> $levels
      * @return static
      */
     public function dirname(int $levels = 1): static
     {
         return new static(dirname($this->value, $levels));
+    }
+
+    /**
+     * @param string $needle
+     * @return bool
+     */
+    public function doesNotContain(string $needle): bool
+    {
+        return Unicode::doesNotContain($this->value, $needle);
     }
 
     /**
@@ -232,6 +205,15 @@ class Stringable implements BaseInterface
     }
 
     /**
+     * @param int $position
+     * @return static
+     */
+    public function dropFirst(int $position): static
+    {
+        return new static(Unicode::dropFirst($this->value, $position));
+    }
+
+    /**
      * @param string|iterable<array-key, string> $needle
      * @return bool
      */
@@ -245,9 +227,19 @@ class Stringable implements BaseInterface
      * @param int $offset
      * @return int|null
      */
-    public function firstIndexOf(string $needle, int $offset = 0): ?int
+    public function indexOfFirst(string $needle, int $offset = 0): ?int
     {
-        return Unicode::firstIndexOf($this->value, $needle, $offset);
+        return Unicode::indexOfFirst($this->value, $needle, $offset);
+    }
+
+    /**
+     * @param string $needle
+     * @param int $offset
+     * @return int|null
+     */
+    public function indexOfLast(string $needle, int $offset = 0): ?int
+    {
+        return Unicode::indexOfLast($this->value, $needle, $offset);
     }
 
     /**
@@ -277,38 +269,11 @@ class Stringable implements BaseInterface
     }
 
     /**
-     * @return static
-     */
-    public function kebabCase(): static
-    {
-        return new static(Unicode::kebabCase($this->value));
-    }
-
-    /**
-     * @param string $needle
-     * @param int $offset
-     * @return int|null
-     */
-    public function lastIndexOf(string $needle, int $offset = 0): ?int
-    {
-        return Unicode::lastIndexOf($this->value, $needle, $offset);
-    }
-
-    /**
      * @return int
      */
     public function length(): int
     {
         return Unicode::length($this->value);
-    }
-
-    /**
-     * @param string $pattern
-     * @return array<int, array<string>>
-     */
-    public function match(string $pattern): array
-    {
-        return Unicode::match($this->value, $pattern);
     }
 
     /**
@@ -321,12 +286,12 @@ class Stringable implements BaseInterface
     }
 
     /**
-     * @param string $needle
-     * @return bool
+     * @param string $pattern
+     * @return string
      */
-    public function notContains(string $needle): bool
+    public function matchFirst(string $pattern): string
     {
-        return Unicode::notContains($this->value, $needle);
+        return Unicode::matchFirst($this->value, $pattern);
     }
 
     /**
@@ -344,9 +309,9 @@ class Stringable implements BaseInterface
      * @param string $pad
      * @return static
      */
-    public function padLeft(int $length, string $pad = ' '): static
+    public function padStart(int $length, string $pad = ' '): static
     {
-        return new static(Unicode::padLeft($this->value, $length, $pad));
+        return new static(Unicode::padStart($this->value, $length, $pad));
     }
 
     /**
@@ -354,18 +319,9 @@ class Stringable implements BaseInterface
      * @param string $pad
      * @return static
      */
-    public function padRight(int $length, string $pad = ' '): static
+    public function padEnd(int $length, string $pad = ' '): static
     {
-        return new static(Unicode::padRight($this->value, $length, $pad));
-    }
-
-    /**
-     * @return static
-     */
-    public function pascalCase(): static
-    {
-        $this->value = Unicode::pascalCase($this->value);
-        return $this;
+        return new static(Unicode::padEnd($this->value, $length, $pad));
     }
 
     /**
@@ -376,6 +332,17 @@ class Stringable implements BaseInterface
     {
         $string[] = $this->value;
         return new static(Unicode::concat(...$string));
+    }
+
+    /**
+     * @param string $search
+     * @param int|null $limit
+     * @param int $count
+     * @return static
+     */
+    public function remove(string $search, ?int $limit = null, int &$count = 0): static
+    {
+        return new static(Unicode::remove($this->value, $search, $limit ?? -1, $count));
     }
 
     /**
@@ -437,14 +404,6 @@ class Stringable implements BaseInterface
     }
 
     /**
-     * @return static
-     */
-    public function snakeCase(): static
-    {
-        return new static(Unicode::snakeCase($this->value));
-    }
-
-    /**
      * @param non-empty-string $separator
      * @param int<0, max>|null $limit
      * @return array<int, string>
@@ -474,19 +433,61 @@ class Stringable implements BaseInterface
     }
 
     /**
+     * @param int $position
      * @return static
      */
-    public function toLower(): static
+    public function takeFirst(int $position): static
     {
-        return new static(Unicode::toLower($this->value));
+        return new static(Unicode::takeFirst($this->value, $position));
     }
 
     /**
      * @return static
      */
-    public function toUpper(): static
+    public function toCamelCase(): static
     {
-        return new static(Unicode::toUpper($this->value));
+        return new static(Unicode::toCamelCase($this->value));
+    }
+
+    /**
+     * @return static
+     */
+    public function toKebabCase(): static
+    {
+        return new static(Unicode::toKebabCase($this->value));
+    }
+
+    /**
+     * @return static
+     */
+    public function toLowerCase(): static
+    {
+        return new static(Unicode::toLowerCase($this->value));
+    }
+
+    /**
+     * @return static
+     */
+    public function toPascalCase(): static
+    {
+        $this->value = Unicode::toPascalCase($this->value);
+        return $this;
+    }
+
+    /**
+     * @return static
+     */
+    public function toUpperCase(): static
+    {
+        return new static(Unicode::toUpperCase($this->value));
+    }
+
+    /**
+     * @return static
+     */
+    public function toSnakeCase(): static
+    {
+        return new static(Unicode::toSnakeCase($this->value));
     }
 
     /**

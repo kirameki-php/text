@@ -3,14 +3,11 @@
 namespace Tests\Kirameki\Text;
 
 use Error;
-use ErrorException;
 use Kirameki\Core\Testing\TestCase;
 use Kirameki\Text\Unicode;
-use PHPUnit\Framework\Attributes\WithoutErrorHandler;
 use PHPUnit\Framework\TestStatus\Warning;
 use RuntimeException;
 use Webmozart\Assert\InvalidArgumentException;
-use function error_reporting;
 use function str_repeat;
 use function substr;
 
@@ -912,9 +909,8 @@ class UnicodeTest extends TestCase
 
     public function test_repeat_negative_times(): void
     {
-        $this->expectError();
-        $this->expectErrorMessage('str_repeat(): Argument #2 ($times) must be greater than or equal to 0');
-        /** @noinspection PhpExpressionResultUnusedInspection */
+        $this->expectException(\Kirameki\Core\Exceptions\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Expected: $times >= 0. Got: -1.');
         Unicode::repeat('a', -1);
     }
 
@@ -1098,7 +1094,8 @@ class UnicodeTest extends TestCase
 
     public function test_split_with_negative_limit(): void
     {
-        $this->expectErrorMessage('Expected a value greater than or equal to 0. Got: -1');
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Expected a value greater than or equal to 0. Got: -1');
         Unicode::split('a', 'b', -1);
     }
 
