@@ -4,6 +4,7 @@ namespace Tests\Kirameki\Text;
 
 use Error;
 use Kirameki\Core\Testing\TestCase;
+use Kirameki\Text\Str;
 use Kirameki\Text\Unicode;
 use PHPUnit\Framework\TestStatus\Warning;
 use RuntimeException;
@@ -16,25 +17,29 @@ class UnicodeTest extends TestCase
     public function test_afterFirst(): void
     {
         // match first
-        self::assertSame('est', Unicode::afterFirst('test', 't'));
+        $found = false;
+        $this->assertSame('est', Str::afterFirst('test', 't', $found));
+        $this->assertTrue($found);
 
         // match last
-        self::assertSame('', Unicode::afterFirst('test1', '1'));
+        $this->assertSame('', Unicode::afterFirst('test1', '1'));
 
         // match empty string
-        self::assertSame('test', Unicode::afterFirst('test', ''));
+        $this->assertSame('test', Unicode::afterFirst('test', ''));
 
         // no match
-        self::assertSame('test', Unicode::afterFirst('test', 'test2'));
+        $found = true;
+        $this->assertSame('test', Str::afterFirst('test', 'test2', $found));
+        $this->assertFalse($found);
 
         // multi byte
-        self::assertSame('うえ', Unicode::afterFirst('ああいうえ', 'い'));
+        $this->assertSame('うえ', Unicode::afterFirst('ああいうえ', 'い'));
 
         // grapheme
-        self::assertSame('def', Unicode::afterFirst('abc🏴󠁧󠁢󠁳󠁣󠁴󠁿def', '🏴󠁧󠁢󠁳󠁣󠁴󠁿'));
+        $this->assertSame('def', Unicode::afterFirst('abc🏴󠁧󠁢󠁳󠁣󠁴󠁿def', '🏴󠁧󠁢󠁳󠁣󠁴󠁿'));
 
         // grapheme cluster
-        self::assertSame('👋🏿', Unicode::afterFirst('👋🏿', '👋'));
+        $this->assertSame('👋🏿', Unicode::afterFirst('👋🏿', '👋'));
     }
 
     public function test_afterLast(): void

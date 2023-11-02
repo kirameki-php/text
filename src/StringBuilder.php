@@ -26,12 +26,17 @@ class StringBuilder implements Stringable
     }
 
     /**
+     * @see Str::afterFirst()
+     *
      * @param string $search
+     * The substring to look for.
+     * @param bool &$found
+     * [Optional][Reference] Whether the search string was found or not.
      * @return static
      */
-    public function afterFirst(string $search): static
+    public function afterFirst(string $search, bool &$found = false): static
     {
-        return new static(Unicode::afterFirst($this->value, $search));
+        return new static(Str::afterFirst($this->value, $search, $found));
     }
 
     /**

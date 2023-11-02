@@ -21,13 +21,21 @@ class StringBuilderTest extends BaseTestCase
         self::assertSame('a', $stringable->toString());
     }
 
-    public function test_after(): void
+    public function test_afterFirst(): void
     {
-        $stringable = StringBuilder::from('abc');
-        $after = $stringable->afterFirst('b');
+        $sb = StringBuilder::from('abc');
+        $found = true;
+        $after = $sb->afterFirst('b', $found);
+        $this->assertInstanceOf(StringBuilder::class, $after);
+        $this->assertSame('c', $after->toString());
+        $this->assertTrue($found);
 
-        self::assertInstanceOf(StringBuilder::class, $after);
-        self::assertSame('c', $after->toString());
+        $sb = StringBuilder::from('abc');
+        $found = true;
+        $after = $sb->afterFirst('d', $found);
+        $this->assertInstanceOf(StringBuilder::class, $after);
+        $this->assertSame('abc', $after->toString());
+        $this->assertFalse($found);
     }
 
     public function test_afterIndex(): void

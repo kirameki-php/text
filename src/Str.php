@@ -70,10 +70,12 @@ class Str
      * The string to look in.
      * @param string $substring
      * The substring to look for.
+     * @param bool &$found
+     * [Optional][Reference] Sets to **true** if substring is found, **false** otherwise.
      * @return string
      * The extracted part of the string.
      */
-    public static function afterFirst(string $string, string $substring): string
+    public static function afterFirst(string $string, string $substring, bool &$found = false): string
     {
         // If empty string is searched, return the string as is since there is nothing to trim.
         if ($substring === self::EMPTY) {
@@ -83,9 +85,11 @@ class Str
         $position = static::indexOfFirst($string, $substring);
 
         if ($position === null) {
+            $found = false;
             return $string;
         }
 
+        $found = true;
         return static::substring($string, $position + static::length($substring));
     }
 

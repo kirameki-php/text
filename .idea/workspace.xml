@@ -5,11 +5,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="7b1512e5-5751-4256-a349-1207d1ae7dd3" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/Str.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tests/src/StrTest.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Stringable.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/StringBuilder.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Unicode.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Unicode.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/src/StringableTest.php" beforeDir="false" afterPath="$PROJECT_DIR$/tests/src/StringableTest.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Str.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Str.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/StringBuilder.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/StringBuilder.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/src/StringBuilderTest.php" beforeDir="false" afterPath="$PROJECT_DIR$/tests/src/StringBuilderTest.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/src/UnicodeTest.php" beforeDir="false" afterPath="$PROJECT_DIR$/tests/src/UnicodeTest.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
