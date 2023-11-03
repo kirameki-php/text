@@ -64,8 +64,8 @@ class Str
      *
      * Example:
      * ```php
-     * Str::afterFirst('buffer', 'f'); // 'fer'
-     * Str::afterFirst('abc', '_'); // NotFoundException
+     * Str::after('buffer', 'f'); // 'fer'
+     * Str::after('abc', '_'); // NotFoundException
      * ```
      *
      * @param string $string
@@ -75,9 +75,9 @@ class Str
      * @return string
      * The extracted part of the string.
      */
-    public static function afterFirst(string $string, string $substring): string
+    public static function after(string $string, string $substring): string
     {
-        $result = static::afterFirstOrNull($string, $substring);
+        $result = static::afterOrNull($string, $substring);
         if ($result !== null) {
             return $result;
         }
@@ -94,8 +94,8 @@ class Str
      *
      * Example:
      * ```php
-     * Str::afterFirstOrNull('buffer', 'f'); // 'fer'
-     * Str::afterFirstOrNull('abc', '_'); // null
+     * Str::afterOrNull('buffer', 'f'); // 'fer'
+     * Str::afterOrNull('abc', '_'); // null
      * ```
      *
      * @param string $string
@@ -105,7 +105,7 @@ class Str
      * @return string|null
      * The extracted part of the string.
      */
-    public static function afterFirstOrNull(string $string, string $substring): ?string
+    public static function afterOrNull(string $string, string $substring): ?string
     {
         if ($substring === self::EMPTY) {
             return $string;
@@ -124,8 +124,8 @@ class Str
      *
      * Example:
      * ```php
-     * Str::afterFirstOrSelf('buffer', 'f'); // 'fer'
-     * Str::afterFirstOrSelf('abc', '_'); // 'abc'
+     * Str::afterOrSelf('buffer', 'f'); // 'fer'
+     * Str::afterOrSelf('abc', '_'); // 'abc'
      * ```
      *
      * @param string $string
@@ -135,9 +135,9 @@ class Str
      * @return string
      * The extracted part of the string.
      */
-    public static function afterFirstOrSelf(string $string, string $substring): string
+    public static function afterOrSelf(string $string, string $substring): string
     {
-        return static::afterFirstOrNull($string, $substring) ?? $string;
+        return static::afterOrNull($string, $substring) ?? $string;
     }
 
     /**
@@ -231,8 +231,8 @@ class Str
      *
      * Example:
      * ```php
-     * Str::beforeFirst('buffer', 'f'); // 'bu'
-     * Str::beforeFirst('abc', '_'); // NotFoundException
+     * Str::before('buffer', 'f'); // 'bu'
+     * Str::before('abc', '_'); // NotFoundException
      * ```
      *
      * @param string $string
@@ -242,9 +242,9 @@ class Str
      * @return string
      * The extracted part of the string.
      */
-    public static function beforeFirst(string $string, string $substring): string
+    public static function before(string $string, string $substring): string
     {
-        $result = static::beforeFirstOrNull($string, $substring);
+        $result = static::beforeOrNull($string, $substring);
         if ($result !== null) {
             return $result;
         }
@@ -261,8 +261,8 @@ class Str
      *
      * Example:
      * ```php
-     * Str::beforeFirstOrNull('buffer', 'f'); // 'bu'
-     * Str::beforeFirstOrNull('abc', '_'); // null
+     * Str::beforeOrNull('buffer', 'f'); // 'bu'
+     * Str::beforeOrNull('abc', '_'); // null
      * ```
      *
      * @param string $string
@@ -272,7 +272,7 @@ class Str
      * @return string|null
      * The extracted part of the string.
      */
-    public static function beforeFirstOrNull(string $string, string $substring): ?string
+    public static function beforeOrNull(string $string, string $substring): ?string
     {
         if ($substring === self::EMPTY) {
             return $string;
@@ -291,8 +291,8 @@ class Str
      *
      * Example:
      * ```php
-     * Str::beforeFirst('buffer', 'f'); // 'bu'
-     * Str::beforeFirst('abc', '_'); // 'abc'
+     * Str::before('buffer', 'f'); // 'bu'
+     * Str::before('abc', '_'); // 'abc'
      * ```
      *
      * @param string $string
@@ -302,9 +302,9 @@ class Str
      * @return string
      * The extracted part of the string.
      */
-    public static function beforeFirstOrSelf(string $string, string $substring): string
+    public static function beforeOrSelf(string $string, string $substring): string
     {
-        return static::beforeFirstOrNull($string, $substring) ?? $string;
+        return static::beforeOrNull($string, $substring) ?? $string;
     }
 
     /**
@@ -360,7 +360,7 @@ class Str
      * The starting string to look for.
      * @param string $to
      * The ending string to look for.
-     * @return list<string>
+     * @return string
      * The extracted part of the string.
      */
     public static function between(string $string, string $from, string $to): string

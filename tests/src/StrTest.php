@@ -8,42 +8,42 @@ use Kirameki\Text\Str;
 
 class StrTest extends TestCase
 {
-    public function test_afterFirst_no_match(): void
+    public function test_after_no_match(): void
     {
         $this->expectExceptionMessage('Substring "test2" does not exist in "test".');
         $this->expectException(NotFoundException::class);
-        Str::afterFirst('test', 'test2');
+        Str::after('test', 'test2');
     }
 
-    public function test_afterFirstOrNull(): void
+    public function test_afterOrNull(): void
     {
         // match first
-        $this->assertSame('est', Str::afterFirstOrNull('test', 't'));
+        $this->assertSame('est', Str::afterOrNull('test', 't'));
 
         // match last
-        $this->assertSame('', Str::afterFirstOrNull('test1', '1'));
+        $this->assertSame('', Str::afterOrNull('test1', '1'));
 
         // match empty string
-        $this->assertSame('test', Str::afterFirstOrNull('test', ''));
+        $this->assertSame('test', Str::afterOrNull('test', ''));
 
         // no match
-        $this->assertSame(null, Str::afterFirstOrNull('test', 'a'));
+        $this->assertSame(null, Str::afterOrNull('test', 'a'));
 
         // multi byte
-        $this->assertSame('うえ', Str::afterFirstOrNull('ああいうえ', 'い'));
+        $this->assertSame('うえ', Str::afterOrNull('ああいうえ', 'い'));
 
         // grapheme
-        $this->assertSame('def', Str::afterFirstOrNull('abc🏴󠁧󠁢󠁳󠁣󠁴󠁿def', '🏴󠁧󠁢󠁳󠁣󠁴󠁿'));
+        $this->assertSame('def', Str::afterOrNull('abc🏴󠁧󠁢󠁳󠁣󠁴󠁿def', '🏴󠁧󠁢󠁳󠁣󠁴󠁿'));
 
         // grapheme cluster
-        $this->assertSame('🏿', Str::afterFirstOrNull('👋🏿', '👋'));
+        $this->assertSame('🏿', Str::afterOrNull('👋🏿', '👋'));
     }
 
-    public function test_afterFirstOrSelf(): void
+    public function test_afterOrSelf(): void
     {
         // no match
-        $this->assertSame('test', Str::afterFirstOrSelf('test', 'a'));
-        $this->assertSame('🏿', Str::afterFirstOrNull('👋🏿', '👋'));
+        $this->assertSame('test', Str::afterOrSelf('test', 'a'));
+        $this->assertSame('🏿', Str::afterOrNull('👋🏿', '👋'));
     }
 
     public function test_afterLast_no_match(): void
@@ -90,49 +90,49 @@ class StrTest extends TestCase
         $this->assertSame('🏿', Str::afterLastOrSelf('👋🏿', '👋'));
     }
 
-    public function test_beforeFirst_no_match(): void
+    public function test_before_no_match(): void
     {
         $this->expectExceptionMessage('Substring "test2" does not exist in "test".');
         $this->expectException(NotFoundException::class);
-        Str::beforeFirst('test', 'test2');
+        Str::before('test', 'test2');
     }
 
-    public function test_beforeFirstOrNull(): void
+    public function test_beforeOrNull(): void
     {
         // match first (single occurrence)
-        $this->assertSame('a', Str::beforeFirstOrNull('abc', 'b'));
+        $this->assertSame('a', Str::beforeOrNull('abc', 'b'));
 
         // match first (multiple occurrence)
-        $this->assertSame('a', Str::beforeFirstOrNull('abc-abc', 'b'));
+        $this->assertSame('a', Str::beforeOrNull('abc-abc', 'b'));
 
         // match last
-        $this->assertSame('test', Str::beforeFirstOrNull('test1', '1'));
+        $this->assertSame('test', Str::beforeOrNull('test1', '1'));
 
         // match multiple chars
-        $this->assertSame('test', Str::beforeFirstOrNull('test123', '12'));
+        $this->assertSame('test', Str::beforeOrNull('test123', '12'));
 
         // match empty string
-        $this->assertSame('test', Str::beforeFirstOrNull('test', ''));
+        $this->assertSame('test', Str::beforeOrNull('test', ''));
 
         // no match
-        $this->assertSame(null, Str::beforeFirstOrNull('test', 'a'));
+        $this->assertSame(null, Str::beforeOrNull('test', 'a'));
 
         // multi byte
-        $this->assertSame('ああ', Str::beforeFirstOrNull('ああいういえ', 'い'));
+        $this->assertSame('ああ', Str::beforeOrNull('ああいういえ', 'い'));
 
         // grapheme
-        $this->assertSame('abc', Str::beforeFirstOrNull('abc🏴󠁧󠁢󠁳󠁣󠁴󠁿d🏴󠁧󠁢󠁳󠁣󠁴󠁿e🏴󠁧󠁢󠁳󠁣󠁴󠁿f', '🏴󠁧󠁢󠁳󠁣󠁴󠁿'));
-        $this->assertSame('abc🏴󠁧󠁢󠁳󠁣󠁴󠁿d🏴󠁧󠁢󠁳󠁣󠁴󠁿', Str::beforeFirstOrNull('abc🏴󠁧󠁢󠁳󠁣󠁴󠁿d🏴󠁧󠁢󠁳󠁣󠁴󠁿e🏴󠁧󠁢󠁳󠁣󠁴󠁿f', 'e'));
+        $this->assertSame('abc', Str::beforeOrNull('abc🏴󠁧󠁢󠁳󠁣󠁴󠁿d🏴󠁧󠁢󠁳󠁣󠁴󠁿e🏴󠁧󠁢󠁳󠁣󠁴󠁿f', '🏴󠁧󠁢󠁳󠁣󠁴󠁿'));
+        $this->assertSame('abc🏴󠁧󠁢󠁳󠁣󠁴󠁿d🏴󠁧󠁢󠁳󠁣󠁴󠁿', Str::beforeOrNull('abc🏴󠁧󠁢󠁳󠁣󠁴󠁿d🏴󠁧󠁢󠁳󠁣󠁴󠁿e🏴󠁧󠁢󠁳󠁣󠁴󠁿f', 'e'));
 
         // grapheme cluster
-        $this->assertSame('👋', Str::beforeFirstOrNull('👋🏿', '🏿'));
+        $this->assertSame('👋', Str::beforeOrNull('👋🏿', '🏿'));
     }
 
-    public function test_beforeFirstOrSelf(): void
+    public function test_beforeOrSelf(): void
     {
         // no match
-        $this->assertSame('test', Str::beforeFirstOrSelf('test', 'a'));
-        $this->assertSame('👋', Str::beforeFirstOrSelf('👋🏿', '🏿'));
+        $this->assertSame('test', Str::beforeOrSelf('test', 'a'));
+        $this->assertSame('👋', Str::beforeOrSelf('👋🏿', '🏿'));
     }
 
     public function test_beforeLast(): void

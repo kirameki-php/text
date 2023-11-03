@@ -26,27 +26,27 @@ class StringBuilder implements Stringable
     }
 
     /**
-     * @see Str::afterFirst()
-     *
      * @param string $search
      * The substring to look for.
      * @return static
+     *@see Str::after()
+     *
      */
-    public function afterFirst(string $search): static
+    public function after(string $search): static
     {
-        return new static(Str::afterFirst($this->value, $search));
+        return new static(Str::after($this->value, $search));
     }
 
     /**
-     * @see Str::afterFirstOrSelf()
-     *
      * @param string $search
      * The substring to look for.
      * @return static
+     *@see Str::afterOrSelf()
+     *
      */
-    public function afterFirstOrSelf(string $search): static
+    public function afterOrSelf(string $search): static
     {
-        return new static(Str::afterFirstOrSelf($this->value, $search));
+        return new static(Str::afterOrSelf($this->value, $search));
     }
 
     /**
@@ -102,28 +102,28 @@ class StringBuilder implements Stringable
     }
 
     /**
-     * @see Str::beforeFirst()
-     *
      * @param string $search
      * The substring to look for.
      * @return static
+     *@see Str::before()
+     *
      */
-    public function beforeFirst(string $search): static
+    public function before(string $search): static
     {
-        return new static(Str::beforeFirst($this->value, $search));
+        return new static(Str::before($this->value, $search));
     }
 
     /**
-     * @see Str::beforeFirst()
-     *
      * @param string $search
      * The substring to look for.
      * @return static
      *
+     *@see Str::before()
+     *
      */
-    public function beforeFirstOrSelf(string $search): static
+    public function beforeOrSelf(string $search): static
     {
-        return new static(Str::beforeFirstOrSelf($this->value, $search));
+        return new static(Str::beforeOrSelf($this->value, $search));
     }
 
     /**
