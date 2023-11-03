@@ -106,13 +106,24 @@ class StringBuilder implements Stringable
      *
      * @param string $search
      * The substring to look for.
-     * @param bool &$found
-     * [Optional][Reference] Whether the search string was found or not.
      * @return static
      */
-    public function beforeFirst(string $search, bool &$found = false): static
+    public function beforeFirst(string $search): static
     {
-        return new static(Str::beforeFirst($this->value, $search, $found));
+        return new static(Str::beforeFirst($this->value, $search));
+    }
+
+    /**
+     * @see Str::beforeFirst()
+     *
+     * @param string $search
+     * The substring to look for.
+     * @return static
+     *
+     */
+    public function beforeFirstOrSelf(string $search): static
+    {
+        return new static(Str::beforeFirstOrSelf($this->value, $search));
     }
 
     /**

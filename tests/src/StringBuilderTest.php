@@ -15,6 +15,13 @@ class StringBuilderTest extends BaseTestCase
         self::assertSame('a', $sb->toString());
     }
 
+    public function test_afterFirst(): void
+    {
+        $after = StringBuilder::from('abc')->afterFirst('b');
+        $this->assertInstanceOf(StringBuilder::class, $after);
+        $this->assertSame('c', $after->toString());
+    }
+
     public function test_afterFirst_no_match(): void
     {
         $this->expectExceptionMessage('Substring "d" does not exist in "abc".');
@@ -31,6 +38,13 @@ class StringBuilderTest extends BaseTestCase
         $after = StringBuilder::from('abc')->afterFirstOrSelf('d');
         $this->assertInstanceOf(StringBuilder::class, $after);
         $this->assertSame('abc', $after->toString());
+    }
+
+    public function test_afterLast(): void
+    {
+        $after = StringBuilder::from('abc abc')->afterFirst('b');
+        $this->assertInstanceOf(StringBuilder::class, $after);
+        $this->assertSame('c', $after->toString());
     }
 
     public function test_afterLast_no_match(): void
@@ -78,19 +92,23 @@ class StringBuilderTest extends BaseTestCase
 
     public function test_beforeFirst(): void
     {
-        $sb = StringBuilder::from('abc');
-        $found = false;
-        $after = $sb->beforeFirst('b', $found);
+        $after = StringBuilder::from('abc')->beforeFirst('b');
         $this->assertInstanceOf(StringBuilder::class, $after);
         $this->assertSame('a', $after->toString());
-        $this->assertTrue($found);
+    }
 
-        $sb = StringBuilder::from('abc');
-        $found = true;
-        $after = $sb->beforeFirst('d', $found);
+    public function test_beforeFirst_not_found(): void
+    {
+        $this->expectExceptionMessage('Substring "d" does not exist in "abc".');
+        $this->expectException(NotFoundException::class);
+        StringBuilder::from('abc')->beforeFirst('d');
+    }
+
+    public function test_beforeFirstOrSelf(): void
+    {
+        $after = StringBuilder::from('abc')->beforeFirstOrSelf('d');
         $this->assertInstanceOf(StringBuilder::class, $after);
         $this->assertSame('abc', $after->toString());
-        $this->assertFalse($found);
     }
 
     public function test_beforeLast(): void

@@ -107,7 +107,6 @@ class Str
      */
     public static function afterFirstOrNull(string $string, string $substring): ?string
     {
-        // If empty string is searched, return the string as is since there is nothing to trim.
         if ($substring === self::EMPTY) {
             return $string;
         }
@@ -192,7 +191,6 @@ class Str
      */
     public static function afterLastOrNull(string $string, string $substring): ?string
     {
-        // If empty string is searched, return the string as is since there is nothing to trim.
         if ($substring === self::EMPTY) {
             return $string;
         }
@@ -229,7 +227,67 @@ class Str
 
     /**
      * Extract string before the specified substring.
-     * Original string is returned if substring is not found.
+     * Returns NotFoundException if substring is not found.
+     *
+     * Example:
+     * ```php
+     * Str::beforeFirst('buffer', 'f'); // 'bu'
+     * Str::beforeFirst('abc', '_'); // NotFoundException
+     * ```
+     *
+     * @param string $string
+     * The string to look in.
+     * @param string $substring
+     * The substring to look for.
+     * @return string
+     * The extracted part of the string.
+     */
+    public static function beforeFirst(string $string, string $substring): string
+    {
+        $result = static::beforeFirstOrNull($string, $substring);
+        if ($result !== null) {
+            return $result;
+        }
+
+        throw new NotFoundException("Substring \"$substring\" does not exist in \"$string\".", [
+            'string' => $string,
+            'substring' => $substring,
+        ]);
+    }
+
+    /**
+     * Extract string before the specified substring.
+     * Returns **null** if substring is not found.
+     *
+     * Example:
+     * ```php
+     * Str::beforeFirstOrNull('buffer', 'f'); // 'bu'
+     * Str::beforeFirstOrNull('abc', '_'); // null
+     * ```
+     *
+     * @param string $string
+     * The string to look in.
+     * @param string $substring
+     * The substring to look for.
+     * @return string|null
+     * The extracted part of the string.
+     */
+    public static function beforeFirstOrNull(string $string, string $substring): ?string
+    {
+        if ($substring === self::EMPTY) {
+            return $string;
+        }
+
+        $position = static::indexOfFirst($string, $substring);
+
+        return $position !== null
+            ? static::substring($string, 0, $position)
+            : null;
+    }
+
+    /**
+     * Extract string before the specified substring.
+     * Returns the original string if substring is not found.
      *
      * Example:
      * ```php
@@ -241,28 +299,12 @@ class Str
      * The string to look in.
      * @param string $substring
      * The substring to look for.
-     * @param bool &$found
-     * [Optional][Reference] Sets to **true** if substring is found, **false** otherwise.
      * @return string
      * The extracted part of the string.
      */
-    public static function beforeFirst(string $string, string $substring, bool &$found = false): string
+    public static function beforeFirstOrSelf(string $string, string $substring): string
     {
-        // If empty string is searched, return the string as is since there is nothing to search.
-        if ($substring === self::EMPTY) {
-            return $string;
-        }
-
-        $position = static::indexOfFirst($string, $substring);
-
-        // If string is not matched, return itself immediately.
-        if ($position === null) {
-            $found = false;
-            return $string;
-        }
-
-        $found = true;
-        return static::substring($string, 0, $position);
+        return static::beforeFirstOrNull($string, $substring) ?? $string;
     }
 
     /**
