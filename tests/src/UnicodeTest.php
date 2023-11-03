@@ -3,7 +3,6 @@
 namespace Tests\Kirameki\Text;
 
 use Error;
-use Kirameki\Core\Testing\TestCase;
 use Kirameki\Text\Str;
 use Kirameki\Text\Unicode;
 use PHPUnit\Framework\TestStatus\Warning;
@@ -45,89 +44,101 @@ class UnicodeTest extends TestCase
     public function test_afterLast(): void
     {
         // match first (single occurrence)
-        self::assertSame('bc', Unicode::afterLast('abc', 'a'));
+        $found = false;
+        $this->assertSame('bc', Unicode::afterLast('abc', 'a', $found));
+        $this->assertTrue($found);
 
         // match first (multiple occurrence)
-        self::assertSame('1', Unicode::afterLast('test1', 't'));
+        $this->assertSame('1', Unicode::afterLast('test1', 't'));
 
         // match last
-        self::assertSame('', Unicode::afterLast('test1', '1'));
+        $this->assertSame('', Unicode::afterLast('test1', '1'));
 
         // should match the last string
-        self::assertSame('Foo', Unicode::afterLast('----Foo', '---'));
+        $this->assertSame('Foo', Unicode::afterLast('----Foo', '---'));
 
         // match empty string
-        self::assertSame('test', Unicode::afterLast('test', ''));
+        $this->assertSame('test', Unicode::afterLast('test', ''));
 
         // no match
-        self::assertSame('test', Unicode::afterLast('test', 'a'));
+        $found = true;
+        $this->assertSame('test', Unicode::afterLast('test', 'a', $found));
+        $this->assertFalse($found);
 
         // multi byte
-        self::assertSame('え', Unicode::afterLast('ああいういえ', 'い'));
+        $this->assertSame('え', Unicode::afterLast('ああいういえ', 'い'));
 
         // grapheme
-        self::assertSame('🏴󠁧󠁢󠁳󠁣󠁴󠁿f', Unicode::afterLast('abc🏴󠁧󠁢󠁳󠁣󠁴󠁿d🏴󠁧󠁢󠁳󠁣󠁴󠁿e🏴󠁧󠁢󠁳󠁣󠁴󠁿f', 'e'));
+        $this->assertSame('🏴󠁧󠁢󠁳󠁣󠁴󠁿f', Unicode::afterLast('abc🏴󠁧󠁢󠁳󠁣󠁴󠁿d🏴󠁧󠁢󠁳󠁣󠁴󠁿e🏴󠁧󠁢󠁳󠁣󠁴󠁿f', 'e'));
 
         // grapheme cluster
-        self::assertSame('👋🏿', Unicode::afterLast('👋🏿', '👋'));
+        $this->assertSame('👋🏿', Unicode::afterLast('👋🏿', '👋'));
     }
 
     public function test_beforeFirst(): void
     {
         // match first (single occurrence)
-        self::assertSame('a', Unicode::beforeFirst('abc', 'b'));
+        $found = false;
+        $this->assertSame('a', Unicode::beforeFirst('abc', 'b', $found));
+        $this->assertTrue($found);
 
         // match first (multiple occurrence)
-        self::assertSame('a', Unicode::beforeFirst('abc-abc', 'b'));
+        $this->assertSame('a', Unicode::beforeFirst('abc-abc', 'b'));
 
         // match last
-        self::assertSame('test', Unicode::beforeFirst('test1', '1'));
+        $this->assertSame('test', Unicode::beforeFirst('test1', '1'));
 
         // match multiple chars
-        self::assertSame('test', Unicode::beforeFirst('test123', '12'));
+        $this->assertSame('test', Unicode::beforeFirst('test123', '12'));
 
         // match empty string
-        self::assertSame('test', Unicode::beforeFirst('test', ''));
+        $this->assertSame('test', Unicode::beforeFirst('test', ''));
 
         // no match
-        self::assertSame('test', Unicode::beforeFirst('test', 'a'));
+        $found = true;
+        $this->assertSame('test', Unicode::beforeFirst('test', 'a', $found));
+        $this->assertFalse($found);
 
         // multi byte
-        self::assertSame('ああ', Unicode::beforeFirst('ああいういえ', 'い'));
+        $this->assertSame('ああ', Unicode::beforeFirst('ああいういえ', 'い'));
 
         // grapheme
-        self::assertSame('abc', Unicode::beforeFirst('abc🏴󠁧󠁢󠁳󠁣󠁴󠁿d🏴󠁧󠁢󠁳󠁣󠁴󠁿e🏴󠁧󠁢󠁳󠁣󠁴󠁿f', '🏴󠁧󠁢󠁳󠁣󠁴󠁿'));
-        self::assertSame('abc🏴󠁧󠁢󠁳󠁣󠁴󠁿d🏴󠁧󠁢󠁳󠁣󠁴󠁿', Unicode::beforeFirst('abc🏴󠁧󠁢󠁳󠁣󠁴󠁿d🏴󠁧󠁢󠁳󠁣󠁴󠁿e🏴󠁧󠁢󠁳󠁣󠁴󠁿f', 'e'));
+        $this->assertSame('abc', Unicode::beforeFirst('abc🏴󠁧󠁢󠁳󠁣󠁴󠁿d🏴󠁧󠁢󠁳󠁣󠁴󠁿e🏴󠁧󠁢󠁳󠁣󠁴󠁿f', '🏴󠁧󠁢󠁳󠁣󠁴󠁿'));
+        $this->assertSame('abc🏴󠁧󠁢󠁳󠁣󠁴󠁿d🏴󠁧󠁢󠁳󠁣󠁴󠁿', Unicode::beforeFirst('abc🏴󠁧󠁢󠁳󠁣󠁴󠁿d🏴󠁧󠁢󠁳󠁣󠁴󠁿e🏴󠁧󠁢󠁳󠁣󠁴󠁿f', 'e'));
 
         // grapheme cluster
-        self::assertSame('👋🏿', Unicode::beforeFirst('👋🏿', '🏿'));
+        $this->assertSame('👋🏿', Unicode::beforeFirst('👋🏿', '🏿'));
     }
 
     public function test_beforeLast(): void
     {
         // match first (single occurrence)
-        self::assertSame('a', Unicode::beforeLast('abc', 'b'));
+        $found = false;
+        $this->assertSame('a', Unicode::beforeLast('abc', 'b', $found));
+        $this->assertTrue($found);
 
         // match first (multiple occurrence)
-        self::assertSame('abc-a', Unicode::beforeLast('abc-abc', 'b'));
+        $this->assertSame('abc-a', Unicode::beforeLast('abc-abc', 'b'));
 
         // match last
-        self::assertSame('test', Unicode::beforeLast('test1', '1'));
+        $this->assertSame('test', Unicode::beforeLast('test1', '1'));
 
         // match empty string
-        self::assertSame('test', Unicode::beforeLast('test', ''));
+        $this->assertSame('test', Unicode::beforeLast('test', ''));
 
         // no match
-        self::assertSame('test', Unicode::beforeLast('test', 'a'));
+        $found = true;
+        $this->assertSame('test', Unicode::beforeLast('test', 'a', $found));
+        $this->assertFalse($found);
 
         // multi byte
-        self::assertSame('ああいう', Unicode::beforeLast('ああいういえ', 'い'));
+        $this->assertSame('ああいう', Unicode::beforeLast('ああいういえ', 'い'));
 
         // grapheme
-        self::assertSame('abc🏴󠁧󠁢󠁳󠁣󠁴󠁿d🏴󠁧󠁢󠁳󠁣󠁴󠁿e', Unicode::beforeLast('abc🏴󠁧󠁢󠁳󠁣󠁴󠁿d🏴󠁧󠁢󠁳󠁣󠁴󠁿e🏴󠁧󠁢󠁳󠁣󠁴󠁿f', '🏴󠁧󠁢󠁳󠁣󠁴󠁿'));
+        $this->assertSame('abc🏴󠁧󠁢󠁳󠁣󠁴󠁿d🏴󠁧󠁢󠁳󠁣󠁴󠁿e', Unicode::beforeLast('abc🏴󠁧󠁢󠁳󠁣󠁴󠁿d🏴󠁧󠁢󠁳󠁣󠁴󠁿e🏴󠁧󠁢󠁳󠁣󠁴󠁿f', '🏴󠁧󠁢󠁳󠁣󠁴󠁿'));
 
         // grapheme cluster
-        self::assertSame('👋🏿', Unicode::beforeLast('👋🏿', '🏿'));
+        $this->assertSame('👋🏿', Unicode::beforeLast('👋🏿', '🏿'));
     }
 
     public function test_between(): void

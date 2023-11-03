@@ -106,12 +106,14 @@ class Str
      * @param string $string
      * The string to look in.
      * @param string $substring
-     * The string to look in.
+     * The substring to look for.
      * If no match is found, the entire `$string` is returned.
+     * @param bool &$found
+     * [Optional][Reference] Sets to **true** if substring is found, **false** otherwise.
      * @return string
      * The extracted part of the string.
      */
-    public static function afterLast(string $string, string $substring): string
+    public static function afterLast(string $string, string $substring, bool &$found = false): string
     {
         // If empty string is searched, return the string as is since there is nothing to trim.
         if ($substring === self::EMPTY) {
@@ -122,9 +124,11 @@ class Str
 
         // If string is not matched, return blank immediately.
         if ($position === null) {
+            $found = false;
             return $string;
         }
 
+        $found = true;
         return static::substring($string, $position + static::length($substring));
     }
 
@@ -141,11 +145,13 @@ class Str
      * @param string $string
      * The string to look in.
      * @param string $substring
-     * The string to look in.
+     * The substring to look for.
+     * @param bool &$found
+     * [Optional][Reference] Sets to **true** if substring is found, **false** otherwise.
      * @return string
      * The extracted part of the string.
      */
-    public static function beforeFirst(string $string, string $substring): string
+    public static function beforeFirst(string $string, string $substring, bool &$found = false): string
     {
         // If empty string is searched, return the string as is since there is nothing to search.
         if ($substring === self::EMPTY) {
@@ -156,9 +162,11 @@ class Str
 
         // If string is not matched, return itself immediately.
         if ($position === null) {
+            $found = false;
             return $string;
         }
 
+        $found = true;
         return static::substring($string, 0, $position);
     }
 
@@ -175,11 +183,13 @@ class Str
      * @param string $string
      * The string to look in.
      * @param string $substring
-     * The string to look in.
+     * The substring to look for.
+     * @param bool &$found
+     * [Optional][Reference] Sets to **true** if substring is found, **false** otherwise.
      * @return string
      * The extracted part of the string.
      */
-    public static function beforeLast(string $string, string $substring): string
+    public static function beforeLast(string $string, string $substring, bool &$found = false): string
     {
         // If empty string is searched, return the string as is since there is nothing to search.
         if ($substring === self::EMPTY) {
@@ -190,9 +200,11 @@ class Str
 
         // If string is not matched, return itself immediately.
         if ($position === null) {
+            $found = false;
             return $string;
         }
 
+        $found = true;
         return static::substring($string, 0, $position);
     }
 

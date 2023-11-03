@@ -24,7 +24,7 @@ class StringBuilderTest extends BaseTestCase
     public function test_afterFirst(): void
     {
         $sb = StringBuilder::from('abc');
-        $found = true;
+        $found = false;
         $after = $sb->afterFirst('b', $found);
         $this->assertInstanceOf(StringBuilder::class, $after);
         $this->assertSame('c', $after->toString());
@@ -38,85 +38,82 @@ class StringBuilderTest extends BaseTestCase
         $this->assertFalse($found);
     }
 
-    public function test_afterIndex(): void
-    {
-        $stringable = StringBuilder::from('abc');
-        $afterPos = $stringable->dropFirst(+1);
-        $afterNeg = $stringable->dropFirst(-1);
-
-        self::assertInstanceOf(StringBuilder::class, $afterPos);
-        self::assertInstanceOf(StringBuilder::class, $afterNeg);
-        self::assertSame('bc', $afterPos->toString());
-        self::assertSame('c', $afterNeg->toString());
-    }
-
     public function test_afterLast(): void
     {
-        $stringable = StringBuilder::from('aabb');
-        $after = $stringable->afterLast('a');
+        $sb = StringBuilder::from('aabb');
+        $found = false;
+        $after = $sb->afterLast('a', $found);
+        $this->assertInstanceOf(StringBuilder::class, $after);
+        $this->assertSame('bb', $after->toString());
+        $this->assertTrue($found);
 
-        self::assertInstanceOf(StringBuilder::class, $after);
-        self::assertSame('bb', $after->toString());
+        $sb = StringBuilder::from('aabb');
+        $found = true;
+        $after = $sb->afterLast('c', $found);
+        $this->assertInstanceOf(StringBuilder::class, $after);
+        $this->assertSame('aabb', $after->toString());
+        $this->assertFalse($found);
     }
 
     public function test_append(): void
     {
-        $stringable = StringBuilder::from('a');
-        $after = $stringable->append('1');
-
-        self::assertInstanceOf(StringBuilder::class, $after);
-        self::assertSame('a1', $after->toString());
+        $sb = StringBuilder::from('a');
+        $after = $sb->append('1');
+        $this->assertInstanceOf(StringBuilder::class, $after);
+        $this->assertSame('a1', $after->toString());
     }
 
     public function test_appendFormat(): void
     {
-        $stringable = StringBuilder::from('a');
-        $after = $stringable->appendFormat('%s %s', 'b', 0);
-
-        self::assertInstanceOf(StringBuilder::class, $after);
-        self::assertSame('ab 0', $after->toString());
+        $sb = StringBuilder::from('a');
+        $after = $sb->appendFormat('%s %s', 'b', 0);
+        $this->assertInstanceOf(StringBuilder::class, $after);
+        $this->assertSame('ab 0', $after->toString());
     }
 
     public function test_basename(): void
     {
-        $stringable = StringBuilder::from('/test/path/of.php');
-        $after = $stringable->basename();
-        $afterSuffix = $stringable->basename('.php');
-
-        self::assertInstanceOf(StringBuilder::class, $after);
-        self::assertInstanceOf(StringBuilder::class, $afterSuffix);
-        self::assertSame('of.php', $after->toString());
-        self::assertSame('of', $afterSuffix->toString());
+        $sb = StringBuilder::from('/test/path/of.php');
+        $after = $sb->basename();
+        $afterSuffix = $sb->basename('.php');
+        $this->assertInstanceOf(StringBuilder::class, $after);
+        $this->assertInstanceOf(StringBuilder::class, $afterSuffix);
+        $this->assertSame('of.php', $after->toString());
+        $this->assertSame('of', $afterSuffix->toString());
     }
 
-    public function test_before(): void
+    public function test_beforeFirst(): void
     {
-        $stringable = StringBuilder::from('abc');
-        $after = $stringable->beforeFirst('b');
+        $sb = StringBuilder::from('abc');
+        $found = false;
+        $after = $sb->beforeFirst('b', $found);
+        $this->assertInstanceOf(StringBuilder::class, $after);
+        $this->assertSame('a', $after->toString());
+        $this->assertTrue($found);
 
-        self::assertInstanceOf(StringBuilder::class, $after);
-        self::assertSame('a', $after->toString());
-    }
-
-    public function test_beforeIndex(): void
-    {
-        $stringable = StringBuilder::from('abc');
-        $afterPos = $stringable->takeFirst(+1);
-        $afterNeg = $stringable->takeFirst(-1);
-
-        self::assertInstanceOf(StringBuilder::class, $afterPos);
-        self::assertInstanceOf(StringBuilder::class, $afterNeg);
-        self::assertSame('a', $afterPos->toString());
-        self::assertSame('ab', $afterNeg->toString());
+        $sb = StringBuilder::from('abc');
+        $found = true;
+        $after = $sb->beforeFirst('d', $found);
+        $this->assertInstanceOf(StringBuilder::class, $after);
+        $this->assertSame('abc', $after->toString());
+        $this->assertFalse($found);
     }
 
     public function test_beforeLast(): void
     {
-        $stringable = StringBuilder::from('aabb');
-        $after = $stringable->beforeLast('b');
+        $sb = StringBuilder::from('abbc');
+        $found = false;
+        $after = $sb->beforeLast('b', $found);
+        $this->assertInstanceOf(StringBuilder::class, $after);
+        $this->assertSame('ab', $after->toString());
+        $this->assertTrue($found);
 
-        self::assertInstanceOf(StringBuilder::class, $after);
-        self::assertSame('aab', $after->toString());
+        $sb = StringBuilder::from('abbc');
+        $found = true;
+        $after = $sb->beforeLast('d', $found);
+        $this->assertInstanceOf(StringBuilder::class, $after);
+        $this->assertSame('abbc', $after->toString());
+        $this->assertFalse($found);
     }
 
     public function test_between(): void
@@ -242,6 +239,18 @@ class StringBuilderTest extends BaseTestCase
         self::assertTrue($stringable->doesNotStartWith('.php'));
     }
 
+    public function test_dropFirst(): void
+    {
+        $stringable = StringBuilder::from('abc');
+        $afterPos = $stringable->dropFirst(+1);
+        $afterNeg = $stringable->dropFirst(-1);
+
+        self::assertInstanceOf(StringBuilder::class, $afterPos);
+        self::assertInstanceOf(StringBuilder::class, $afterNeg);
+        self::assertSame('bc', $afterPos->toString());
+        self::assertSame('c', $afterNeg->toString());
+    }
+
     public function test_endsWith(): void
     {
         $stringable = StringBuilder::from('/test/path/of.php');
@@ -302,4 +311,15 @@ class StringBuilderTest extends BaseTestCase
         self::assertSame(3, $stringable->length());
     }
 
+    public function test_takeFirst(): void
+    {
+        $stringable = StringBuilder::from('abc');
+        $afterPos = $stringable->takeFirst(+1);
+        $afterNeg = $stringable->takeFirst(-1);
+
+        self::assertInstanceOf(StringBuilder::class, $afterPos);
+        self::assertInstanceOf(StringBuilder::class, $afterNeg);
+        self::assertSame('a', $afterPos->toString());
+        self::assertSame('ab', $afterNeg->toString());
+    }
 }
