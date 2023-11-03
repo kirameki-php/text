@@ -26,6 +26,7 @@ use function preg_match;
 use function preg_match_all;
 use function preg_replace;
 use function preg_replace_callback;
+use function stat;
 use function str_contains;
 use function str_repeat;
 use function str_replace;
@@ -59,12 +60,12 @@ class Str
 
     /**
      * Extract string after the specified substring.
-     * Throws InvalidArgumentException is thrown if substring is not found.
+     * Throws NotFoundException if substring is not found.
      *
      * Example:
      * ```php
      * Str::afterFirst('buffer', 'f'); // 'fer'
-     * Str::afterFirst('abc', '_'); // InvalidArgumentException
+     * Str::afterFirst('abc', '_'); // NotFoundException
      * ```
      *
      * @param string $string
@@ -81,7 +82,7 @@ class Str
             return $result;
         }
 
-        throw new NotFoundException("Substring \"$substring\" does not exist in \"$string\"", [
+        throw new NotFoundException("Substring \"$substring\" does not exist in \"$string\".", [
             'string' => $string,
             'substring' => $substring,
         ]);
@@ -119,13 +120,35 @@ class Str
     }
 
     /**
+     * Extract string after the specified substring.
+     * Returns the original string if substring is not found.
+     *
+     * Example:
+     * ```php
+     * Str::afterFirstOrSelf('buffer', 'f'); // 'fer'
+     * Str::afterFirstOrSelf('abc', '_'); // 'abc'
+     * ```
+     *
+     * @param string $string
+     * The string to look in.
+     * @param string $substring
+     * The substring to look for.
+     * @return string
+     * The extracted part of the string.
+     */
+    public static function afterFirstOrSelf(string $string, string $substring): string
+    {
+        return static::afterFirstOrNull($string, $substring) ?? $string;
+    }
+
+    /**
      * Extract string after the last occurrence of the specified substring.
-     * Original string is returned if substring is not found.
+     * Throws NotFoundException if substring is not found.
      *
      * Example:
      * ```php
      * Str::afterLast('buffer', 'f'); // 'er'
-     * Str::afterLast('abc', '_'); // 'abc'
+     * Str::afterLast('abc', '_'); // NotFoundException
      * ```
      *
      * @param string $string
@@ -133,12 +156,41 @@ class Str
      * @param string $substring
      * The substring to look for.
      * If no match is found, the entire `$string` is returned.
-     * @param bool &$found
-     * [Optional][Reference] Sets to **true** if substring is found, **false** otherwise.
      * @return string
      * The extracted part of the string.
      */
-    public static function afterLast(string $string, string $substring, bool &$found = false): string
+    public static function afterLast(string $string, string $substring): string
+    {
+        $result = static::afterLastOrNull($string, $substring);
+        if ($result !== null) {
+            return $result;
+        }
+
+        throw new NotFoundException("Substring \"$substring\" does not exist in \"$string\".", [
+            'string' => $string,
+            'substring' => $substring,
+        ]);
+    }
+
+    /**
+     * Extract string after the last occurrence of the specified substring.
+     * Returns **null** returned if substring is not found.
+     *
+     * Example:
+     * ```php
+     * Str::afterLastOrNull('buffer', 'f'); // 'er'
+     * Str::afterLastOrNull('abc', '_'); // null
+     * ```
+     *
+     * @param string $string
+     * The string to look in.
+     * @param string $substring
+     * The substring to look for.
+     * If no match is found, the entire `$string` is returned.
+     * @return string|null
+     * The extracted part of the string.
+     */
+    public static function afterLastOrNull(string $string, string $substring): ?string
     {
         // If empty string is searched, return the string as is since there is nothing to trim.
         if ($substring === self::EMPTY) {
@@ -147,14 +199,32 @@ class Str
 
         $position = static::indexOfLast($string, $substring);
 
-        // If string is not matched, return blank immediately.
-        if ($position === null) {
-            $found = false;
-            return $string;
-        }
+        return $position !== null
+            ? static::substring($string, $position + static::length($substring))
+            : null;
+    }
 
-        $found = true;
-        return static::substring($string, $position + static::length($substring));
+    /**
+     * Extract string after the last occurrence of the specified substring.
+     * Returns the original string if substring is not found.
+     *
+     * Example:
+     * ```php
+     * Str::afterLastOrSelf('buffer', 'f'); // 'er'
+     * Str::afterLastOrSelf('abc', '_'); // 'abc'
+     * ```
+     *
+     * @param string $string
+     * The string to look in.
+     * @param string $substring
+     * The substring to look for.
+     * If no match is found, the entire `$string` is returned.
+     * @return string
+     * The extracted part of the string.
+     */
+    public static function afterLastOrSelf(string $string, string $substring): string
+    {
+        return static::afterLastOrNull($string, $substring) ?? $string;
     }
 
     /**

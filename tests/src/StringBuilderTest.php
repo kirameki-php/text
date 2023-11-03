@@ -2,71 +2,65 @@
 
 namespace Tests\Kirameki\Text;
 
+use Kirameki\Text\Exceptions\NotFoundException;
 use Kirameki\Text\StringBuilder;
 use PHPUnit\Framework\TestCase as BaseTestCase;
-use function dump;
-use function grapheme_strpos;
 
 class StringBuilderTest extends BaseTestCase
 {
-    public function test_tt(): void
-    {
-        dump(grapheme_strpos('abc', 'a', 5));
-    }
-
     public function test_from(): void
     {
-        $stringable = StringBuilder::from('a');
-        self::assertInstanceOf(StringBuilder::class, $stringable);
-        self::assertSame('a', $stringable->toString());
+        $sb = StringBuilder::from('a');
+        self::assertInstanceOf(StringBuilder::class, $sb);
+        self::assertSame('a', $sb->toString());
     }
 
-    public function test_afterFirst(): void
+    public function test_afterFirst_no_match(): void
     {
-        $sb = StringBuilder::from('abc');
-        $found = false;
-        $after = $sb->afterFirst('b', $found);
-        $this->assertInstanceOf(StringBuilder::class, $after);
-        $this->assertSame('c', $after->toString());
-        $this->assertTrue($found);
+        $this->expectExceptionMessage('Substring "d" does not exist in "abc".');
+        $this->expectException(NotFoundException::class);
+        StringBuilder::from('abc')->afterFirst('d');
+    }
 
-        $sb = StringBuilder::from('abc');
-        $found = true;
-        $after = $sb->afterFirst('d', $found);
+    public function test_afterFirstOrSelf(): void
+    {
+        $after = StringBuilder::from('buffer')->afterFirstOrSelf('f');
+        $this->assertInstanceOf(StringBuilder::class, $after);
+        $this->assertSame('fer', $after->toString());
+
+        $after = StringBuilder::from('abc')->afterFirstOrSelf('d');
         $this->assertInstanceOf(StringBuilder::class, $after);
         $this->assertSame('abc', $after->toString());
-        $this->assertFalse($found);
     }
 
-    public function test_afterLast(): void
+    public function test_afterLast_no_match(): void
     {
-        $sb = StringBuilder::from('aabb');
-        $found = false;
-        $after = $sb->afterLast('a', $found);
-        $this->assertInstanceOf(StringBuilder::class, $after);
-        $this->assertSame('bb', $after->toString());
-        $this->assertTrue($found);
+        $this->expectExceptionMessage('Substring "d" does not exist in "abc".');
+        $this->expectException(NotFoundException::class);
+        StringBuilder::from('abc')->afterLast('d');
+    }
 
-        $sb = StringBuilder::from('aabb');
-        $found = true;
-        $after = $sb->afterLast('c', $found);
+    public function test_afterLastOrSelf(): void
+    {
+        $after = StringBuilder::from('buffer')->afterLastOrSelf('f');
         $this->assertInstanceOf(StringBuilder::class, $after);
-        $this->assertSame('aabb', $after->toString());
-        $this->assertFalse($found);
+        $this->assertSame('er', $after->toString());
+
+        $after = StringBuilder::from('abc')->afterLastOrSelf('d');
+        $this->assertInstanceOf(StringBuilder::class, $after);
+        $this->assertSame('abc', $after->toString());
     }
 
     public function test_append(): void
     {
-        $sb = StringBuilder::from('a');
-        $after = $sb->append('1');
+        $after = StringBuilder::from('a')->append('1');
         $this->assertInstanceOf(StringBuilder::class, $after);
         $this->assertSame('a1', $after->toString());
     }
 
     public function test_appendFormat(): void
     {
-        $sb = StringBuilder::from('a');
-        $after = $sb->appendFormat('%s %s', 'b', 0);
+        $after = StringBuilder::from('a')->appendFormat('%s %s', 'b', 0);
         $this->assertInstanceOf(StringBuilder::class, $after);
         $this->assertSame('ab 0', $after->toString());
     }

@@ -30,13 +30,23 @@ class StringBuilder implements Stringable
      *
      * @param string $search
      * The substring to look for.
-     * @param bool &$found
-     * [Optional][Reference] Whether the search string was found or not.
      * @return static
      */
-    public function afterFirst(string $search, bool &$found = false): static
+    public function afterFirst(string $search): static
     {
-        return new static(Str::afterFirst($this->value, $search, $found));
+        return new static(Str::afterFirst($this->value, $search));
+    }
+
+    /**
+     * @see Str::afterFirstOrSelf()
+     *
+     * @param string $search
+     * The substring to look for.
+     * @return static
+     */
+    public function afterFirstOrSelf(string $search): static
+    {
+        return new static(Str::afterFirstOrSelf($this->value, $search));
     }
 
     /**
@@ -44,13 +54,23 @@ class StringBuilder implements Stringable
      *
      * @param string $search
      * The substring to look for.
-     * @param bool &$found
-     * [Optional][Reference] Whether the search string was found or not.
      * @return static
      */
-    public function afterLast(string $search, bool &$found = false): static
+    public function afterLast(string $search): static
     {
-        return new static(Str::afterLast($this->value, $search, $found));
+        return new static(Str::afterLast($this->value, $search));
+    }
+
+    /**
+     * @see Str::afterLastOrSelf()
+     *
+     * @param string $search
+     * The substring to look for.
+     * @return static
+     */
+    public function afterLastOrSelf(string $search): static
+    {
+        return new static(Str::afterLastOrSelf($this->value, $search));
     }
 
     /**

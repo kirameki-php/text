@@ -3,70 +3,91 @@
 namespace Tests\Kirameki\Text;
 
 use Kirameki\Core\Testing\TestCase;
+use Kirameki\Text\Exceptions\NotFoundException;
 use Kirameki\Text\Str;
 
 class StrTest extends TestCase
 {
-    public function test_afterFirst(): void
+    public function test_afterFirst_no_match(): void
     {
-        // match first
-        $found = false;
-        $this->assertSame('est', Str::afterFirst('test', 't', $found));
-        $this->assertTrue($found);
-
-        // match last
-        $this->assertSame('', Str::afterFirst('test1', '1'));
-
-        // match empty string
-        $this->assertSame('test', Str::afterFirst('test', ''));
-
-        // no match
-        $found = true;
-        $this->assertSame('test', Str::afterFirst('test', 'test2', $found));
-        $this->assertFalse($found);
-
-        // multi byte
-        $this->assertSame('うえ', Str::afterFirst('ああいうえ', 'い'));
-
-        // grapheme
-        $this->assertSame('def', Str::afterFirst('abc🏴󠁧󠁢󠁳󠁣󠁴󠁿def', '🏴󠁧󠁢󠁳󠁣󠁴󠁿'));
-
-        // grapheme cluster
-        $this->assertSame('🏿', Str::afterFirst('👋🏿', '👋'));
+        $this->expectExceptionMessage('Substring "test2" does not exist in "test".');
+        $this->expectException(NotFoundException::class);
+        Str::afterFirst('test', 'test2');
     }
 
-    public function test_afterLast(): void
+    public function test_afterFirstOrNull(): void
     {
-        // match first (single occurrence)
-        $found = false;
-        self::assertSame('bc', Str::afterLast('abc', 'a', $found));
-        $this->assertTrue($found);
-
-        // match first (multiple occurrence)
-        self::assertSame('1', Str::afterLast('test1', 't'));
+        // match first
+        $this->assertSame('est', Str::afterFirstOrNull('test', 't'));
 
         // match last
-        self::assertSame('', Str::afterLast('test1', '1'));
-
-        // should match the last string
-        self::assertSame('Foo', Str::afterLast('----Foo', '---'));
+        $this->assertSame('', Str::afterFirstOrNull('test1', '1'));
 
         // match empty string
-        self::assertSame('test', Str::afterLast('test', ''));
+        $this->assertSame('test', Str::afterFirstOrNull('test', ''));
 
         // no match
-        $found = true;
-        self::assertSame('test', Str::afterLast('test', 'a', $found));
-        $this->assertFalse($found);
+        $this->assertSame(null, Str::afterFirstOrNull('test', 'a'));
 
         // multi byte
-        self::assertSame('え', Str::afterLast('ああいういえ', 'い'));
+        $this->assertSame('うえ', Str::afterFirstOrNull('ああいうえ', 'い'));
 
         // grapheme
-        self::assertSame('🏴󠁧󠁢󠁳󠁣󠁴󠁿f', Str::afterLast('abc🏴󠁧󠁢󠁳󠁣󠁴󠁿d🏴󠁧󠁢󠁳󠁣󠁴󠁿e🏴󠁧󠁢󠁳󠁣󠁴󠁿f', 'e'));
+        $this->assertSame('def', Str::afterFirstOrNull('abc🏴󠁧󠁢󠁳󠁣󠁴󠁿def', '🏴󠁧󠁢󠁳󠁣󠁴󠁿'));
 
         // grapheme cluster
-        self::assertSame('🏿', Str::afterLast('👋🏿', '👋'));
+        $this->assertSame('🏿', Str::afterFirstOrNull('👋🏿', '👋'));
+    }
+
+    public function test_afterFirstOrSelf(): void
+    {
+        // no match
+        $this->assertSame('test', Str::afterFirstOrSelf('test', 'a'));
+        $this->assertSame('🏿', Str::afterFirstOrNull('👋🏿', '👋'));
+    }
+
+    public function test_afterLast_no_match(): void
+    {
+        $this->expectExceptionMessage('Substring "test2" does not exist in "test".');
+        $this->expectException(NotFoundException::class);
+        Str::afterLast('test', 'test2');
+    }
+
+    public function test_afterLastOrNull(): void
+    {
+        // match first (single occurrence)
+        $this->assertSame('bc', Str::afterLastOrNull('abc', 'a'));
+
+        // match first (multiple occurrence)
+        $this->assertSame('1', Str::afterLastOrNull('test1', 't'));
+
+        // match last
+        $this->assertSame('', Str::afterLastOrNull('test1', '1'));
+
+        // should match the last string
+        $this->assertSame('Foo', Str::afterLastOrNull('----Foo', '---'));
+
+        // match empty string
+        $this->assertSame('test', Str::afterLastOrNull('test', ''));
+
+        // no match
+        $this->assertSame(null, Str::afterLastOrNull('test', 'a'));
+
+        // multi byte
+        $this->assertSame('え', Str::afterLastOrNull('ああいういえ', 'い'));
+
+        // grapheme
+        $this->assertSame('🏴󠁧󠁢󠁳󠁣󠁴󠁿f', Str::afterLastOrNull('abc🏴󠁧󠁢󠁳󠁣󠁴󠁿d🏴󠁧󠁢󠁳󠁣󠁴󠁿e🏴󠁧󠁢󠁳󠁣󠁴󠁿f', 'e'));
+
+        // grapheme cluster
+        $this->assertSame('🏿', Str::afterLastOrNull('👋🏿', '👋'));
+    }
+
+    public function test_afterLastOrSelf(): void
+    {
+        // no match
+        $this->assertSame('test', Str::afterLastOrSelf('test', 'a'));
+        $this->assertSame('🏿', Str::afterLastOrSelf('👋🏿', '👋'));
     }
 
     public function test_beforeFirst(): void
