@@ -3,6 +3,7 @@
 namespace Kirameki\Text;
 
 use Kirameki\Core\Exceptions\InvalidArgumentException;
+use Kirameki\Text\Exceptions\NotFoundException;
 use LogicException;
 use RuntimeException;
 use Traversable;
@@ -58,24 +59,52 @@ class Str
 
     /**
      * Extract string after the specified substring.
-     * Original string is returned if substring is not found.
+     * Throws InvalidArgumentException is thrown if substring is not found.
      *
      * Example:
      * ```php
      * Str::afterFirst('buffer', 'f'); // 'fer'
-     * Str::afterFirst('abc', '_'); // 'abc'
+     * Str::afterFirst('abc', '_'); // InvalidArgumentException
      * ```
      *
      * @param string $string
      * The string to look in.
      * @param string $substring
      * The substring to look for.
-     * @param bool &$found
-     * [Optional][Reference] Sets to **true** if substring is found, **false** otherwise.
      * @return string
      * The extracted part of the string.
      */
-    public static function afterFirst(string $string, string $substring, bool &$found = false): string
+    public static function afterFirst(string $string, string $substring): string
+    {
+        $result = static::afterFirstOrNull($string, $substring);
+        if ($result !== null) {
+            return $result;
+        }
+
+        throw new NotFoundException("Substring \"$substring\" does not exist in \"$string\"", [
+            'string' => $string,
+            'substring' => $substring,
+        ]);
+    }
+
+    /**
+     * Extract string after the specified substring.
+     * Returns **null** if substring is not found.
+     *
+     * Example:
+     * ```php
+     * Str::afterFirstOrNull('buffer', 'f'); // 'fer'
+     * Str::afterFirstOrNull('abc', '_'); // null
+     * ```
+     *
+     * @param string $string
+     * The string to look in.
+     * @param string $substring
+     * The substring to look for.
+     * @return string|null
+     * The extracted part of the string.
+     */
+    public static function afterFirstOrNull(string $string, string $substring): ?string
     {
         // If empty string is searched, return the string as is since there is nothing to trim.
         if ($substring === self::EMPTY) {
@@ -84,13 +113,9 @@ class Str
 
         $position = static::indexOfFirst($string, $substring);
 
-        if ($position === null) {
-            $found = false;
-            return $string;
-        }
-
-        $found = true;
-        return static::substring($string, $position + static::length($substring));
+        return $position !== null
+            ? static::substring($string, $position + static::length($substring))
+            : null;
     }
 
     /**
@@ -223,13 +248,26 @@ class Str
      * The starting string to look for.
      * @param string $to
      * The ending string to look for.
-     * @return string
+     * @return list<string>
      * The extracted part of the string.
      */
     public static function between(string $string, string $from, string $to): string
     {
-        Assert::notEmpty($from);
-        Assert::notEmpty($to);
+        if ($from === '') {
+            throw new InvalidArgumentException('$from must not be empty', [
+                'string' => $string,
+                'from' => $from,
+                'to' => $to,
+            ]);
+        }
+
+        if ($to === '') {
+            throw new InvalidArgumentException('$to must not be empty', [
+                'string' => $string,
+                'from' => $from,
+                'to' => $to,
+            ]);
+        }
 
         $startPos = static::indexOfFirst($string, $from);
         if ($startPos === null) {
