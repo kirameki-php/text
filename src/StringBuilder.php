@@ -110,7 +110,7 @@ class StringBuilder implements Stringable
      */
     public function between(string $from, string $to): static
     {
-        return new static(Unicode::between($this->value, $from, $to));
+        return new static(Unicode::betweenFurthest($this->value, $from, $to));
     }
 
     /**

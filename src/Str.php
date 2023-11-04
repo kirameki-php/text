@@ -3,7 +3,6 @@
 namespace Kirameki\Text;
 
 use Kirameki\Core\Exceptions\InvalidArgumentException;
-use Kirameki\Text\Exceptions\NotFoundException;
 use LogicException;
 use RuntimeException;
 use Traversable;
@@ -16,17 +15,16 @@ use function bcdiv;
 use function bcmul;
 use function bcpow;
 use function ceil;
+use function compact;
 use function filter_var;
 use function floor;
 use function implode;
 use function is_iterable;
 use function iterator_to_array;
-use function mb_strtolower;
 use function preg_match;
 use function preg_match_all;
 use function preg_replace;
 use function preg_replace_callback;
-use function stat;
 use function str_contains;
 use function str_repeat;
 use function str_replace;
@@ -34,6 +32,7 @@ use function strlen;
 use function strpos;
 use function strrev;
 use function strrpos;
+use function strtolower;
 use function strtoupper;
 use function substr;
 use function ucwords;
@@ -198,23 +197,10 @@ class Str
      * @return string
      * The extracted part of the string.
      */
-    public static function between(string $string, string $from, string $to): string
+    public static function betweenFurthest(string $string, string $from, string $to): string
     {
-        if ($from === '') {
-            throw new InvalidArgumentException('$from must not be empty', [
-                'string' => $string,
-                'from' => $from,
-                'to' => $to,
-            ]);
-        }
-
-        if ($to === '') {
-            throw new InvalidArgumentException('$to must not be empty', [
-                'string' => $string,
-                'from' => $from,
-                'to' => $to,
-            ]);
-        }
+        static::assertNotEmpty('$from', $from, compact('string', 'from', 'to'));
+        static::assertNotEmpty('$to', $to, compact('string', 'from', 'to'));
 
         $startPos = static::indexOfFirst($string, $from);
         if ($startPos === null) {
@@ -250,8 +236,8 @@ class Str
      */
     public static function betweenFirst(string $string, string $from, string $to): string
     {
-        Assert::notEmpty($from);
-        Assert::notEmpty($to);
+        static::assertNotEmpty('$from', $from, compact('string', 'from', 'to'));
+        static::assertNotEmpty('$to', $to, compact('string', 'from', 'to'));
 
         $startPos = static::indexOfFirst($string, $from);
         if ($startPos === null) {
@@ -287,8 +273,8 @@ class Str
      */
     public static function betweenLast(string $string, string $from, string $to): string
     {
-        Assert::notEmpty($from);
-        Assert::notEmpty($to);
+        static::assertNotEmpty('$from', $from, compact('string', 'from', 'to'));
+        static::assertNotEmpty('$to', $to, compact('string', 'from', 'to'));
 
         $startPos = static::indexOfLast($string, $from);
         if ($startPos === null) {
@@ -1900,12 +1886,10 @@ class Str
 
     /**
      * Convert the given string to lower case.
-     * Supports multibyte strings.
      *
      * Example:
      * ```php
      * Str::toLowerCase('AbCd'); // 'abcd'
-     * Str::toLowerCase('ÇĞİÖŞÜ'); // 'çği̇öşü'
      * ```
      *
      * @param string $string
@@ -1915,7 +1899,7 @@ class Str
      */
     public static function toLowerCase(string $string): string
     {
-        return mb_strtolower($string);
+        return strtolower($string);
     }
 
     /**
@@ -1964,7 +1948,6 @@ class Str
 
     /**
      * Convert the given string to upper case.
-     * Supports multibyte strings.
      *
      * Example:
      * ```php
@@ -2137,5 +2120,18 @@ class Str
     public static function wrap(string $string, string $before, string $after): string
     {
         return static::concat($before, $string, $after);
+    }
+
+    /**
+     * @param string $name
+     * @param string $string
+     * @param array<string, string> $context
+     * @return void
+     */
+    protected static function assertNotEmpty(string $name, string $string, array $context): void
+    {
+        if ($string === '') {
+            throw new InvalidArgumentException($name . ' must not be empty', $context);
+        }
     }
 }

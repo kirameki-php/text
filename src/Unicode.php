@@ -12,6 +12,7 @@ use function grapheme_strrpos;
 use function grapheme_substr;
 use function implode;
 use function intl_get_error_message;
+use function mb_strtolower;
 use function mb_strtoupper;
 use function strlen;
 use function strrev;
@@ -240,6 +241,26 @@ class Unicode extends Str
     }
 
     /**
+     * Convert the given string to lower case.
+     * Supports multibyte strings.
+     *
+     * Example:
+     * ```php
+     * Str::toLowerCase('AbCd'); // 'abcd'
+     * Str::toLowerCase('ÇĞİÖŞÜ'); // 'çği̇öşü'
+     * ```
+     *
+     * @param string $string
+     * The string being lower-cased.
+     * @return string
+     * String with all alphabetic characters converted to lower case.
+     */
+    public static function toLowerCase(string $string): string
+    {
+        return mb_strtolower($string);
+    }
+
+    /**
      * Convert the given string to upper case.
      * Supports multibyte strings.
      *
@@ -255,4 +276,5 @@ class Unicode extends Str
     {
         return mb_strtoupper($string);
     }
+
 }
