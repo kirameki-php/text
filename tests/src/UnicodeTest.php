@@ -13,131 +13,89 @@ use function substr;
 
 class UnicodeTest extends TestCase
 {
-    public function test_after_no_match(): void
-    {
-        $this->expectExceptionMessage('Substring "test2" does not exist in "test".');
-        $this->expectException(NotFoundException::class);
-        Unicode::after('test', 'test2');
-    }
-
-    public function test_afterOrNull(): void
+    public function test_after(): void
     {
         // match first
-        $this->assertSame('est', Unicode::afterOrNull('test', 't'));
+        $this->assertSame('est', Unicode::after('test', 't'));
 
         // match last
-        $this->assertSame('', Unicode::afterOrNull('test1', '1'));
+        $this->assertSame('', Unicode::after('test1', '1'));
 
         // match empty string
-        $this->assertSame('test', Unicode::afterOrNull('test', ''));
+        $this->assertSame('test', Unicode::after('test', ''));
 
         // no match
-        $this->assertSame(null, Unicode::afterOrNull('test', 'test2'));
+        $this->assertSame('test', Unicode::after('test', 'test2'));
 
         // multi byte
-        $this->assertSame('うえ', Unicode::afterOrNull('ああいうえ', 'い'));
+        $this->assertSame('うえ', Unicode::after('ああいうえ', 'い'));
 
         // grapheme
-        $this->assertSame('def', Unicode::afterOrNull('abc🏴󠁧󠁢󠁳󠁣󠁴󠁿def', '🏴󠁧󠁢󠁳󠁣󠁴󠁿'));
+        $this->assertSame('def', Unicode::after('abc🏴󠁧󠁢󠁳󠁣󠁴󠁿def', '🏴󠁧󠁢󠁳󠁣󠁴󠁿'));
 
         // grapheme cluster
-        $this->assertSame(null, Unicode::afterOrNull('👋🏿', '👋'));
+        $this->assertSame('👋🏿', Unicode::after('👋🏿', '👋'));
     }
 
-    public function test_afterOrSelf(): void
-    {
-        // no match
-        $this->assertSame('test', Unicode::afterOrSelf('test', 'a'));
-        $this->assertSame('👋🏿', Unicode::afterOrSelf('👋🏿', '👋'));
-    }
-
-    public function test_afterLast_no_match(): void
-    {
-        $this->expectExceptionMessage('Substring "test2" does not exist in "test".');
-        $this->expectException(NotFoundException::class);
-        Unicode::afterLast('test', 'test2');
-    }
-
-    public function test_afterLastOrNull(): void
+    public function test_afterLast(): void
     {
         // match first (single occurrence)
-        $this->assertSame('bc', Unicode::afterLastOrNull('abc', 'a'));
+        $this->assertSame('bc', Unicode::afterLast('abc', 'a'));
 
         // match first (multiple occurrence)
-        $this->assertSame('1', Unicode::afterLastOrNull('test1', 't'));
+        $this->assertSame('1', Unicode::afterLast('test1', 't'));
 
         // match last
-        $this->assertSame('', Unicode::afterLastOrNull('test1', '1'));
+        $this->assertSame('', Unicode::afterLast('test1', '1'));
 
         // should match the last string
-        $this->assertSame('Foo', Unicode::afterLastOrNull('----Foo', '---'));
+        $this->assertSame('Foo', Unicode::afterLast('----Foo', '---'));
 
         // match empty string
-        $this->assertSame('test', Unicode::afterLastOrNull('test', ''));
+        $this->assertSame('test', Unicode::afterLast('test', ''));
 
         // no match
-        $this->assertSame(null, Unicode::afterLastOrNull('test', 'a'));
+        $this->assertSame('test', Unicode::afterLast('test', 'a'));
 
         // multi byte
-        $this->assertSame('え', Unicode::afterLastOrNull('ああいういえ', 'い'));
+        $this->assertSame('え', Unicode::afterLast('ああいういえ', 'い'));
 
         // grapheme
-        $this->assertSame('🏴󠁧󠁢󠁳󠁣󠁴󠁿f', Unicode::afterLastOrNull('abc🏴󠁧󠁢󠁳󠁣󠁴󠁿d🏴󠁧󠁢󠁳󠁣󠁴󠁿e🏴󠁧󠁢󠁳󠁣󠁴󠁿f', 'e'));
+        $this->assertSame('🏴󠁧󠁢󠁳󠁣󠁴󠁿f', Unicode::afterLast('abc🏴󠁧󠁢󠁳󠁣󠁴󠁿d🏴󠁧󠁢󠁳󠁣󠁴󠁿e🏴󠁧󠁢󠁳󠁣󠁴󠁿f', 'e'));
 
         // grapheme cluster
-        $this->assertSame(null, Unicode::afterLastOrNull('👋🏿', '👋'));
+        $this->assertSame('👋🏿', Unicode::afterLast('👋🏿', '👋'));
     }
 
-    public function test_afterLastOrSelf(): void
-    {
-        // no match
-        $this->assertSame('test', Unicode::afterLastOrSelf('test', 'a'));
-        $this->assertSame('👋🏿', Unicode::afterLastOrSelf('👋🏿', '👋'));
-    }
-
-    public function test_before_no_match(): void
-    {
-        $this->expectExceptionMessage('Substring "test2" does not exist in "test".');
-        $this->expectException(NotFoundException::class);
-        Unicode::before('test', 'test2');
-    }
-
-    public function test_beforeOrNull(): void
+    public function test_before(): void
     {
         // match first (single occurrence)
-        $this->assertSame('a', Unicode::beforeOrNull('abc', 'b'));
+        $this->assertSame('a', Unicode::before('abc', 'b'));
 
         // match first (multiple occurrence)
-        $this->assertSame('a', Unicode::beforeOrNull('abc-abc', 'b'));
+        $this->assertSame('a', Unicode::before('abc-abc', 'b'));
 
         // match last
-        $this->assertSame('test', Unicode::beforeOrNull('test1', '1'));
+        $this->assertSame('test', Unicode::before('test1', '1'));
 
         // match multiple chars
-        $this->assertSame('test', Unicode::beforeOrNull('test123', '12'));
+        $this->assertSame('test', Unicode::before('test123', '12'));
 
         // match empty string
-        $this->assertSame('test', Unicode::beforeOrNull('test', ''));
+        $this->assertSame('test', Unicode::before('test', ''));
 
         // no match
-        $this->assertSame(null, Unicode::beforeOrNull('test', 'a'));
+        $this->assertSame('test', Unicode::before('test', 'a'));
 
         // multi byte
-        $this->assertSame('ああ', Unicode::beforeOrNull('ああいういえ', 'い'));
+        $this->assertSame('ああ', Unicode::before('ああいういえ', 'い'));
 
         // grapheme
-        $this->assertSame('abc', Unicode::beforeOrNull('abc🏴󠁧󠁢󠁳󠁣󠁴󠁿d🏴󠁧󠁢󠁳󠁣󠁴󠁿e🏴󠁧󠁢󠁳󠁣󠁴󠁿f', '🏴󠁧󠁢󠁳󠁣󠁴󠁿'));
-        $this->assertSame('abc🏴󠁧󠁢󠁳󠁣󠁴󠁿d🏴󠁧󠁢󠁳󠁣󠁴󠁿', Unicode::beforeOrNull('abc🏴󠁧󠁢󠁳󠁣󠁴󠁿d🏴󠁧󠁢󠁳󠁣󠁴󠁿e🏴󠁧󠁢󠁳󠁣󠁴󠁿f', 'e'));
+        $this->assertSame('abc', Unicode::before('abc🏴󠁧󠁢󠁳󠁣󠁴󠁿d🏴󠁧󠁢󠁳󠁣󠁴󠁿e🏴󠁧󠁢󠁳󠁣󠁴󠁿f', '🏴󠁧󠁢󠁳󠁣󠁴󠁿'));
+        $this->assertSame('abc🏴󠁧󠁢󠁳󠁣󠁴󠁿d🏴󠁧󠁢󠁳󠁣󠁴󠁿', Unicode::before('abc🏴󠁧󠁢󠁳󠁣󠁴󠁿d🏴󠁧󠁢󠁳󠁣󠁴󠁿e🏴󠁧󠁢󠁳󠁣󠁴󠁿f', 'e'));
 
         // grapheme cluster
-        $this->assertSame(null, Unicode::beforeOrNull('👋🏿', '🏿'));
-    }
-
-    public function test_beforeOrSelf(): void
-    {
-        // no match
-        $this->assertSame('test', Unicode::beforeOrSelf('test', 'a'));
-        $this->assertSame('👋🏿', Unicode::beforeOrSelf('👋🏿', '👋'));
+        $this->assertSame('👋🏿', Unicode::before('👋🏿', '🏿'));
     }
 
     public function test_beforeLast(): void

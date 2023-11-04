@@ -8,131 +8,89 @@ use Kirameki\Text\Str;
 
 class StrTest extends TestCase
 {
-    public function test_after_no_match(): void
-    {
-        $this->expectExceptionMessage('Substring "test2" does not exist in "test".');
-        $this->expectException(NotFoundException::class);
-        Str::after('test', 'test2');
-    }
-
-    public function test_afterOrNull(): void
+    public function test_after(): void
     {
         // match first
-        $this->assertSame('est', Str::afterOrNull('test', 't'));
+        $this->assertSame('est', Str::after('test', 't'));
 
         // match last
-        $this->assertSame('', Str::afterOrNull('test1', '1'));
+        $this->assertSame('', Str::after('test1', '1'));
 
         // match empty string
-        $this->assertSame('test', Str::afterOrNull('test', ''));
+        $this->assertSame('test', Str::after('test', ''));
 
         // no match
-        $this->assertSame(null, Str::afterOrNull('test', 'a'));
+        $this->assertSame('test', Str::after('test', 'a'));
 
         // multi byte
-        $this->assertSame('うえ', Str::afterOrNull('ああいうえ', 'い'));
+        $this->assertSame('うえ', Str::after('ああいうえ', 'い'));
 
         // grapheme
-        $this->assertSame('def', Str::afterOrNull('abc🏴󠁧󠁢󠁳󠁣󠁴󠁿def', '🏴󠁧󠁢󠁳󠁣󠁴󠁿'));
+        $this->assertSame('def', Str::after('abc🏴󠁧󠁢󠁳󠁣󠁴󠁿def', '🏴󠁧󠁢󠁳󠁣󠁴󠁿'));
 
         // grapheme cluster
-        $this->assertSame('🏿', Str::afterOrNull('👋🏿', '👋'));
+        $this->assertSame('🏿', Str::after('👋🏿', '👋'));
     }
 
-    public function test_afterOrSelf(): void
-    {
-        // no match
-        $this->assertSame('test', Str::afterOrSelf('test', 'a'));
-        $this->assertSame('🏿', Str::afterOrNull('👋🏿', '👋'));
-    }
-
-    public function test_afterLast_no_match(): void
-    {
-        $this->expectExceptionMessage('Substring "test2" does not exist in "test".');
-        $this->expectException(NotFoundException::class);
-        Str::afterLast('test', 'test2');
-    }
-
-    public function test_afterLastOrNull(): void
+    public function test_afterLast(): void
     {
         // match first (single occurrence)
-        $this->assertSame('bc', Str::afterLastOrNull('abc', 'a'));
+        $this->assertSame('bc', Str::afterLast('abc', 'a'));
 
         // match first (multiple occurrence)
-        $this->assertSame('1', Str::afterLastOrNull('test1', 't'));
+        $this->assertSame('1', Str::afterLast('test1', 't'));
 
         // match last
-        $this->assertSame('', Str::afterLastOrNull('test1', '1'));
+        $this->assertSame('', Str::afterLast('test1', '1'));
 
         // should match the last string
-        $this->assertSame('Foo', Str::afterLastOrNull('----Foo', '---'));
+        $this->assertSame('Foo', Str::afterLast('----Foo', '---'));
 
         // match empty string
-        $this->assertSame('test', Str::afterLastOrNull('test', ''));
+        $this->assertSame('test', Str::afterLast('test', ''));
 
         // no match
-        $this->assertSame(null, Str::afterLastOrNull('test', 'a'));
+        $this->assertSame('test', Str::afterLast('test', 'a'));
 
         // multi byte
-        $this->assertSame('え', Str::afterLastOrNull('ああいういえ', 'い'));
+        $this->assertSame('え', Str::afterLast('ああいういえ', 'い'));
 
         // grapheme
-        $this->assertSame('🏴󠁧󠁢󠁳󠁣󠁴󠁿f', Str::afterLastOrNull('abc🏴󠁧󠁢󠁳󠁣󠁴󠁿d🏴󠁧󠁢󠁳󠁣󠁴󠁿e🏴󠁧󠁢󠁳󠁣󠁴󠁿f', 'e'));
+        $this->assertSame('🏴󠁧󠁢󠁳󠁣󠁴󠁿f', Str::afterLast('abc🏴󠁧󠁢󠁳󠁣󠁴󠁿d🏴󠁧󠁢󠁳󠁣󠁴󠁿e🏴󠁧󠁢󠁳󠁣󠁴󠁿f', 'e'));
 
         // grapheme cluster
-        $this->assertSame('🏿', Str::afterLastOrNull('👋🏿', '👋'));
+        $this->assertSame('🏿', Str::afterLast('👋🏿', '👋'));
     }
 
-    public function test_afterLastOrSelf(): void
-    {
-        // no match
-        $this->assertSame('test', Str::afterLastOrSelf('test', 'a'));
-        $this->assertSame('🏿', Str::afterLastOrSelf('👋🏿', '👋'));
-    }
-
-    public function test_before_no_match(): void
-    {
-        $this->expectExceptionMessage('Substring "test2" does not exist in "test".');
-        $this->expectException(NotFoundException::class);
-        Str::before('test', 'test2');
-    }
-
-    public function test_beforeOrNull(): void
+    public function test_before(): void
     {
         // match first (single occurrence)
-        $this->assertSame('a', Str::beforeOrNull('abc', 'b'));
+        $this->assertSame('a', Str::before('abc', 'b'));
 
         // match first (multiple occurrence)
-        $this->assertSame('a', Str::beforeOrNull('abc-abc', 'b'));
+        $this->assertSame('a', Str::before('abc-abc', 'b'));
 
         // match last
-        $this->assertSame('test', Str::beforeOrNull('test1', '1'));
+        $this->assertSame('test', Str::before('test1', '1'));
 
         // match multiple chars
-        $this->assertSame('test', Str::beforeOrNull('test123', '12'));
+        $this->assertSame('test', Str::before('test123', '12'));
 
         // match empty string
-        $this->assertSame('test', Str::beforeOrNull('test', ''));
+        $this->assertSame('test', Str::before('test', ''));
 
         // no match
-        $this->assertSame(null, Str::beforeOrNull('test', 'a'));
+        $this->assertSame('test', Str::before('test', 'a'));
 
         // multi byte
-        $this->assertSame('ああ', Str::beforeOrNull('ああいういえ', 'い'));
+        $this->assertSame('ああ', Str::before('ああいういえ', 'い'));
 
         // grapheme
-        $this->assertSame('abc', Str::beforeOrNull('abc🏴󠁧󠁢󠁳󠁣󠁴󠁿d🏴󠁧󠁢󠁳󠁣󠁴󠁿e🏴󠁧󠁢󠁳󠁣󠁴󠁿f', '🏴󠁧󠁢󠁳󠁣󠁴󠁿'));
-        $this->assertSame('abc🏴󠁧󠁢󠁳󠁣󠁴󠁿d🏴󠁧󠁢󠁳󠁣󠁴󠁿', Str::beforeOrNull('abc🏴󠁧󠁢󠁳󠁣󠁴󠁿d🏴󠁧󠁢󠁳󠁣󠁴󠁿e🏴󠁧󠁢󠁳󠁣󠁴󠁿f', 'e'));
+        $this->assertSame('abc', Str::before('abc🏴󠁧󠁢󠁳󠁣󠁴󠁿d🏴󠁧󠁢󠁳󠁣󠁴󠁿e🏴󠁧󠁢󠁳󠁣󠁴󠁿f', '🏴󠁧󠁢󠁳󠁣󠁴󠁿'));
+        $this->assertSame('abc🏴󠁧󠁢󠁳󠁣󠁴󠁿d🏴󠁧󠁢󠁳󠁣󠁴󠁿', Str::before('abc🏴󠁧󠁢󠁳󠁣󠁴󠁿d🏴󠁧󠁢󠁳󠁣󠁴󠁿e🏴󠁧󠁢󠁳󠁣󠁴󠁿f', 'e'));
 
         // grapheme cluster
-        $this->assertSame('👋', Str::beforeOrNull('👋🏿', '🏿'));
-    }
-
-    public function test_beforeOrSelf(): void
-    {
-        // no match
-        $this->assertSame('test', Str::beforeOrSelf('test', 'a'));
-        $this->assertSame('👋', Str::beforeOrSelf('👋🏿', '🏿'));
+        $this->assertSame('👋', Str::before('👋🏿', '🏿'));
     }
 
     public function test_beforeLast(): void
