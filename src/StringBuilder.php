@@ -9,6 +9,8 @@ use function sprintf;
 
 class StringBuilder implements Stringable
 {
+    protected static Str $ref;
+
     /**
      * @param string $value
      * @return static
@@ -23,6 +25,7 @@ class StringBuilder implements Stringable
      */
     public function __construct(protected string $value = '')
     {
+        static::$ref ??= new Str();
     }
 
     /**
@@ -34,7 +37,7 @@ class StringBuilder implements Stringable
      */
     public function after(string $search): static
     {
-        return new static(Str::after($this->value, $search));
+        return new static(static::$ref::after($this->value, $search));
     }
 
     /**
@@ -46,7 +49,7 @@ class StringBuilder implements Stringable
      */
     public function afterLast(string $search): static
     {
-        return new static(Str::afterLast($this->value, $search));
+        return new static(static::$ref::afterLast($this->value, $search));
     }
 
     /**
@@ -55,7 +58,7 @@ class StringBuilder implements Stringable
      */
     public function append(string ...$string): static
     {
-        return new static(Str::concat($this->value, ...$string));
+        return new static(static::$ref::concat($this->value, ...$string));
     }
 
     /**
@@ -86,7 +89,7 @@ class StringBuilder implements Stringable
      */
     public function before(string $search): static
     {
-        return new static(Str::before($this->value, $search));
+        return new static(static::$ref::before($this->value, $search));
     }
 
     /**
@@ -98,7 +101,7 @@ class StringBuilder implements Stringable
      */
     public function beforeLast(string $search): static
     {
-        return new static(Str::beforeLast($this->value, $search));
+        return new static(static::$ref::beforeLast($this->value, $search));
     }
 
     /**
@@ -110,7 +113,7 @@ class StringBuilder implements Stringable
      */
     public function between(string $from, string $to): static
     {
-        return new static(Str::between($this->value, $from, $to));
+        return new static(static::$ref::between($this->value, $from, $to));
     }
 
     /**
@@ -122,7 +125,7 @@ class StringBuilder implements Stringable
      */
     public function betweenFurthest(string $from, string $to): static
     {
-        return new static(Str::betweenFurthest($this->value, $from, $to));
+        return new static(static::$ref::betweenFurthest($this->value, $from, $to));
     }
 
     /**
@@ -134,15 +137,7 @@ class StringBuilder implements Stringable
      */
     public function betweenLast(string $from, string $to): static
     {
-        return new static(Str::betweenLast($this->value, $from, $to));
-    }
-
-    /**
-     * @return int
-     */
-    public function byteLength(): int
-    {
-        return Unicode::byteLength($this->value);
+        return new static(static::$ref::betweenLast($this->value, $from, $to));
     }
 
     /**
