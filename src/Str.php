@@ -324,7 +324,7 @@ class Str
      *
      * @param string $string
      * String to be chunked.
-     * @param int<1, max> $size
+     * @param int $size
      * Size of each chunk. Must be > 1.
      * @param int &$count
      * [Optional][Reference] Sets the number of times chunking occurred.
@@ -341,8 +341,8 @@ class Str
         $remains = $limit ?? INF;
         $count = 0;
 
-        static::assertGreaterThanEqual('$size', $size, 0, compact('string', 'size', 'remains'));
-        static::assertGreaterThanEqual('$remains', $remains, 0, compact('string', 'size', 'remains'));
+        static::assertGreaterThanEqual('$size', $size, 1, compact('string', 'size', 'remains'));
+        static::assertGreaterThanEqual('$remains', $remains, 1, compact('string', 'size', 'remains'));
 
         $chunk = [];
         $offset = 0;
