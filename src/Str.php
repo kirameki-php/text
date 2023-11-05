@@ -326,9 +326,6 @@ class Str
      * String to be chunked.
      * @param int $size
      * Size of each chunk. Must be > 1.
-     * @param int &$count
-     * [Optional][Reference] Sets the number of times chunking occurred.
-     * Any value previously set will be reset.
      * @return list<string>
      */
     public static function chunk(

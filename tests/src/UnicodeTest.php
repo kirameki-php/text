@@ -317,11 +317,13 @@ class UnicodeTest extends TestCase
 
     public function test_concat(): void
     {
-        self::assertSame('', Unicode::concat());
-        self::assertSame('test', Unicode::concat('test'));
-        self::assertSame('testa ', Unicode::concat('test', 'a', '', ' '));
-        self::assertSame('ゅゅ', Unicode::concat('ゅ', 'ゅ'));
-        self::assertSame('🏴󠁧󠁢󠁳󠁣󠁴󠁿🐌', Unicode::concat('🏴󠁧󠁢󠁳󠁣󠁴󠁿', '🐌'));
+        $this->assertSame('', Unicode::concat('', '', ''), 'empty');
+        $this->assertSame(' ', Unicode::concat('', ' '), 'blank');
+        $this->assertSame('', Unicode::concat(), 'no arg');
+        $this->assertSame('a', Unicode::concat('a'), 'one arg');
+        $this->assertSame('abc', Unicode::concat('a', 'b', 'c'), 'basic');
+        $this->assertSame('あい', Unicode::concat('あ', 'い'), 'mb string');
+        $this->assertSame('👋🏿', Unicode::concat('👋', '🏿'), 'mb string');
     }
 
     public function test_contains(): void

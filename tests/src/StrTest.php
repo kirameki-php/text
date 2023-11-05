@@ -301,4 +301,14 @@ class StrTest extends TestCase
         $this->assertSame(1, strlen($chunked[1]), 'invalid');
     }
 
+    public function test_concat(): void
+    {
+        $this->assertSame('', Str::concat('', '', ''), 'empty');
+        $this->assertSame(' ', Str::concat('', ' '), 'blank');
+        $this->assertSame('', Str::concat(), 'no arg');
+        $this->assertSame('a', Str::concat('a'), 'one arg');
+        $this->assertSame('abc', Str::concat('a', 'b', 'c'), 'basic');
+        $this->assertSame('あい', Str::concat('あ', 'い'), 'mb string');
+        $this->assertSame('👋🏿', Str::concat('👋', '🏿'), 'mb string');
+    }
 }
