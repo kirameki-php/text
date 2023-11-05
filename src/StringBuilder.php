@@ -126,6 +126,18 @@ class StringBuilder implements Stringable
     }
 
     /**
+     * @see Str::betweenLast()
+     *
+     * @param string $from
+     * @param string $to
+     * @return static
+     */
+    public function betweenLast(string $from, string $to): static
+    {
+        return new static(Str::betweenLast($this->value, $from, $to));
+    }
+
+    /**
      * @return int
      */
     public function byteLength(): int

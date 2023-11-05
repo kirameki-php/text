@@ -204,13 +204,13 @@ class Str
 
         $startPos = static::indexOfFirst($string, $from);
         if ($startPos === null) {
-            throw new RuntimeException("\$from: \"$from\" does not exist in \"$string\"");
+            return $string;
         }
         $startPos += static::length($from);
 
         $endPos = static::indexOfFirst($string, $to, $startPos);
         if ($endPos === null) {
-            throw new RuntimeException("\$to: \"$to\" does not exist after \$from in \"$string\"");
+            return $string;
         }
 
         return static::range($string, $startPos, $endPos);
@@ -241,13 +241,13 @@ class Str
 
         $startPos = static::indexOfFirst($string, $from);
         if ($startPos === null) {
-            throw new RuntimeException("\$from: \"$from\" does not exist in \"$string\"");
+            return $string;
         }
         $startPos += static::length($from);
 
         $endPos = static::indexOfLast($string, $to, $startPos);
         if ($endPos === null) {
-            throw new RuntimeException("\$to: \"$to\" does not exist after \$from in \"$string\"");
+            return $string;
         }
 
         return static::range($string, $startPos, $endPos);
@@ -278,13 +278,13 @@ class Str
 
         $startPos = static::indexOfLast($string, $from);
         if ($startPos === null) {
-            throw new RuntimeException("\$from: \"$from\" does not exist in \"$string\"");
+            return $string;
         }
         $startPos += static::length($from);
 
         $endPos = static::indexOfLast($string, $to, $startPos);
         if ($endPos === null) {
-            throw new RuntimeException("\$to: \"$to\" does not exist after \$from in \"$string\"");
+            return $string;
         }
 
         return static::range($string, $startPos, $endPos);
@@ -2131,7 +2131,7 @@ class Str
     protected static function assertNotEmpty(string $name, string $string, array $context): void
     {
         if ($string === '') {
-            throw new InvalidArgumentException($name . ' must not be empty', $context);
+            throw new InvalidArgumentException($name . ' must not be empty.', $context);
         }
     }
 }

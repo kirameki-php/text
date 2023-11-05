@@ -128,193 +128,166 @@ class UnicodeTest extends TestCase
     public function test_between(): void
     {
         // basic
-        self::assertSame('1', Unicode::between('test(1)', '(', ')'));
+        $this->assertSame('1', Unicode::between('test(1)', '(', ')'));
 
         // edge
-        self::assertSame('', Unicode::between('()', '(', ')'));
-        self::assertSame('1', Unicode::between('(1)', '(', ')'));
+        $this->assertSame('', Unicode::between('()', '(', ')'));
+        $this->assertSame('1', Unicode::between('(1)', '(', ')'));
+
+        // missing from
+        $this->assertSame('test)', Unicode::between('test)', '(', ')'));
+
+        // missing to
+        $this->assertSame('test(', Unicode::between('test(', '(', ')'));
 
         // nested
-        self::assertSame('test(1', Unicode::between('(test(1))', '(', ')'));
-        self::assertSame('1', Unicode::between('(1) to (2)', '(', ')'));
+        $this->assertSame('test(1', Unicode::between('(test(1))', '(', ')'));
+        $this->assertSame('1', Unicode::between('(1) to (2)', '(', ')'));
 
         // multi char
-        self::assertSame('_ab_', Unicode::between('ab_ab_ba_ba', 'ab', 'ba'));
+        $this->assertSame('_ab_', Unicode::between('ab_ab_ba_ba', 'ab', 'ba'));
 
         // utf8
-        self::assertSame('い', Unicode::between('あいういう', 'あ', 'う'));
+        $this->assertSame('い', Unicode::between('あいういう', 'あ', 'う'));
 
         // grapheme
-        self::assertSame('😃', Unicode::between('👋🏿😃👋🏿😃👋🏿', '👋🏿', '👋🏿'));
+        $this->assertSame('😃', Unicode::between('👋🏿😃👋🏿😃👋🏿', '👋🏿', '👋🏿'));
+
+        // grapheme between codepoints
+        $this->assertSame('👋🏿', Unicode::between('👋🏿', '👋', '🏿'));
     }
 
     public function test_between_empty_from(): void
     {
-        $this->expectExceptionMessage('Expected a non-empty value. Got: ""');
+        $this->expectExceptionMessage('$from must not be empty.');
         Unicode::between('test)', '', ')');
     }
 
     public function test_between_empty_to(): void
     {
-        $this->expectExceptionMessage('Expected a non-empty value. Got: ""');
+        $this->expectExceptionMessage('$to must not be empty.');
         Unicode::between('test)', '(', '');
     }
 
     public function test_between_empty_from_and_to(): void
     {
-        $this->expectExceptionMessage('Expected a non-empty value. Got: ""');
+        $this->expectExceptionMessage('$from must not be empty.');
         Unicode::between('test)', '', '');
-    }
-
-    public function test_between_missing_from(): void
-    {
-        $this->expectExceptionMessage('$from: "(" does not exist in "test)"');
-        Unicode::between('test)', '(', ')');
-    }
-
-    public function test_between_missing_to(): void
-    {
-        $this->expectExceptionMessage('$to: ")" does not exist after $from in "test("');
-        Unicode::between('test(', '(', ')');
-    }
-
-    public function test_between_grapheme_substring(): void
-    {
-        $this->expectExceptionMessage('$from: "👋" does not exist in "👋🏿"');
-        Unicode::between('👋🏿', '👋', '🏿');
     }
 
     public function test_betweenFurthest(): void
     {
         // basic
-        self::assertSame('1', Unicode::betweenFurthest('test(1)', '(', ')'));
+        $this->assertSame('1', Unicode::betweenFurthest('test(1)', '(', ')'));
 
         // edge
-        self::assertSame('', Unicode::betweenFurthest('()', '(', ')'));
-        self::assertSame('1', Unicode::betweenFurthest('(1)', '(', ')'));
+        $this->assertSame('', Unicode::betweenFurthest('()', '(', ')'));
+        $this->assertSame('1', Unicode::betweenFurthest('(1)', '(', ')'));
+
+        // missing from
+        $this->assertSame('test)', Unicode::betweenFurthest('test)', '(', ')'));
+
+        // missing to
+        $this->assertSame('test(', Unicode::betweenFurthest('test(', '(', ')'));
 
         // nested
-        self::assertSame('test(1)', Unicode::betweenFurthest('(test(1))', '(', ')'));
-        self::assertSame('1) to (2', Unicode::betweenFurthest('(1) to (2)', '(', ')'));
+        $this->assertSame('test(1)', Unicode::betweenFurthest('(test(1))', '(', ')'));
+        $this->assertSame('1) to (2', Unicode::betweenFurthest('(1) to (2)', '(', ')'));
 
-        // multichar
-        self::assertSame('_', Unicode::betweenFurthest('ab_ba', 'ab', 'ba'));
+        // multi char
+        $this->assertSame('_', Unicode::betweenFurthest('ab_ba', 'ab', 'ba'));
 
         // utf8
-        self::assertSame('い', Unicode::betweenFurthest('あいう', 'あ', 'う'));
+        $this->assertSame('い', Unicode::betweenFurthest('あいう', 'あ', 'う'));
 
         // grapheme
-        self::assertSame('😃', Unicode::betweenFurthest('👋🏿😃👋🏿😃', '👋🏿', '👋🏿'));
+        $this->assertSame('😃', Unicode::betweenFurthest('👋🏿😃👋🏿😃', '👋🏿', '👋🏿'));
+
+        // grapheme between codepoints
+        $this->assertSame('👋🏿', Unicode::between('👋🏿', '👋', '🏿'));
     }
 
     public function test_betweenFurthest_empty_from(): void
     {
-        $this->expectExceptionMessage('Expected a non-empty value. Got: ""');
+        $this->expectExceptionMessage('$from must not be empty.');
         Unicode::betweenFurthest('test)', '', ')');
     }
 
     public function test_betweenFurthest_empty_to(): void
     {
-        $this->expectExceptionMessage('Expected a non-empty value. Got: ""');
+        $this->expectExceptionMessage('$to must not be empty.');
         Unicode::betweenFurthest('test)', '(', '');
     }
 
     public function test_betweenFurthest_empty_from_and_to(): void
     {
-        $this->expectExceptionMessage('Expected a non-empty value. Got: ""');
+        $this->expectExceptionMessage('$from must not be empty.');
         Unicode::betweenFurthest('test)', '', '');
-    }
-
-    public function test_betweenFurthest_missing_from(): void
-    {
-        $this->expectExceptionMessage('$from: "(" does not exist in "test)"');
-        Unicode::betweenFurthest('test)', '(', ')');
-    }
-
-    public function test_betweenFurthest_missing_to(): void
-    {
-        $this->expectExceptionMessage('$to: ")" does not exist after $from in "test("');
-        Unicode::betweenFurthest('test(', '(', ')');
-    }
-
-    public function test_betweenFurthest_grapheme_substring(): void
-    {
-        $this->expectExceptionMessage('$from: "👋" does not exist in "👋🏿"');
-        Unicode::betweenFurthest('👋🏿', '👋', '🏿');
     }
 
     public function test_betweenLast(): void
     {
         // basic
-        self::assertSame('1', Unicode::betweenLast('test(1)', '(', ')'));
+        $this->assertSame('1', Unicode::betweenLast('test(1)', '(', ')'));
 
         // edge
-        self::assertSame('', Unicode::betweenLast('()', '(', ')'));
-        self::assertSame('1', Unicode::betweenLast('(1)', '(', ')'));
+        $this->assertSame('', Unicode::betweenLast('()', '(', ')'));
+        $this->assertSame('1', Unicode::betweenLast('(1)', '(', ')'));
+
+        // missing from
+        $this->assertSame('test)', Unicode::between('test)', '(', ')'));
+
+        // missing to
+        $this->assertSame('test(', Unicode::between('test(', '(', ')'));
 
         // nested
-        self::assertSame('1)', Unicode::betweenLast('(test(1))', '(', ')'));
-        self::assertSame('2', Unicode::betweenLast('(1) to (2)', '(', ')'));
+        $this->assertSame('1)', Unicode::betweenLast('(test(1))', '(', ')'));
+        $this->assertSame('2', Unicode::betweenLast('(1) to (2)', '(', ')'));
 
-        // multichar
-        self::assertSame('_ba_', Unicode::betweenLast('ab_ab_ba_ba', 'ab', 'ba'));
+        // multi char
+        $this->assertSame('_ba_', Unicode::betweenLast('ab_ab_ba_ba', 'ab', 'ba'));
 
         // utf8
-        self::assertSame('いうい', Unicode::betweenLast('あいういう', 'あ', 'う'));
+        $this->assertSame('いうい', Unicode::betweenLast('あいういう', 'あ', 'う'));
 
         // grapheme
-        self::assertSame('🥹', Unicode::betweenLast('👋🏿😃👋🏿🥹👋', '👋🏿', '👋'));
+        $this->assertSame('🥹', Unicode::betweenLast('👋🏿😃👋🏿🥹👋', '👋🏿', '👋'));
+
+        // grapheme between codepoints
+        $this->assertSame('👋🏿', Unicode::between('👋🏿', '👋', '🏿'));
     }
 
     public function test_betweenLast_empty_from(): void
     {
-        $this->expectExceptionMessage('Expected a non-empty value. Got: ""');
+        $this->expectExceptionMessage('$from must not be empty.');
         Unicode::betweenFurthest('test)', '', ')');
     }
 
     public function test_betweenLast_empty_to(): void
     {
-        $this->expectExceptionMessage('Expected a non-empty value. Got: ""');
+        $this->expectExceptionMessage('$to must not be empty.');
         Unicode::betweenFurthest('test)', '(', '');
     }
 
     public function test_betweenLast_empty_from_and_to(): void
     {
-        $this->expectExceptionMessage('Expected a non-empty value. Got: ""');
+        $this->expectExceptionMessage('$from must not be empty.');
         Unicode::betweenFurthest('test)', '', '');
-    }
-
-    public function test_betweenLast_missing_from(): void
-    {
-        $this->expectExceptionMessage('$from: "(" does not exist in "test)"');
-        Unicode::betweenFurthest('test)', '(', ')');
-    }
-
-    public function test_betweenLast_missing_to(): void
-    {
-        $this->expectExceptionMessage('$to: ")" does not exist after $from in "test("');
-        Unicode::betweenFurthest('test(', '(', ')');
-    }
-
-    public function test_betweenLast_grapheme_substring(): void
-    {
-        $this->expectExceptionMessage('$from: "👋" does not exist in "👋🏿"');
-        Unicode::betweenFurthest('👋🏿', '👋', '🏿');
     }
 
     public function test_byteLength(): void
     {
         // empty
-        self::assertSame(0, Unicode::byteLength(''));
+        $this->assertSame(0, Unicode::byteLength(''));
 
         // ascii
-        self::assertSame(1, Unicode::byteLength('a'));
+        $this->assertSame(1, Unicode::byteLength('a'));
 
         // utf8
-        self::assertSame(3, Unicode::byteLength('あ'));
+        $this->assertSame(3, Unicode::byteLength('あ'));
 
         // emoji
-        self::assertSame(25, Unicode::byteLength('👨‍👨‍👧‍👦'));
+        $this->assertSame(25, Unicode::byteLength('👨‍👨‍👧‍👦'));
     }
 
     public function test_capitalize(): void

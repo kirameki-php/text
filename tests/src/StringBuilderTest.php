@@ -96,6 +96,20 @@ class StringBuilderTest extends BaseTestCase
         self::assertSame('b', $after->toString());
     }
 
+    public function test_betweenFurthest(): void
+    {
+        $after = StringBuilder::from('aa bb cc')->betweenFurthest('a', 'c');
+        self::assertInstanceOf(StringBuilder::class, $after);
+        self::assertSame('a bb c', $after->toString());
+    }
+
+    public function test_betweenLast(): void
+    {
+        $after = StringBuilder::from('aa bb cc')->betweenLast('a', 'c');
+        self::assertInstanceOf(StringBuilder::class, $after);
+        self::assertSame(' bb c', $after->toString());
+    }
+
     public function test_bytes(): void
     {
         self::assertSame(9, StringBuilder::from('あいう')->byteLength());
