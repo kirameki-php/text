@@ -326,13 +326,11 @@ class Str
      * String to be chunked.
      * @param int $size
      * Size of each chunk. Must be > 1.
+     * @param int|null $limit
+     * Maximum number times to chunk the string.
      * @return list<string>
      */
-    public static function chunk(
-        string $string,
-        int $size,
-        ?int $limit = null,
-    ): array
+    public static function chunk(string $string, int $size, ?int $limit = null): array
     {
         $remains = $limit ?? INF;
 

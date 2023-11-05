@@ -53,6 +53,8 @@ class StringBuilder implements Stringable
     }
 
     /**
+     * Appends the given string(s) to the end of the current string.
+     *
      * @param string ...$string
      * @return static
      */
@@ -62,6 +64,9 @@ class StringBuilder implements Stringable
     }
 
     /**
+     * Appends the given string(s) to the end of the current string.
+     * The string(s) will be formatted using sprintf().
+     *
      * @param string $format
      * @param float|int|string ...$values
      * @return static
@@ -72,6 +77,10 @@ class StringBuilder implements Stringable
     }
 
     /**
+     * @see basename()
+     *
+     * Calls and returns the result of calling basename() on the current string.
+     *
      * @param string $suffix
      * @return static
      */
@@ -141,6 +150,8 @@ class StringBuilder implements Stringable
     }
 
     /**
+     * @see Str::capitalize()
+     *
      * @return static
      */
     public function capitalize(): static
@@ -149,6 +160,8 @@ class StringBuilder implements Stringable
     }
 
     /**
+     * @see Str::chunk()
+     *
      * @param int $size
      * @param int|null $limit
      * @return list<string>
