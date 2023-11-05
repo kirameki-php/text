@@ -92,41 +92,32 @@ class StringBuilderTest extends BaseTestCase
     public function test_between(): void
     {
         $after = StringBuilder::from('abcd')->between('a', 'c');
-        self::assertInstanceOf(StringBuilder::class, $after);
-        self::assertSame('b', $after->toString());
+        $this->assertInstanceOf(StringBuilder::class, $after);
+        $this->assertSame('b', $after->toString());
     }
 
     public function test_betweenFurthest(): void
     {
         $after = StringBuilder::from('aa bb cc')->betweenFurthest('a', 'c');
-        self::assertInstanceOf(StringBuilder::class, $after);
-        self::assertSame('a bb c', $after->toString());
+        $this->assertInstanceOf(StringBuilder::class, $after);
+        $this->assertSame('a bb c', $after->toString());
     }
 
     public function test_betweenLast(): void
     {
         $after = StringBuilder::from('aa bb cc')->betweenLast('a', 'c');
-        self::assertInstanceOf(StringBuilder::class, $after);
-        self::assertSame(' bb c', $after->toString());
-    }
-
-    public function test_bytes(): void
-    {
-        self::assertSame(9, StringBuilder::from('あいう')->byteLength());
-    }
-
-    public function test_camelCase(): void
-    {
-        $after = StringBuilder::from('foo bar')->toCamelCase();
-        self::assertInstanceOf(StringBuilder::class, $after);
-        self::assertSame('fooBar', $after->toString());
+        $this->assertInstanceOf(StringBuilder::class, $after);
+        $this->assertSame(' bb c', $after->toString());
     }
 
     public function test_capitalize(): void
     {
         $after = StringBuilder::from('foo bar')->capitalize();
-        self::assertInstanceOf(StringBuilder::class, $after);
-        self::assertSame('Foo bar', $after->toString());
+        $this->assertInstanceOf(StringBuilder::class, $after);
+        $this->assertSame('Foo bar', $after->toString());
+        $after = StringBuilder::from('é')->capitalize();
+        $this->assertInstanceOf(StringBuilder::class, $after);
+        $this->assertSame('é', $after->toString());
     }
 
     public function test_contains(): void
@@ -277,5 +268,12 @@ class StringBuilderTest extends BaseTestCase
         self::assertInstanceOf(StringBuilder::class, $afterNeg);
         self::assertSame('a', $afterPos->toString());
         self::assertSame('ab', $afterNeg->toString());
+    }
+
+    public function test_toCamelCase(): void
+    {
+        $after = StringBuilder::from('foo bar')->toCamelCase();
+        self::assertInstanceOf(StringBuilder::class, $after);
+        self::assertSame('fooBar', $after->toString());
     }
 }

@@ -271,4 +271,16 @@ class StrTest extends TestCase
         Str::betweenFurthest('test)', '', '');
     }
 
+    public function test_capitalize(): void
+    {
+        self::assertSame('', Str::capitalize(''), 'empty');
+        self::assertSame('TT', Str::capitalize('TT'), 'all uppercase');
+        self::assertSame('Test', Str::capitalize('test'), 'lowercase');
+        self::assertSame('Test abc', Str::capitalize('test abc'), 'lowercase with spaces');
+        self::assertSame(' test abc', Str::capitalize(' test abc'), 'lowercase with spaces and leading space');
+        self::assertSame('àbc', Str::capitalize('àbc'), 'lowercase with accent');
+        self::assertSame('é', Str::capitalize('é'), 'lowercase with accent');
+        self::assertSame('ゅ', Str::capitalize('ゅ'), 'lowercase with hiragana');
+        self::assertSame('🏴󠁧󠁢󠁳󠁣󠁴󠁿', Str::capitalize('🏴󠁧󠁢󠁳󠁣󠁴󠁿'), 'lowercase with emoji');
+    }
 }

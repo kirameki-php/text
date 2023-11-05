@@ -341,8 +341,8 @@ class Str
         $remains = $limit ?? INF;
         $count = 0;
 
-        Assert::greaterThanEq($size, 0);
-        Assert::greaterThanEq($remains, 0);
+        static::assertGreaterThanEqual('$size', $size, 0, compact('string', 'size', 'remains'));
+        static::assertGreaterThanEqual('$remains', $remains, 0, compact('string', 'size', 'remains'));
 
         $chunk = [];
         $offset = 0;
@@ -2125,13 +2125,33 @@ class Str
     /**
      * @param string $name
      * @param string $string
-     * @param array<string, string> $context
+     * @param iterable<string, mixed> $context
      * @return void
      */
-    protected static function assertNotEmpty(string $name, string $string, array $context): void
+    protected static function assertNotEmpty(string $name, string $string, iterable $context): void
     {
         if ($string === '') {
             throw new InvalidArgumentException($name . ' must not be empty.', $context);
+        }
+    }
+
+    /**
+     * @template TNum of int|float
+     * @param string $name
+     * @param TNum $value
+     * @param TNum $limit
+     * @param iterable<string, mixed> $context
+     * @return void
+     */
+    protected static function assertGreaterThanEqual(
+        string $name,
+        mixed $value,
+        mixed $limit,
+        iterable $context,
+    ): void
+    {
+        if ($value < $limit) {
+            throw new InvalidArgumentException("Expected: {$name} >= {$limit}. Got: {$value}.", $context);
         }
     }
 }

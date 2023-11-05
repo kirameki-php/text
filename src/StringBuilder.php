@@ -145,7 +145,7 @@ class StringBuilder implements Stringable
      */
     public function capitalize(): static
     {
-        return new static(Unicode::capitalize($this->value));
+        return new static(static::$ref::capitalize($this->value));
     }
 
     /**

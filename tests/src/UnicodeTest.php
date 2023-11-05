@@ -292,19 +292,15 @@ class UnicodeTest extends TestCase
 
     public function test_capitalize(): void
     {
-        // empty
-        self::assertSame('', Unicode::capitalize(''));
-
-        // only the first character is changed
-        self::assertSame('TT', Unicode::capitalize('TT'));
-
-        self::assertSame('Test', Unicode::capitalize('test'));
-        self::assertSame('Test abc', Unicode::capitalize('test abc'));
-        self::assertSame(' test abc', Unicode::capitalize(' test abc'));
-        self::assertSame('Àbc', Unicode::capitalize('àbc'));
-        self::assertSame('É', Unicode::capitalize('é'));
-        self::assertSame('ゅ', Unicode::capitalize('ゅ'));
-        self::assertSame('🏴󠁧󠁢󠁳󠁣󠁴󠁿', Unicode::capitalize('🏴󠁧󠁢󠁳󠁣󠁴󠁿'));
+        $this->assertSame('', Unicode::capitalize(''), 'empty');
+        $this->assertSame('TT', Unicode::capitalize('TT'), 'all uppercase');
+        $this->assertSame('Test', Unicode::capitalize('test'), 'lowercase');
+        $this->assertSame('Test abc', Unicode::capitalize('test abc'), 'lowercase with spaces');
+        $this->assertSame(' test abc', Unicode::capitalize(' test abc'), 'lowercase with spaces and leading space');
+        $this->assertSame('Àbc', Unicode::capitalize('àbc'), 'lowercase with accent');
+        $this->assertSame('É', Unicode::capitalize('é'), 'lowercase with accent');
+        $this->assertSame('ゅ', Unicode::capitalize('ゅ'), 'lowercase with hiragana');
+        $this->assertSame('🏴󠁧󠁢󠁳󠁣󠁴󠁿', Unicode::capitalize('🏴󠁧󠁢󠁳󠁣󠁴󠁿'), 'lowercase with emoji');
     }
 
     public function test_chunk(): void
