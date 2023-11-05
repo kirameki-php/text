@@ -335,14 +335,11 @@ class Str
         string $string,
         int $size,
         ?int $limit = null,
-        int &$count = 0,
     ): array
     {
         $remains = $limit ?? INF;
-        $count = 0;
 
         static::assertGreaterThanEqual('$size', $size, 1, compact('string', 'size', 'remains'));
-        static::assertGreaterThanEqual('$remains', $remains, 1, compact('string', 'size', 'remains'));
 
         $chunk = [];
         $offset = 0;
@@ -353,7 +350,6 @@ class Str
             }
             $chunk[] = $piece;
             $offset += $size;
-            ++$count;
             --$remains;
 
             if ($remains === 0) {

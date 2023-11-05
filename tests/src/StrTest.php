@@ -6,6 +6,9 @@ use Kirameki\Core\Testing\TestCase;
 use Kirameki\Text\Exceptions\NotFoundException;
 use Kirameki\Text\Str;
 use Kirameki\Text\Unicode;
+use function dump;
+use function strlen;
+use function substr;
 
 class StrTest extends TestCase
 {
@@ -273,14 +276,29 @@ class StrTest extends TestCase
 
     public function test_capitalize(): void
     {
-        self::assertSame('', Str::capitalize(''), 'empty');
-        self::assertSame('TT', Str::capitalize('TT'), 'all uppercase');
-        self::assertSame('Test', Str::capitalize('test'), 'lowercase');
-        self::assertSame('Test abc', Str::capitalize('test abc'), 'lowercase with spaces');
-        self::assertSame(' test abc', Str::capitalize(' test abc'), 'lowercase with spaces and leading space');
-        self::assertSame('àbc', Str::capitalize('àbc'), 'lowercase with accent');
-        self::assertSame('é', Str::capitalize('é'), 'lowercase with accent');
-        self::assertSame('ゅ', Str::capitalize('ゅ'), 'lowercase with hiragana');
-        self::assertSame('🏴󠁧󠁢󠁳󠁣󠁴󠁿', Str::capitalize('🏴󠁧󠁢󠁳󠁣󠁴󠁿'), 'lowercase with emoji');
+        $this->assertSame('', Str::capitalize(''), 'empty');
+        $this->assertSame('TT', Str::capitalize('TT'), 'all uppercase');
+        $this->assertSame('Test', Str::capitalize('test'), 'lowercase');
+        $this->assertSame('Test abc', Str::capitalize('test abc'), 'lowercase with spaces');
+        $this->assertSame(' test abc', Str::capitalize(' test abc'), 'lowercase with spaces and leading space');
+        $this->assertSame('àbc', Str::capitalize('àbc'), 'lowercase with accent');
+        $this->assertSame('é', Str::capitalize('é'), 'lowercase with accent');
+        $this->assertSame('ゅ', Str::capitalize('ゅ'), 'lowercase with hiragana');
+        $this->assertSame('🏴󠁧󠁢󠁳󠁣󠁴󠁿', Str::capitalize('🏴󠁧󠁢󠁳󠁣󠁴󠁿'), 'lowercase with emoji');
     }
+
+    public function test_chunk(): void
+    {
+        $this->assertSame([], Str::chunk('', 5), 'empty');
+        $this->assertSame(['ab'], Str::chunk('ab', 5), 'oversize');
+        $this->assertSame(['ab'], Str::chunk('ab', 2), 'exact');
+        $this->assertSame(['ab', 'c'], Str::chunk('abc', 2), 'fragment');
+        $this->assertSame(['あ', 'い', 'う'], Str::chunk('あいう', 3), 'utf8');
+        $this->assertSame(['ab', 'cd', 'efg'], Str::chunk('abcdefg', 2, 2), 'limit');
+
+        $chunked = Str::chunk('あ', 2);
+        $this->assertSame(2, strlen($chunked[0]), 'invalid');
+        $this->assertSame(1, strlen($chunked[1]), 'invalid');
+    }
+
 }

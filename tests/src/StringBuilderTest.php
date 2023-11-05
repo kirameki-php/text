@@ -120,6 +120,12 @@ class StringBuilderTest extends BaseTestCase
         $this->assertSame('é', $after->toString());
     }
 
+    public function test_chunk(): void
+    {
+        $after = StringBuilder::from('foo bar')->chunk(2, 2);
+        $this->assertSame(['fo', 'o ', 'bar'], $after);
+    }
+
     public function test_contains(): void
     {
         $sb = StringBuilder::from('foo bar');

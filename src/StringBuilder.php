@@ -149,6 +149,16 @@ class StringBuilder implements Stringable
     }
 
     /**
+     * @param int $size
+     * @param int|null $limit
+     * @return list<string>
+     */
+    public function chunk(int $size, ?int $limit = null): array
+    {
+        return static::$ref::chunk($this->value, $size, $limit);
+    }
+
+    /**
      * @param string $needle
      * @return bool
      */

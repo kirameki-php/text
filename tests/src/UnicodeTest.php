@@ -4,6 +4,7 @@ namespace Tests\Kirameki\Text;
 
 use Error;
 use Kirameki\Text\Exceptions\NotFoundException;
+use Kirameki\Text\Str;
 use Kirameki\Text\Unicode;
 use PHPUnit\Framework\TestStatus\Warning;
 use RuntimeException;
@@ -305,12 +306,13 @@ class UnicodeTest extends TestCase
 
     public function test_chunk(): void
     {
-        self::assertSame([], Unicode::chunk('', 5), 'empty');
-        self::assertSame(['ab'], Unicode::chunk('ab', 5), 'oversize');
-        self::assertSame(['ab'], Unicode::chunk('ab', 2), 'exact');
-        self::assertSame(['ab', 'c'], Unicode::chunk('abc', 2), 'fragment');
-        self::assertSame(['あい', 'う'], Unicode::chunk('あいう', 2), 'utf8');
-        self::assertSame(['👨‍👨‍👧‍👦', '👨‍👨‍👧‍👦'], Unicode::chunk('👨‍👨‍👧‍👦👨‍👨‍👧‍👦', 1), 'emoji');
+        $this->assertSame([], Unicode::chunk('', 5), 'empty');
+        $this->assertSame(['ab'], Unicode::chunk('ab', 5), 'oversize');
+        $this->assertSame(['ab'], Unicode::chunk('ab', 2), 'exact');
+        $this->assertSame(['ab', 'c'], Unicode::chunk('abc', 2), 'fragment');
+        $this->assertSame(['あい', 'う'], Unicode::chunk('あいう', 2), 'utf8');
+        $this->assertSame(['👨‍👨‍👧‍👦', '👨‍👨‍👧‍👦'], Unicode::chunk('👨‍👨‍👧‍👦👨‍👨‍👧‍👦', 1), 'emoji');
+        $this->assertSame(['あい', 'うえ', 'おかき'], Unicode::chunk('あいうえおかき', 2, 2), 'limit');
     }
 
     public function test_concat(): void
