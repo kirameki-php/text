@@ -180,12 +180,49 @@ class Str
     }
 
     /**
+     * Extract string between the first occurrence of `$from` and `$to`.
+     *
+     * Example:
+     * ```php
+     * Str::between('[a] to [b]', '[', ']'); // 'a'
+     * Str::between('no tag', '<', '>'); // 'no tag'
+     * ```
+     *
+     * @param string $string
+     * The string to look in.
+     * @param string $from
+     * The starting string to look for.
+     * @param string $to
+     * The ending string to look for.
+     * @return string
+     * The extracted part of the string.
+     */
+    public static function between(string $string, string $from, string $to): string
+    {
+        static::assertNotEmpty('$from', $from, compact('string', 'from', 'to'));
+        static::assertNotEmpty('$to', $to, compact('string', 'from', 'to'));
+
+        $startPos = static::indexOfFirst($string, $from);
+        if ($startPos === null) {
+            throw new RuntimeException("\$from: \"$from\" does not exist in \"$string\"");
+        }
+        $startPos += static::length($from);
+
+        $endPos = static::indexOfFirst($string, $to, $startPos);
+        if ($endPos === null) {
+            throw new RuntimeException("\$to: \"$to\" does not exist after \$from in \"$string\"");
+        }
+
+        return static::range($string, $startPos, $endPos);
+    }
+
+    /**
      * Extract string between the first occurrence of `$from` and last occurrence of `$to`.
      *
      * Example:
      * ```php
-     * Str::between('<tag>', '<', '>'); // 'tag'
-     * Str::between('no tag', '<', '>'); // RuntimeException
+     * Str::betweenFurthest('<tag>', '<', '>'); // 'tag'
+     * Str::betweenFurthest('no tag', '<', '>'); // 'no tag'
      * ```
      *
      * @param string $string
@@ -217,49 +254,12 @@ class Str
     }
 
     /**
-     * Extract string between the first occurrence of `$from` and `$to`.
-     *
-     * Example:
-     * ```php
-     * Str::betweenFirst('[a] to [b]', '[', ']'); // 'a'
-     * Str::betweenFirst('no tag', '<', '>'); // RuntimeException
-     * ```
-     *
-     * @param string $string
-     * The string to look in.
-     * @param string $from
-     * The starting string to look for.
-     * @param string $to
-     * The ending string to look for.
-     * @return string
-     * The extracted part of the string.
-     */
-    public static function betweenFirst(string $string, string $from, string $to): string
-    {
-        static::assertNotEmpty('$from', $from, compact('string', 'from', 'to'));
-        static::assertNotEmpty('$to', $to, compact('string', 'from', 'to'));
-
-        $startPos = static::indexOfFirst($string, $from);
-        if ($startPos === null) {
-            throw new RuntimeException("\$from: \"$from\" does not exist in \"$string\"");
-        }
-        $startPos += static::length($from);
-
-        $endPos = static::indexOfFirst($string, $to, $startPos);
-        if ($endPos === null) {
-            throw new RuntimeException("\$to: \"$to\" does not exist after \$from in \"$string\"");
-        }
-
-        return static::range($string, $startPos, $endPos);
-    }
-
-    /**
      * Extract string between the last occurrence of `$from` and `$to`.
      *
      * Example:
      * ```php
      * Str::betweenLast('[a] to [b]', '[', ']'); // 'b'
-     * Str::betweenLast('no tag', '<', '>'); // RuntimeException
+     * Str::betweenLast('no tag', '<', '>'); // 'no tag'
      * ```
      *
      * @param string $string

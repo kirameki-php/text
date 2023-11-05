@@ -94,23 +94,35 @@ class StringBuilder implements Stringable
      *
      * @param string $search
      * The substring to look for.
-     * @param bool &$found
-     * [Optional][Reference] Whether the search string was found or not.
      * @return static
      */
-    public function beforeLast(string $search, bool &$found = false): static
+    public function beforeLast(string $search): static
     {
-        return new static(Str::beforeLast($this->value, $search, $found));
+        return new static(Str::beforeLast($this->value, $search));
     }
 
     /**
+     * @see Str::between()
+     *
      * @param string $from
      * @param string $to
      * @return static
      */
     public function between(string $from, string $to): static
     {
-        return new static(Unicode::betweenFurthest($this->value, $from, $to));
+        return new static(Str::between($this->value, $from, $to));
+    }
+
+    /**
+     * @see Str::betweenFurthest()
+     *
+     * @param string $from
+     * @param string $to
+     * @return static
+     */
+    public function betweenFurthest(string $from, string $to): static
+    {
+        return new static(Str::betweenFurthest($this->value, $from, $to));
     }
 
     /**

@@ -101,9 +101,7 @@ class UnicodeTest extends TestCase
     public function test_beforeLast(): void
     {
         // match first (single occurrence)
-        $found = false;
-        $this->assertSame('a', Unicode::beforeLast('abc', 'b', $found));
-        $this->assertTrue($found);
+        $this->assertSame('a', Unicode::beforeLast('abc', 'b'));
 
         // match first (multiple occurrence)
         $this->assertSame('abc-a', Unicode::beforeLast('abc-abc', 'b'));
@@ -115,9 +113,7 @@ class UnicodeTest extends TestCase
         $this->assertSame('test', Unicode::beforeLast('test', ''));
 
         // no match
-        $found = true;
-        $this->assertSame('test', Unicode::beforeLast('test', 'a', $found));
-        $this->assertFalse($found);
+        $this->assertSame('test', Unicode::beforeLast('test', 'a'));
 
         // multi byte
         $this->assertSame('ああいう', Unicode::beforeLast('ああいういえ', 'い'));
@@ -130,6 +126,65 @@ class UnicodeTest extends TestCase
     }
 
     public function test_between(): void
+    {
+        // basic
+        self::assertSame('1', Unicode::between('test(1)', '(', ')'));
+
+        // edge
+        self::assertSame('', Unicode::between('()', '(', ')'));
+        self::assertSame('1', Unicode::between('(1)', '(', ')'));
+
+        // nested
+        self::assertSame('test(1', Unicode::between('(test(1))', '(', ')'));
+        self::assertSame('1', Unicode::between('(1) to (2)', '(', ')'));
+
+        // multi char
+        self::assertSame('_ab_', Unicode::between('ab_ab_ba_ba', 'ab', 'ba'));
+
+        // utf8
+        self::assertSame('い', Unicode::between('あいういう', 'あ', 'う'));
+
+        // grapheme
+        self::assertSame('😃', Unicode::between('👋🏿😃👋🏿😃👋🏿', '👋🏿', '👋🏿'));
+    }
+
+    public function test_between_empty_from(): void
+    {
+        $this->expectExceptionMessage('Expected a non-empty value. Got: ""');
+        Unicode::between('test)', '', ')');
+    }
+
+    public function test_between_empty_to(): void
+    {
+        $this->expectExceptionMessage('Expected a non-empty value. Got: ""');
+        Unicode::between('test)', '(', '');
+    }
+
+    public function test_between_empty_from_and_to(): void
+    {
+        $this->expectExceptionMessage('Expected a non-empty value. Got: ""');
+        Unicode::between('test)', '', '');
+    }
+
+    public function test_between_missing_from(): void
+    {
+        $this->expectExceptionMessage('$from: "(" does not exist in "test)"');
+        Unicode::between('test)', '(', ')');
+    }
+
+    public function test_between_missing_to(): void
+    {
+        $this->expectExceptionMessage('$to: ")" does not exist after $from in "test("');
+        Unicode::between('test(', '(', ')');
+    }
+
+    public function test_between_grapheme_substring(): void
+    {
+        $this->expectExceptionMessage('$from: "👋" does not exist in "👋🏿"');
+        Unicode::between('👋🏿', '👋', '🏿');
+    }
+
+    public function test_betweenFurthest(): void
     {
         // basic
         self::assertSame('1', Unicode::betweenFurthest('test(1)', '(', ')'));
@@ -152,96 +207,37 @@ class UnicodeTest extends TestCase
         self::assertSame('😃', Unicode::betweenFurthest('👋🏿😃👋🏿😃', '👋🏿', '👋🏿'));
     }
 
-    public function test_between_empty_from(): void
+    public function test_betweenFurthest_empty_from(): void
     {
         $this->expectExceptionMessage('Expected a non-empty value. Got: ""');
         Unicode::betweenFurthest('test)', '', ')');
     }
 
-    public function test_between_empty_to(): void
+    public function test_betweenFurthest_empty_to(): void
     {
         $this->expectExceptionMessage('Expected a non-empty value. Got: ""');
         Unicode::betweenFurthest('test)', '(', '');
     }
 
-    public function test_between_empty_from_and_to(): void
+    public function test_betweenFurthest_empty_from_and_to(): void
     {
         $this->expectExceptionMessage('Expected a non-empty value. Got: ""');
         Unicode::betweenFurthest('test)', '', '');
     }
 
-    public function test_between_missing_from(): void
+    public function test_betweenFurthest_missing_from(): void
     {
         $this->expectExceptionMessage('$from: "(" does not exist in "test)"');
         Unicode::betweenFurthest('test)', '(', ')');
     }
 
-    public function test_between_missing_to(): void
+    public function test_betweenFurthest_missing_to(): void
     {
         $this->expectExceptionMessage('$to: ")" does not exist after $from in "test("');
         Unicode::betweenFurthest('test(', '(', ')');
     }
 
-    public function test_between_grapheme_substring(): void
-    {
-        $this->expectExceptionMessage('$from: "👋" does not exist in "👋🏿"');
-        Unicode::betweenFurthest('👋🏿', '👋', '🏿');
-    }
-
-    public function test_betweenFirst(): void
-    {
-        // basic
-        self::assertSame('1', Unicode::betweenFirst('test(1)', '(', ')'));
-
-        // edge
-        self::assertSame('', Unicode::betweenFirst('()', '(', ')'));
-        self::assertSame('1', Unicode::betweenFirst('(1)', '(', ')'));
-
-        // nested
-        self::assertSame('test(1', Unicode::betweenFirst('(test(1))', '(', ')'));
-        self::assertSame('1', Unicode::betweenFirst('(1) to (2)', '(', ')'));
-
-        // multichar
-        self::assertSame('_ab_', Unicode::betweenFirst('ab_ab_ba_ba', 'ab', 'ba'));
-
-        // utf8
-        self::assertSame('い', Unicode::betweenFirst('あいういう', 'あ', 'う'));
-
-        // grapheme
-        self::assertSame('😃', Unicode::betweenFirst('👋🏿😃👋🏿😃👋🏿', '👋🏿', '👋🏿'));
-    }
-
-    public function test_betweenFirst_empty_from(): void
-    {
-        $this->expectExceptionMessage('Expected a non-empty value. Got: ""');
-        Unicode::betweenFurthest('test)', '', ')');
-    }
-
-    public function test_betweenFirst_empty_to(): void
-    {
-        $this->expectExceptionMessage('Expected a non-empty value. Got: ""');
-        Unicode::betweenFurthest('test)', '(', '');
-    }
-
-    public function test_betweenFirst_empty_from_and_to(): void
-    {
-        $this->expectExceptionMessage('Expected a non-empty value. Got: ""');
-        Unicode::betweenFurthest('test)', '', '');
-    }
-
-    public function test_betweenFirst_missing_from(): void
-    {
-        $this->expectExceptionMessage('$from: "(" does not exist in "test)"');
-        Unicode::betweenFurthest('test)', '(', ')');
-    }
-
-    public function test_betweenFirst_missing_to(): void
-    {
-        $this->expectExceptionMessage('$to: ")" does not exist after $from in "test("');
-        Unicode::betweenFurthest('test(', '(', ')');
-    }
-
-    public function test_betweenFirst_grapheme_substring(): void
+    public function test_betweenFurthest_grapheme_substring(): void
     {
         $this->expectExceptionMessage('$from: "👋" does not exist in "👋🏿"');
         Unicode::betweenFurthest('👋🏿', '👋', '🏿');

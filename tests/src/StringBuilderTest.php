@@ -80,121 +80,97 @@ class StringBuilderTest extends BaseTestCase
 
     public function test_beforeLast(): void
     {
-        $sb = StringBuilder::from('abbc');
-        $found = false;
-        $after = $sb->beforeLast('b', $found);
+        $after = StringBuilder::from('abbc')->beforeLast('b');
         $this->assertInstanceOf(StringBuilder::class, $after);
         $this->assertSame('ab', $after->toString());
-        $this->assertTrue($found);
 
-        $sb = StringBuilder::from('abbc');
-        $found = true;
-        $after = $sb->beforeLast('d', $found);
+        $after = StringBuilder::from('abbc')->beforeLast('d');
         $this->assertInstanceOf(StringBuilder::class, $after);
         $this->assertSame('abbc', $after->toString());
-        $this->assertFalse($found);
     }
 
     public function test_between(): void
     {
-        $stringable = StringBuilder::from('abcd');
-        $after = $stringable->between('a', 'c');
-
+        $after = StringBuilder::from('abcd')->between('a', 'c');
         self::assertInstanceOf(StringBuilder::class, $after);
         self::assertSame('b', $after->toString());
     }
 
     public function test_bytes(): void
     {
-        $stringable = StringBuilder::from('あいう');
-
-        self::assertSame(9, $stringable->byteLength());
+        self::assertSame(9, StringBuilder::from('あいう')->byteLength());
     }
 
     public function test_camelCase(): void
     {
-        $stringable = StringBuilder::from('foo bar');
-        $after = $stringable->toCamelCase();
-
+        $after = StringBuilder::from('foo bar')->toCamelCase();
         self::assertInstanceOf(StringBuilder::class, $after);
         self::assertSame('fooBar', $after->toString());
     }
 
     public function test_capitalize(): void
     {
-        $stringable = StringBuilder::from('foo bar');
-        $after = $stringable->capitalize();
-
+        $after = StringBuilder::from('foo bar')->capitalize();
         self::assertInstanceOf(StringBuilder::class, $after);
         self::assertSame('Foo bar', $after->toString());
     }
 
     public function test_contains(): void
     {
-        $stringable = StringBuilder::from('foo bar');
-
-        self::assertFalse($stringable->contains('baz'));
-        self::assertTrue($stringable->contains('foo'));
-        self::assertTrue($stringable->contains(''));
+        $sb = StringBuilder::from('foo bar');
+        self::assertFalse($sb->contains('baz'));
+        self::assertTrue($sb->contains('foo'));
+        self::assertTrue($sb->contains(''));
     }
 
     public function test_containsAll(): void
     {
-        $stringable = StringBuilder::from('foo bar');
-
-        self::assertFalse($stringable->containsAll(['foo', 'bar', 'baz']));
-        self::assertTrue($stringable->containsAll(['foo', 'bar']));
-        self::assertTrue($stringable->containsAll(['', '']));
+        $sb = StringBuilder::from('foo bar');
+        self::assertFalse($sb->containsAll(['foo', 'bar', 'baz']));
+        self::assertTrue($sb->containsAll(['foo', 'bar']));
+        self::assertTrue($sb->containsAll(['', '']));
     }
 
     public function test_containsAny(): void
     {
-        $stringable = StringBuilder::from('foo bar');
-
-        self::assertTrue($stringable->containsAny(['foo', 'bar', 'baz']));
-        self::assertFalse($stringable->containsAny(['baz', '_']));
+        $sb = StringBuilder::from('foo bar');
+        self::assertTrue($sb->containsAny(['foo', 'bar', 'baz']));
+        self::assertFalse($sb->containsAny(['baz', '_']));
     }
 
     public function test_containsPattern(): void
     {
-        $stringable = StringBuilder::from('foo bar');
-
-        self::assertTrue($stringable->containsPattern('/[a-z]+/'));
-        self::assertFalse($stringable->containsPattern('/[0-9]+/'));
+        $sb = StringBuilder::from('foo bar');
+        self::assertTrue($sb->containsPattern('/[a-z]+/'));
+        self::assertFalse($sb->containsPattern('/[0-9]+/'));
     }
 
     public function test_cut(): void
     {
-        $stringable = StringBuilder::from('あいう');
-        $after = $stringable->cut(7, '...');
-
+        $after = StringBuilder::from('あいう')->cut(7, '...');
         self::assertInstanceOf(StringBuilder::class, $after);
         self::assertSame('あい...', $after->toString());
     }
 
     public function test_decapitalize(): void
     {
-        $stringable = StringBuilder::from('FOO Bar');
-        $after = $stringable->decapitalize();
-
+        $after = StringBuilder::from('FOO Bar')->decapitalize();
         self::assertInstanceOf(StringBuilder::class, $after);
         self::assertSame('fOO Bar', $after->toString());
     }
 
     public function test_delete(): void
     {
-        $stringable = StringBuilder::from('foooooo bar');
-        $after = $stringable->remove('oo', 2);
-
+        $after = StringBuilder::from('foooooo bar')->remove('oo', 2);
         self::assertInstanceOf(StringBuilder::class, $after);
         self::assertSame('foo bar', $after->toString());
     }
 
     public function test_dirname(): void
     {
-        $stringable = StringBuilder::from('/test/path/of.php');
-        $after1 = $stringable->dirname();
-        $after2 = $stringable->dirname(2);
+        $sb = StringBuilder::from('/test/path/of.php');
+        $after1 = $sb->dirname();
+        $after2 = $sb->dirname(2);
 
         self::assertInstanceOf(StringBuilder::class, $after1);
         self::assertInstanceOf(StringBuilder::class, $after2);
@@ -204,25 +180,23 @@ class StringBuilderTest extends BaseTestCase
 
     public function test_doesNotEndWith(): void
     {
-        $stringable = StringBuilder::from('/test/path/of.php');
-
-        self::assertTrue($stringable->doesNotEndWith('/test'));
-        self::assertFalse($stringable->doesNotEndWith('.php'));
+        $sb = StringBuilder::from('/test/path/of.php');
+        self::assertTrue($sb->doesNotEndWith('/test'));
+        self::assertFalse($sb->doesNotEndWith('.php'));
     }
 
     public function test_doesNotStartWith(): void
     {
-        $stringable = StringBuilder::from('/test/path/of.php');
-
-        self::assertFalse($stringable->doesNotStartWith('/test'));
-        self::assertTrue($stringable->doesNotStartWith('.php'));
+        $sb = StringBuilder::from('/test/path/of.php');
+        self::assertFalse($sb->doesNotStartWith('/test'));
+        self::assertTrue($sb->doesNotStartWith('.php'));
     }
 
     public function test_dropFirst(): void
     {
-        $stringable = StringBuilder::from('abc');
-        $afterPos = $stringable->dropFirst(+1);
-        $afterNeg = $stringable->dropFirst(-1);
+        $sb = StringBuilder::from('abc');
+        $afterPos = $sb->dropFirst(+1);
+        $afterNeg = $sb->dropFirst(-1);
 
         self::assertInstanceOf(StringBuilder::class, $afterPos);
         self::assertInstanceOf(StringBuilder::class, $afterNeg);
@@ -232,24 +206,20 @@ class StringBuilderTest extends BaseTestCase
 
     public function test_endsWith(): void
     {
-        $stringable = StringBuilder::from('/test/path/of.php');
-
-        self::assertFalse($stringable->endsWith('/test'));
-        self::assertTrue($stringable->endsWith('.php'));
+        $sb = StringBuilder::from('/test/path/of.php');
+        self::assertFalse($sb->endsWith('/test'));
+        self::assertTrue($sb->endsWith('.php'));
     }
 
     public function test_firstIndexOf(): void
     {
-        $stringable = StringBuilder::from('aabbcc');
-
-        self::assertSame(2, $stringable->indexOfFirst('b'));
+        $sb = StringBuilder::from('aabbcc');
+        self::assertSame(2, $sb->indexOfFirst('b'));
     }
 
     public function test_insert(): void
     {
-        $stringable = StringBuilder::from('aaa');
-        $after = $stringable->insert('b', 1);
-
+        $after = StringBuilder::from('aaa')->insert('b', 1);
         self::assertSame('abaa', $after->toString());
     }
 
@@ -269,33 +239,26 @@ class StringBuilderTest extends BaseTestCase
 
     public function test_kebabCase(): void
     {
-        $stringable = StringBuilder::from('foo barBaz');
-        $after = $stringable->toKebabCase();
-
+        $after = StringBuilder::from('foo barBaz')->toKebabCase();
         self::assertInstanceOf(StringBuilder::class, $after);
         self::assertSame('foo-bar-baz', $after->toString());
     }
 
     public function test_indexOfLast(): void
     {
-        $stringable = StringBuilder::from('aabbcc');
-
-        self::assertSame(3, $stringable->indexOfLast('b'));
+        self::assertSame(3, StringBuilder::from('aabbcc')->indexOfLast('b'));
     }
 
     public function test_length(): void
     {
-        $stringable = StringBuilder::from('あいう');
-
-        self::assertSame(3, $stringable->length());
+        self::assertSame(3, StringBuilder::from('あいう')->length());
     }
 
     public function test_takeFirst(): void
     {
-        $stringable = StringBuilder::from('abc');
-        $afterPos = $stringable->takeFirst(+1);
-        $afterNeg = $stringable->takeFirst(-1);
-
+        $sb = StringBuilder::from('abc');
+        $afterPos = $sb->takeFirst(+1);
+        $afterNeg = $sb->takeFirst(-1);
         self::assertInstanceOf(StringBuilder::class, $afterPos);
         self::assertInstanceOf(StringBuilder::class, $afterNeg);
         self::assertSame('a', $afterPos->toString());
