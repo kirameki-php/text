@@ -46,10 +46,10 @@ class Unicode extends Str
      *
      * Example:
      * ```php
-     * Str::contains('Foo bar', 'bar'); // true
-     * Str::contains('👨‍👨‍👧‍👧‍', '👨'); // false
-     * Str::contains('a', ''); // true
-     * Str::contains('', ''); // true
+     * Unicode::contains('Foo bar', 'bar'); // true
+     * Unicode::contains('👨‍👨‍👧‍👧‍', '👨'); // false
+     * Unicode::contains('a', ''); // true
+     * Unicode::contains('', ''); // true
      * ```
      *
      * @inheritDoc
@@ -67,8 +67,8 @@ class Unicode extends Str
      *
      * Example:
      * ```php
-     * Str::cut('abc', 1); // 'a'
-     * Str::cut('あいう', 1); // '' since あ is 3 bytes long.
+     * Unicode::cut('abc', 1); // 'a'
+     * Unicode::cut('あいう', 1); // '' since あ is 3 bytes long.
      * ```
      *
      * @param string $string
@@ -111,9 +111,9 @@ class Unicode extends Str
      *
      * Example:
      * ```php
-     * Str::firstIndexOf('abb', 'b'); // 1
-     * Str::firstIndexOf('abb', 'b', 2); // 2
-     * Str::firstIndexOf('abb', 'b', 3); // null
+     * Unicode::firstIndexOf('abb', 'b'); // 1
+     * Unicode::firstIndexOf('abb', 'b', 2); // 2
+     * Unicode::firstIndexOf('abb', 'b', 3); // null
      * ```
      *
      * @inheritDoc
@@ -136,9 +136,9 @@ class Unicode extends Str
      *
      * Example:
      * ```php
-     * Str::indexOfLast('abb', 'b'); // 2
-     * Str::indexOfLast('abb', 'b', 2); // 2
-     * Str::indexOfLast('abb', 'b', 3); // null
+     * Unicode::indexOfLast('abb', 'b'); // 2
+     * Unicode::indexOfLast('abb', 'b', 2); // 2
+     * Unicode::indexOfLast('abb', 'b', 3); // null
      * ```
      *
      * @inheritDoc
@@ -162,9 +162,9 @@ class Unicode extends Str
      *
      * Example:
      * ```php
-     * Str::length(''); // 0
-     * Str::length('開発'); // 2
-     * Str::length('👨‍👨‍👧‍👦'); // 1
+     * Unicode::length(''); // 0
+     * Unicode::length('開発'); // 2
+     * Unicode::length('👨‍👨‍👧‍👦'); // 1
      * ```
      *
      * @inheritDoc
@@ -220,11 +220,11 @@ class Unicode extends Str
      *
      * Example:
      * ```php
-     * Str::substring('abc', 1); // 'a'
-     * Str::substring('abc', 0, 1); // 'a'
-     * Str::substring('abc', 1, 2); // 'bc'
-     * Str::substring('a', 1); // RuntimeException: Offset: 1 is out of range for string "a"
-     * Str::substring('👨‍👨‍👧‍👦', 1, 'not found'); // 'not found'
+     * Unicode::substring('abc', 1); // 'a'
+     * Unicode::substring('abc', 0, 1); // 'a'
+     * Unicode::substring('abc', 1, 2); // 'bc'
+     * Unicode::substring('a', 1); // RuntimeException: Offset: 1 is out of range for string "a"
+     * Unicode::substring('👨‍👨‍👧‍👦', 1, 'not found'); // 'not found'
      * ```
      *
      * @inheritDoc
@@ -246,8 +246,8 @@ class Unicode extends Str
      *
      * Example:
      * ```php
-     * Str::toLowerCase('AbCd'); // 'abcd'
-     * Str::toLowerCase('ÇĞİÖŞÜ'); // 'çği̇öşü'
+     * Unicode::toLowerCase('AbCd'); // 'abcd'
+     * Unicode::toLowerCase('ÇĞİÖŞÜ'); // 'çği̇öşü'
      * ```
      *
      * @param string $string
@@ -266,8 +266,8 @@ class Unicode extends Str
      *
      * Example:
      * ```php
-     * Str::toUpperCase('AbCd'); // 'ABCD'
-     * Str::toUpperCase('çği̇öşü'); // ÇĞİÖŞÜ
+     * Unicode::toUpperCase('AbCd'); // 'ABCD'
+     * Unicode::toUpperCase('çği̇öşü'); // ÇĞİÖŞÜ
      * ```
      *
      * @inheritDoc

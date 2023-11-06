@@ -3,8 +3,6 @@
 namespace Tests\Kirameki\Text;
 
 use Error;
-use Kirameki\Text\Exceptions\NotFoundException;
-use Kirameki\Text\Str;
 use Kirameki\Text\Unicode;
 use PHPUnit\Framework\TestStatus\Warning;
 use RuntimeException;
@@ -14,1176 +12,1190 @@ use function substr;
 
 class UnicodeTest extends TestCase
 {
+    protected static Unicode $ref;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        self::$ref = new Unicode();
+    }
+
     public function test_after(): void
     {
         // match first
-        $this->assertSame('est', Unicode::after('test', 't'));
+        $this->assertSame('est', self::$ref::after('test', 't'));
 
         // match last
-        $this->assertSame('', Unicode::after('test1', '1'));
+        $this->assertSame('', self::$ref::after('test1', '1'));
 
         // match empty string
-        $this->assertSame('test', Unicode::after('test', ''));
+        $this->assertSame('test', self::$ref::after('test', ''));
 
         // no match
-        $this->assertSame('test', Unicode::after('test', 'test2'));
+        $this->assertSame('test', self::$ref::after('test', 'test2'));
 
         // multi byte
-        $this->assertSame('うえ', Unicode::after('ああいうえ', 'い'));
+        $this->assertSame('うえ', self::$ref::after('ああいうえ', 'い'));
 
         // grapheme
-        $this->assertSame('def', Unicode::after('abc🏴󠁧󠁢󠁳󠁣󠁴󠁿def', '🏴󠁧󠁢󠁳󠁣󠁴󠁿'));
+        $this->assertSame('def', self::$ref::after('abc🏴󠁧󠁢󠁳󠁣󠁴󠁿def', '🏴󠁧󠁢󠁳󠁣󠁴󠁿'));
 
         // grapheme cluster
-        $this->assertSame('👋🏿', Unicode::after('👋🏿', '👋'));
+        $this->assertSame('👋🏿', self::$ref::after('👋🏿', '👋'));
     }
 
     public function test_afterLast(): void
     {
         // match first (single occurrence)
-        $this->assertSame('bc', Unicode::afterLast('abc', 'a'));
+        $this->assertSame('bc', self::$ref::afterLast('abc', 'a'));
 
         // match first (multiple occurrence)
-        $this->assertSame('1', Unicode::afterLast('test1', 't'));
+        $this->assertSame('1', self::$ref::afterLast('test1', 't'));
 
         // match last
-        $this->assertSame('', Unicode::afterLast('test1', '1'));
+        $this->assertSame('', self::$ref::afterLast('test1', '1'));
 
         // should match the last string
-        $this->assertSame('Foo', Unicode::afterLast('----Foo', '---'));
+        $this->assertSame('Foo', self::$ref::afterLast('----Foo', '---'));
 
         // match empty string
-        $this->assertSame('test', Unicode::afterLast('test', ''));
+        $this->assertSame('test', self::$ref::afterLast('test', ''));
 
         // no match
-        $this->assertSame('test', Unicode::afterLast('test', 'a'));
+        $this->assertSame('test', self::$ref::afterLast('test', 'a'));
 
         // multi byte
-        $this->assertSame('え', Unicode::afterLast('ああいういえ', 'い'));
+        $this->assertSame('え', self::$ref::afterLast('ああいういえ', 'い'));
 
         // grapheme
-        $this->assertSame('🏴󠁧󠁢󠁳󠁣󠁴󠁿f', Unicode::afterLast('abc🏴󠁧󠁢󠁳󠁣󠁴󠁿d🏴󠁧󠁢󠁳󠁣󠁴󠁿e🏴󠁧󠁢󠁳󠁣󠁴󠁿f', 'e'));
+        $this->assertSame('🏴󠁧󠁢󠁳󠁣󠁴󠁿f', self::$ref::afterLast('abc🏴󠁧󠁢󠁳󠁣󠁴󠁿d🏴󠁧󠁢󠁳󠁣󠁴󠁿e🏴󠁧󠁢󠁳󠁣󠁴󠁿f', 'e'));
 
         // grapheme cluster
-        $this->assertSame('👋🏿', Unicode::afterLast('👋🏿', '👋'));
+        $this->assertSame('👋🏿', self::$ref::afterLast('👋🏿', '👋'));
     }
 
     public function test_before(): void
     {
         // match first (single occurrence)
-        $this->assertSame('a', Unicode::before('abc', 'b'));
+        $this->assertSame('a', self::$ref::before('abc', 'b'));
 
         // match first (multiple occurrence)
-        $this->assertSame('a', Unicode::before('abc-abc', 'b'));
+        $this->assertSame('a', self::$ref::before('abc-abc', 'b'));
 
         // match last
-        $this->assertSame('test', Unicode::before('test1', '1'));
+        $this->assertSame('test', self::$ref::before('test1', '1'));
 
         // match multiple chars
-        $this->assertSame('test', Unicode::before('test123', '12'));
+        $this->assertSame('test', self::$ref::before('test123', '12'));
 
         // match empty string
-        $this->assertSame('test', Unicode::before('test', ''));
+        $this->assertSame('test', self::$ref::before('test', ''));
 
         // no match
-        $this->assertSame('test', Unicode::before('test', 'a'));
+        $this->assertSame('test', self::$ref::before('test', 'a'));
 
         // multi byte
-        $this->assertSame('ああ', Unicode::before('ああいういえ', 'い'));
+        $this->assertSame('ああ', self::$ref::before('ああいういえ', 'い'));
 
         // grapheme
-        $this->assertSame('abc', Unicode::before('abc🏴󠁧󠁢󠁳󠁣󠁴󠁿d🏴󠁧󠁢󠁳󠁣󠁴󠁿e🏴󠁧󠁢󠁳󠁣󠁴󠁿f', '🏴󠁧󠁢󠁳󠁣󠁴󠁿'));
-        $this->assertSame('abc🏴󠁧󠁢󠁳󠁣󠁴󠁿d🏴󠁧󠁢󠁳󠁣󠁴󠁿', Unicode::before('abc🏴󠁧󠁢󠁳󠁣󠁴󠁿d🏴󠁧󠁢󠁳󠁣󠁴󠁿e🏴󠁧󠁢󠁳󠁣󠁴󠁿f', 'e'));
+        $this->assertSame('abc', self::$ref::before('abc🏴󠁧󠁢󠁳󠁣󠁴󠁿d🏴󠁧󠁢󠁳󠁣󠁴󠁿e🏴󠁧󠁢󠁳󠁣󠁴󠁿f', '🏴󠁧󠁢󠁳󠁣󠁴󠁿'));
+        $this->assertSame('abc🏴󠁧󠁢󠁳󠁣󠁴󠁿d🏴󠁧󠁢󠁳󠁣󠁴󠁿', self::$ref::before('abc🏴󠁧󠁢󠁳󠁣󠁴󠁿d🏴󠁧󠁢󠁳󠁣󠁴󠁿e🏴󠁧󠁢󠁳󠁣󠁴󠁿f', 'e'));
 
         // grapheme cluster
-        $this->assertSame('👋🏿', Unicode::before('👋🏿', '🏿'));
+        $this->assertSame('👋🏿', self::$ref::before('👋🏿', '🏿'));
     }
 
     public function test_beforeLast(): void
     {
         // match first (single occurrence)
-        $this->assertSame('a', Unicode::beforeLast('abc', 'b'));
+        $this->assertSame('a', self::$ref::beforeLast('abc', 'b'));
 
         // match first (multiple occurrence)
-        $this->assertSame('abc-a', Unicode::beforeLast('abc-abc', 'b'));
+        $this->assertSame('abc-a', self::$ref::beforeLast('abc-abc', 'b'));
 
         // match last
-        $this->assertSame('test', Unicode::beforeLast('test1', '1'));
+        $this->assertSame('test', self::$ref::beforeLast('test1', '1'));
 
         // match empty string
-        $this->assertSame('test', Unicode::beforeLast('test', ''));
+        $this->assertSame('test', self::$ref::beforeLast('test', ''));
 
         // no match
-        $this->assertSame('test', Unicode::beforeLast('test', 'a'));
+        $this->assertSame('test', self::$ref::beforeLast('test', 'a'));
 
         // multi byte
-        $this->assertSame('ああいう', Unicode::beforeLast('ああいういえ', 'い'));
+        $this->assertSame('ああいう', self::$ref::beforeLast('ああいういえ', 'い'));
 
         // grapheme
-        $this->assertSame('abc🏴󠁧󠁢󠁳󠁣󠁴󠁿d🏴󠁧󠁢󠁳󠁣󠁴󠁿e', Unicode::beforeLast('abc🏴󠁧󠁢󠁳󠁣󠁴󠁿d🏴󠁧󠁢󠁳󠁣󠁴󠁿e🏴󠁧󠁢󠁳󠁣󠁴󠁿f', '🏴󠁧󠁢󠁳󠁣󠁴󠁿'));
+        $this->assertSame('abc🏴󠁧󠁢󠁳󠁣󠁴󠁿d🏴󠁧󠁢󠁳󠁣󠁴󠁿e', self::$ref::beforeLast('abc🏴󠁧󠁢󠁳󠁣󠁴󠁿d🏴󠁧󠁢󠁳󠁣󠁴󠁿e🏴󠁧󠁢󠁳󠁣󠁴󠁿f', '🏴󠁧󠁢󠁳󠁣󠁴󠁿'));
 
         // grapheme cluster
-        $this->assertSame('👋🏿', Unicode::beforeLast('👋🏿', '🏿'));
+        $this->assertSame('👋🏿', self::$ref::beforeLast('👋🏿', '🏿'));
     }
 
     public function test_between(): void
     {
         // basic
-        $this->assertSame('1', Unicode::between('test(1)', '(', ')'));
+        $this->assertSame('1', self::$ref::between('test(1)', '(', ')'));
 
         // edge
-        $this->assertSame('', Unicode::between('()', '(', ')'));
-        $this->assertSame('1', Unicode::between('(1)', '(', ')'));
+        $this->assertSame('', self::$ref::between('()', '(', ')'));
+        $this->assertSame('1', self::$ref::between('(1)', '(', ')'));
 
         // missing from
-        $this->assertSame('test)', Unicode::between('test)', '(', ')'));
+        $this->assertSame('test)', self::$ref::between('test)', '(', ')'));
 
         // missing to
-        $this->assertSame('test(', Unicode::between('test(', '(', ')'));
+        $this->assertSame('test(', self::$ref::between('test(', '(', ')'));
 
         // nested
-        $this->assertSame('test(1', Unicode::between('(test(1))', '(', ')'));
-        $this->assertSame('1', Unicode::between('(1) to (2)', '(', ')'));
+        $this->assertSame('test(1', self::$ref::between('(test(1))', '(', ')'));
+        $this->assertSame('1', self::$ref::between('(1) to (2)', '(', ')'));
 
         // multi char
-        $this->assertSame('_ab_', Unicode::between('ab_ab_ba_ba', 'ab', 'ba'));
+        $this->assertSame('_ab_', self::$ref::between('ab_ab_ba_ba', 'ab', 'ba'));
 
         // utf8
-        $this->assertSame('い', Unicode::between('あいういう', 'あ', 'う'));
+        $this->assertSame('い', self::$ref::between('あいういう', 'あ', 'う'));
 
         // grapheme
-        $this->assertSame('😃', Unicode::between('👋🏿😃👋🏿😃👋🏿', '👋🏿', '👋🏿'));
+        $this->assertSame('😃', self::$ref::between('👋🏿😃👋🏿😃👋🏿', '👋🏿', '👋🏿'));
 
         // grapheme between codepoints
-        $this->assertSame('👋🏿', Unicode::between('👋🏿', '👋', '🏿'));
+        $this->assertSame('👋🏿', self::$ref::between('👋🏿', '👋', '🏿'));
     }
 
     public function test_between_empty_from(): void
     {
         $this->expectExceptionMessage('$from must not be empty.');
-        Unicode::between('test)', '', ')');
+        self::$ref::between('test)', '', ')');
     }
 
     public function test_between_empty_to(): void
     {
         $this->expectExceptionMessage('$to must not be empty.');
-        Unicode::between('test)', '(', '');
+        self::$ref::between('test)', '(', '');
     }
 
     public function test_between_empty_from_and_to(): void
     {
         $this->expectExceptionMessage('$from must not be empty.');
-        Unicode::between('test)', '', '');
+        self::$ref::between('test)', '', '');
     }
 
     public function test_betweenFurthest(): void
     {
         // basic
-        $this->assertSame('1', Unicode::betweenFurthest('test(1)', '(', ')'));
+        $this->assertSame('1', self::$ref::betweenFurthest('test(1)', '(', ')'));
 
         // edge
-        $this->assertSame('', Unicode::betweenFurthest('()', '(', ')'));
-        $this->assertSame('1', Unicode::betweenFurthest('(1)', '(', ')'));
+        $this->assertSame('', self::$ref::betweenFurthest('()', '(', ')'));
+        $this->assertSame('1', self::$ref::betweenFurthest('(1)', '(', ')'));
 
         // missing from
-        $this->assertSame('test)', Unicode::betweenFurthest('test)', '(', ')'));
+        $this->assertSame('test)', self::$ref::betweenFurthest('test)', '(', ')'));
 
         // missing to
-        $this->assertSame('test(', Unicode::betweenFurthest('test(', '(', ')'));
+        $this->assertSame('test(', self::$ref::betweenFurthest('test(', '(', ')'));
 
         // nested
-        $this->assertSame('test(1)', Unicode::betweenFurthest('(test(1))', '(', ')'));
-        $this->assertSame('1) to (2', Unicode::betweenFurthest('(1) to (2)', '(', ')'));
+        $this->assertSame('test(1)', self::$ref::betweenFurthest('(test(1))', '(', ')'));
+        $this->assertSame('1) to (2', self::$ref::betweenFurthest('(1) to (2)', '(', ')'));
 
         // multi char
-        $this->assertSame('_', Unicode::betweenFurthest('ab_ba', 'ab', 'ba'));
+        $this->assertSame('_', self::$ref::betweenFurthest('ab_ba', 'ab', 'ba'));
 
         // utf8
-        $this->assertSame('い', Unicode::betweenFurthest('あいう', 'あ', 'う'));
+        $this->assertSame('い', self::$ref::betweenFurthest('あいう', 'あ', 'う'));
 
         // grapheme
-        $this->assertSame('😃', Unicode::betweenFurthest('👋🏿😃👋🏿😃', '👋🏿', '👋🏿'));
+        $this->assertSame('😃', self::$ref::betweenFurthest('👋🏿😃👋🏿😃', '👋🏿', '👋🏿'));
 
         // grapheme between codepoints
-        $this->assertSame('👋🏿', Unicode::between('👋🏿', '👋', '🏿'));
+        $this->assertSame('👋🏿', self::$ref::between('👋🏿', '👋', '🏿'));
     }
 
     public function test_betweenFurthest_empty_from(): void
     {
         $this->expectExceptionMessage('$from must not be empty.');
-        Unicode::betweenFurthest('test)', '', ')');
+        self::$ref::betweenFurthest('test)', '', ')');
     }
 
     public function test_betweenFurthest_empty_to(): void
     {
         $this->expectExceptionMessage('$to must not be empty.');
-        Unicode::betweenFurthest('test)', '(', '');
+        self::$ref::betweenFurthest('test)', '(', '');
     }
 
     public function test_betweenFurthest_empty_from_and_to(): void
     {
         $this->expectExceptionMessage('$from must not be empty.');
-        Unicode::betweenFurthest('test)', '', '');
+        self::$ref::betweenFurthest('test)', '', '');
     }
 
     public function test_betweenLast(): void
     {
         // basic
-        $this->assertSame('1', Unicode::betweenLast('test(1)', '(', ')'));
+        $this->assertSame('1', self::$ref::betweenLast('test(1)', '(', ')'));
 
         // edge
-        $this->assertSame('', Unicode::betweenLast('()', '(', ')'));
-        $this->assertSame('1', Unicode::betweenLast('(1)', '(', ')'));
+        $this->assertSame('', self::$ref::betweenLast('()', '(', ')'));
+        $this->assertSame('1', self::$ref::betweenLast('(1)', '(', ')'));
 
         // missing from
-        $this->assertSame('test)', Unicode::between('test)', '(', ')'));
+        $this->assertSame('test)', self::$ref::between('test)', '(', ')'));
 
         // missing to
-        $this->assertSame('test(', Unicode::between('test(', '(', ')'));
+        $this->assertSame('test(', self::$ref::between('test(', '(', ')'));
 
         // nested
-        $this->assertSame('1)', Unicode::betweenLast('(test(1))', '(', ')'));
-        $this->assertSame('2', Unicode::betweenLast('(1) to (2)', '(', ')'));
+        $this->assertSame('1)', self::$ref::betweenLast('(test(1))', '(', ')'));
+        $this->assertSame('2', self::$ref::betweenLast('(1) to (2)', '(', ')'));
 
         // multi char
-        $this->assertSame('_ba_', Unicode::betweenLast('ab_ab_ba_ba', 'ab', 'ba'));
+        $this->assertSame('_ba_', self::$ref::betweenLast('ab_ab_ba_ba', 'ab', 'ba'));
 
         // utf8
-        $this->assertSame('いうい', Unicode::betweenLast('あいういう', 'あ', 'う'));
+        $this->assertSame('いうい', self::$ref::betweenLast('あいういう', 'あ', 'う'));
 
         // grapheme
-        $this->assertSame('🥹', Unicode::betweenLast('👋🏿😃👋🏿🥹👋', '👋🏿', '👋'));
+        $this->assertSame('🥹', self::$ref::betweenLast('👋🏿😃👋🏿🥹👋', '👋🏿', '👋'));
 
         // grapheme between codepoints
-        $this->assertSame('👋🏿', Unicode::between('👋🏿', '👋', '🏿'));
+        $this->assertSame('👋🏿', self::$ref::between('👋🏿', '👋', '🏿'));
     }
 
     public function test_betweenLast_empty_from(): void
     {
         $this->expectExceptionMessage('$from must not be empty.');
-        Unicode::betweenFurthest('test)', '', ')');
+        self::$ref::betweenFurthest('test)', '', ')');
     }
 
     public function test_betweenLast_empty_to(): void
     {
         $this->expectExceptionMessage('$to must not be empty.');
-        Unicode::betweenFurthest('test)', '(', '');
+        self::$ref::betweenFurthest('test)', '(', '');
     }
 
     public function test_betweenLast_empty_from_and_to(): void
     {
         $this->expectExceptionMessage('$from must not be empty.');
-        Unicode::betweenFurthest('test)', '', '');
+        self::$ref::betweenFurthest('test)', '', '');
     }
 
     public function test_byteLength(): void
     {
         // empty
-        $this->assertSame(0, Unicode::byteLength(''));
+        $this->assertSame(0, self::$ref::byteLength(''));
 
         // ascii
-        $this->assertSame(1, Unicode::byteLength('a'));
+        $this->assertSame(1, self::$ref::byteLength('a'));
 
         // utf8
-        $this->assertSame(3, Unicode::byteLength('あ'));
+        $this->assertSame(3, self::$ref::byteLength('あ'));
 
         // emoji
-        $this->assertSame(25, Unicode::byteLength('👨‍👨‍👧‍👦'));
+        $this->assertSame(25, self::$ref::byteLength('👨‍👨‍👧‍👦'));
     }
 
     public function test_capitalize(): void
     {
-        $this->assertSame('', Unicode::capitalize(''), 'empty');
-        $this->assertSame('TT', Unicode::capitalize('TT'), 'all uppercase');
-        $this->assertSame('Test', Unicode::capitalize('test'), 'lowercase');
-        $this->assertSame('Test abc', Unicode::capitalize('test abc'), 'lowercase with spaces');
-        $this->assertSame(' test abc', Unicode::capitalize(' test abc'), 'lowercase with spaces and leading space');
-        $this->assertSame('Àbc', Unicode::capitalize('àbc'), 'lowercase with accent');
-        $this->assertSame('É', Unicode::capitalize('é'), 'lowercase with accent');
-        $this->assertSame('ゅ', Unicode::capitalize('ゅ'), 'lowercase with hiragana');
-        $this->assertSame('🏴󠁧󠁢󠁳󠁣󠁴󠁿', Unicode::capitalize('🏴󠁧󠁢󠁳󠁣󠁴󠁿'), 'lowercase with emoji');
+        $this->assertSame('', self::$ref::capitalize(''), 'empty');
+        $this->assertSame('TT', self::$ref::capitalize('TT'), 'all uppercase');
+        $this->assertSame('Test', self::$ref::capitalize('test'), 'lowercase');
+        $this->assertSame('Test abc', self::$ref::capitalize('test abc'), 'lowercase with spaces');
+        $this->assertSame(' test abc', self::$ref::capitalize(' test abc'), 'lowercase with spaces and leading space');
+        $this->assertSame('Àbc', self::$ref::capitalize('àbc'), 'lowercase with accent');
+        $this->assertSame('É', self::$ref::capitalize('é'), 'lowercase with accent');
+        $this->assertSame('ゅ', self::$ref::capitalize('ゅ'), 'lowercase with hiragana');
+        $this->assertSame('🏴󠁧󠁢󠁳󠁣󠁴󠁿', self::$ref::capitalize('🏴󠁧󠁢󠁳󠁣󠁴󠁿'), 'lowercase with emoji');
     }
 
     public function test_chunk(): void
     {
-        $this->assertSame([], Unicode::chunk('', 5), 'empty');
-        $this->assertSame(['ab'], Unicode::chunk('ab', 5), 'oversize');
-        $this->assertSame(['ab'], Unicode::chunk('ab', 2), 'exact');
-        $this->assertSame(['ab', 'c'], Unicode::chunk('abc', 2), 'fragment');
-        $this->assertSame(['あい', 'う'], Unicode::chunk('あいう', 2), 'utf8');
-        $this->assertSame(['👨‍👨‍👧‍👦', '👨‍👨‍👧‍👦'], Unicode::chunk('👨‍👨‍👧‍👦👨‍👨‍👧‍👦', 1), 'emoji');
-        $this->assertSame(['あい', 'うえ', 'おかき'], Unicode::chunk('あいうえおかき', 2, 2), 'limit');
+        $this->assertSame([], self::$ref::chunk('', 5), 'empty');
+        $this->assertSame(['ab'], self::$ref::chunk('ab', 5), 'oversize');
+        $this->assertSame(['ab'], self::$ref::chunk('ab', 2), 'exact');
+        $this->assertSame(['ab', 'c'], self::$ref::chunk('abc', 2), 'fragment');
+        $this->assertSame(['あい', 'う'], self::$ref::chunk('あいう', 2), 'utf8');
+        $this->assertSame(['👨‍👨‍👧‍👦', '👨‍👨‍👧‍👦'], self::$ref::chunk('👨‍👨‍👧‍👦👨‍👨‍👧‍👦', 1), 'emoji');
+        $this->assertSame(['あい', 'うえ', 'おかき'], self::$ref::chunk('あいうえおかき', 2, 2), 'limit');
     }
 
     public function test_concat(): void
     {
-        $this->assertSame('', Unicode::concat('', '', ''), 'empty');
-        $this->assertSame(' ', Unicode::concat('', ' '), 'blank');
-        $this->assertSame('', Unicode::concat(), 'no arg');
-        $this->assertSame('a', Unicode::concat('a'), 'one arg');
-        $this->assertSame('abc', Unicode::concat('a', 'b', 'c'), 'basic');
-        $this->assertSame('あい', Unicode::concat('あ', 'い'), 'mb string');
-        $this->assertSame('👋🏿', Unicode::concat('👋', '🏿'), 'mb string');
+        $this->assertSame('', self::$ref::concat('', '', ''), 'empty');
+        $this->assertSame(' ', self::$ref::concat('', ' '), 'blank');
+        $this->assertSame('', self::$ref::concat(), 'no arg');
+        $this->assertSame('a', self::$ref::concat('a'), 'one arg');
+        $this->assertSame('abc', self::$ref::concat('a', 'b', 'c'), 'basic');
+        $this->assertSame('あい', self::$ref::concat('あ', 'い'), 'mb string');
+        $this->assertSame('👋🏿', self::$ref::concat('👋', '🏿'), 'mb string');
     }
 
     public function test_contains(): void
     {
-        self::assertTrue(Unicode::contains('abcde', 'ab'));
-        self::assertFalse(Unicode::contains('abcde', 'ac'));
-        self::assertTrue(Unicode::contains('abcde', ''));
-        self::assertTrue(Unicode::contains('', ''));
-        self::assertFalse(Unicode::contains('👨‍👨‍👧‍👧‍', '👨'));
+        $this->assertTrue(self::$ref::contains('abcde', ''), 'empty needle');
+        $this->assertTrue(self::$ref::contains('', ''), 'empty haystack and needle');
+        $this->assertTrue(self::$ref::contains('abcde', 'ab'), 'partial first');
+        $this->assertTrue(self::$ref::contains('abcde', 'cd'), 'partial mid');
+        $this->assertTrue(self::$ref::contains('abcde', 'de'), 'partial last');
+        $this->assertFalse(self::$ref::contains('abc', ' a'), 'space pad left');
+        $this->assertFalse(self::$ref::contains('abc', 'a '), 'space pad right');
+        $this->assertTrue(self::$ref::contains('abc', 'abc'), 'full');
+        $this->assertFalse(self::$ref::contains('ab', 'abc'), 'needle is longer');
+        $this->assertFalse(self::$ref::contains('👨‍👨‍👧‍👧‍', '👨'), 'grapheme partial');
+        $this->assertFalse(self::$ref::contains('👨‍👨‍👧‍👧‍abc', '👨‍👨‍👧‍👧‍ abc'), 'grapheme');
     }
 
     public function test_containsAll(): void
     {
-        self::assertTrue(Unicode::containsAll('', []), 'empty substrings with blank');
-        self::assertTrue(Unicode::containsAll('abc', []), 'empty substrings');
-        self::assertTrue(Unicode::containsAll('', ['']), 'blank match blank');
-        self::assertTrue(Unicode::containsAll('abcde', ['']), 'blank match string');
-        self::assertFalse(Unicode::containsAll('abcde', ['a', 'z']), 'partial match first');
-        self::assertFalse(Unicode::containsAll('abcde', ['z', 'a']), 'partial match last');
-        self::assertTrue(Unicode::containsAll('abcde', ['a']), 'match single');
-        self::assertFalse(Unicode::containsAll('abcde', ['z']), 'no match single');
-        self::assertTrue(Unicode::containsAll('abcde', ['a', 'b']), 'match all first');
-        self::assertTrue(Unicode::containsAll('abcde', ['c', 'b']), 'match all reversed');
-        self::assertFalse(Unicode::containsAll('abcde', ['y', 'z']), 'no match all');
+        $this->assertTrue(self::$ref::containsAll('', []), 'empty substrings with blank');
+        $this->assertTrue(self::$ref::containsAll('abc', []), 'empty substrings');
+        $this->assertTrue(self::$ref::containsAll('', ['']), 'blank match blank');
+        $this->assertTrue(self::$ref::containsAll('abcde', ['']), 'blank match string');
+        $this->assertFalse(self::$ref::containsAll('abcde', ['a', 'z']), 'partial match first');
+        $this->assertFalse(self::$ref::containsAll('abcde', ['z', 'a']), 'partial match last');
+        $this->assertTrue(self::$ref::containsAll('abcde', ['a']), 'match single');
+        $this->assertFalse(self::$ref::containsAll('abcde', ['z']), 'no match single');
+        $this->assertTrue(self::$ref::containsAll('abcde', ['a', 'b']), 'match all first');
+        $this->assertTrue(self::$ref::containsAll('abcde', ['c', 'b']), 'match all reversed');
+        $this->assertFalse(self::$ref::containsAll('abcde', ['y', 'z']), 'no match all');
     }
 
     public function test_containsAny(): void
     {
-        self::assertTrue(Unicode::containsAny('', []), 'blank and empty substrings');
-        self::assertTrue(Unicode::containsAny('abcde', []), 'empty substrings');
-        self::assertTrue(Unicode::containsAny('', ['']), 'blank match blank');
-        self::assertTrue(Unicode::containsAny('abcde', ['']), 'blank matchs anything');
-        self::assertTrue(Unicode::containsAny('abcde', ['a', 'z']), 'one match of many (first one matched)');
-        self::assertTrue(Unicode::containsAny('abcde', ['z', 'a']), 'one match of many (last one matched)');
-        self::assertTrue(Unicode::containsAny('abcde', ['a']), 'match single');
-        self::assertFalse(Unicode::containsAny('abcde', ['z']), 'no match single');
-        self::assertFalse(Unicode::containsAny('abcde', ['y', 'z']), 'no match all');
+        self::assertTrue(self::$ref::containsAny('', []), 'blank and empty substrings');
+        self::assertTrue(self::$ref::containsAny('abcde', []), 'empty substrings');
+        self::assertTrue(self::$ref::containsAny('', ['']), 'blank match blank');
+        self::assertTrue(self::$ref::containsAny('abcde', ['']), 'blank matchs anything');
+        self::assertTrue(self::$ref::containsAny('abcde', ['a', 'z']), 'one match of many (first one matched)');
+        self::assertTrue(self::$ref::containsAny('abcde', ['z', 'a']), 'one match of many (last one matched)');
+        self::assertTrue(self::$ref::containsAny('abcde', ['a']), 'match single');
+        self::assertFalse(self::$ref::containsAny('abcde', ['z']), 'no match single');
+        self::assertFalse(self::$ref::containsAny('abcde', ['y', 'z']), 'no match all');
     }
 
     public function test_containsNone(): void
     {
-        self::assertTrue(Unicode::containsNone('', []), 'blank and empty substrings');
-        self::assertTrue(Unicode::containsNone('abcde', []), 'empty substrings');
-        self::assertFalse(Unicode::containsNone('', ['']), 'blank match blank');
-        self::assertFalse(Unicode::containsNone('abcde', ['']), 'blank matchs anything');
-        self::assertFalse(Unicode::containsNone('abcde', ['a', 'z']), 'one match of many (first one matched)');
-        self::assertFalse(Unicode::containsNone('abcde', ['z', 'a']), 'one match of many (last one matched)');
-        self::assertFalse(Unicode::containsNone('abcde', ['a']), 'match single');
-        self::assertTrue(Unicode::containsNone('abcde', ['z']), 'no match single');
-        self::assertTrue(Unicode::containsNone('abcde', ['y', 'z']), 'no match all');
+        self::assertTrue(self::$ref::containsNone('', []), 'blank and empty substrings');
+        self::assertTrue(self::$ref::containsNone('abcde', []), 'empty substrings');
+        self::assertFalse(self::$ref::containsNone('', ['']), 'blank match blank');
+        self::assertFalse(self::$ref::containsNone('abcde', ['']), 'blank matchs anything');
+        self::assertFalse(self::$ref::containsNone('abcde', ['a', 'z']), 'one match of many (first one matched)');
+        self::assertFalse(self::$ref::containsNone('abcde', ['z', 'a']), 'one match of many (last one matched)');
+        self::assertFalse(self::$ref::containsNone('abcde', ['a']), 'match single');
+        self::assertTrue(self::$ref::containsNone('abcde', ['z']), 'no match single');
+        self::assertTrue(self::$ref::containsNone('abcde', ['y', 'z']), 'no match all');
     }
 
     public function test_containsPattern(): void
     {
-        self::assertTrue(Unicode::containsPattern('abc', '/b/'));
-        self::assertTrue(Unicode::containsPattern('abc', '/ab/'));
-        self::assertTrue(Unicode::containsPattern('abc', '/abc/'));
-        self::assertTrue(Unicode::containsPattern('ABC', '/abc/i'));
-        self::assertTrue(Unicode::containsPattern('aaaz', '/a{3}/'));
-        self::assertTrue(Unicode::containsPattern('ABC1', '/[A-z\d]+/'));
-        self::assertTrue(Unicode::containsPattern('ABC1]', '/\d]$/'));
-        self::assertFalse(Unicode::containsPattern('AB1C', '/\d]$/'));
+        self::assertTrue(self::$ref::containsPattern('abc', '/b/'));
+        self::assertTrue(self::$ref::containsPattern('abc', '/ab/'));
+        self::assertTrue(self::$ref::containsPattern('abc', '/abc/'));
+        self::assertTrue(self::$ref::containsPattern('ABC', '/abc/i'));
+        self::assertTrue(self::$ref::containsPattern('aaaz', '/a{3}/'));
+        self::assertTrue(self::$ref::containsPattern('ABC1', '/[A-z\d]+/'));
+        self::assertTrue(self::$ref::containsPattern('ABC1]', '/\d]$/'));
+        self::assertFalse(self::$ref::containsPattern('AB1C', '/\d]$/'));
     }
 
     public function test_containsPattern_warning_as_error(): void
     {
         $this->expectExceptionMessage('preg_match(): Unknown modifier \'a\'');
         $this->expectException(Error::class);
-        self::assertFalse(Unicode::containsPattern('', '/a/a'));
+        self::assertFalse(self::$ref::containsPattern('', '/a/a'));
     }
 
     public function test_count(): void
     {
         // empty string
-        self::assertSame(0, Unicode::count('', 'aaa'));
+        $this->assertSame(0, self::$ref::count('', 'aaa'));
 
         // exact match
-        self::assertSame(1, Unicode::count('abc', 'abc'));
+        $this->assertSame(1, self::$ref::count('abc', 'abc'));
 
         // no match
-        self::assertSame(0, Unicode::count('ab', 'abc'));
+        $this->assertSame(0, self::$ref::count('ab', 'abc'));
 
         // simple
-        self::assertSame(1, Unicode::count('This is a cat', ' is '));
-        self::assertSame(2, Unicode::count('This is a cat', 'is'));
+        $this->assertSame(1, self::$ref::count('This is a cat', ' is '));
+        $this->assertSame(2, self::$ref::count('This is a cat', 'is'));
 
         // overlapping
-        self::assertSame(2, Unicode::count('ababab', 'aba'));
+        $this->assertSame(2, self::$ref::count('ababab', 'aba'));
 
         // utf8
-        self::assertSame(2, Unicode::count('あいあ', 'あ'));
+        $this->assertSame(2, self::$ref::count('あいあ', 'あ'));
 
         // utf8 overlapping
-        self::assertSame(2, Unicode::count('あああ', 'ああ'));
+        $this->assertSame(2, self::$ref::count('あああ', 'ああ'));
 
         // check half-width is not counted.
-        self::assertSame(0, Unicode::count('ア', 'ｱ'));
+        $this->assertSame(0, self::$ref::count('ア', 'ｱ'));
 
         // grapheme
-        self::assertSame(1, Unicode::count('👨‍👨‍👧‍👦', '👨‍👨‍👧‍👦'));
+        $this->assertSame(1, self::$ref::count('👨‍👨‍👧‍👦', '👨‍👨‍👧‍👦'));
 
         // grapheme subset should not match
-        self::assertSame(0, Unicode::count('👨‍👨‍👧‍👦', '👨'));
+        $this->assertSame(0, self::$ref::count('👨‍👨‍👧‍👦', '👨'));
 
         // grapheme overlapping
-        self::assertSame(2, Unicode::count('👨‍👨‍👧‍👦👨‍👨‍👧‍👦👨‍👨‍👧‍👦', '👨‍👨‍👧‍👦👨‍👨‍👧‍👦'));
+        $this->assertSame(2, self::$ref::count('👨‍👨‍👧‍👦👨‍👨‍👧‍👦👨‍👨‍👧‍👦', '👨‍👨‍👧‍👦👨‍👨‍👧‍👦'));
     }
 
     public function test_count_with_empty_search(): void
     {
         $this->expectExceptionMessage('Search string must be non-empty');
-        self::assertFalse(Unicode::count('a', ''));
+        self::assertFalse(self::$ref::count('a', ''));
     }
 
     public function test_cut(): void
     {
         // empty
-        self::assertSame('', Unicode::cut('', 0));
+        $this->assertSame('', self::$ref::cut('', 0));
 
         // basic
-        self::assertSame('a', Unicode::cut('a', 1));
-        self::assertSame('a', Unicode::cut('abc', 1));
+        $this->assertSame('a', self::$ref::cut('a', 1));
+        $this->assertSame('a', self::$ref::cut('abc', 1));
 
         // utf-8
-        self::assertSame('', Unicode::cut('あいう', 1));
-        self::assertSame('あ', Unicode::cut('あいう', 3));
+        $this->assertSame('', self::$ref::cut('あいう', 1));
+        $this->assertSame('あ', self::$ref::cut('あいう', 3));
 
         // grapheme
-        self::assertSame('', Unicode::cut('👋', 1));
-        self::assertSame('', Unicode::cut('👋🏿', 1));
-        self::assertSame('👋🏿', Unicode::cut('👋🏿', 8));
+        $this->assertSame('', self::$ref::cut('👋', 1));
+        $this->assertSame('', self::$ref::cut('👋🏿', 1));
+        $this->assertSame('👋🏿', self::$ref::cut('👋🏿', 8));
 
         // cut and replaced with ellipsis
-        self::assertSame('a...', Unicode::cut('abc', 1, '...'));
-        self::assertSame('...', Unicode::cut('あいう', 1, '...'));
-        self::assertSame('あ...', Unicode::cut('あいう', 3, '...'));
+        $this->assertSame('a...', self::$ref::cut('abc', 1, '...'));
+        $this->assertSame('...', self::$ref::cut('あいう', 1, '...'));
+        $this->assertSame('あ...', self::$ref::cut('あいう', 3, '...'));
 
         // cut and replaced with custom ellipsis
-        self::assertSame('a$', Unicode::cut('abc', 1, '$'));
+        $this->assertSame('a$', self::$ref::cut('abc', 1, '$'));
     }
 
     public function test_decapitalize(): void
     {
-        self::assertSame('', Unicode::decapitalize(''));
-        self::assertSame('test', Unicode::decapitalize('Test'));
-        self::assertSame('t T', Unicode::decapitalize('T T'));
-        self::assertSame(' T ', Unicode::decapitalize(' T '));
-        self::assertSame('é', Unicode::decapitalize('É'));
-        self::assertSame('🔡', Unicode::decapitalize('🔡'));
+        $this->assertSame('', self::$ref::decapitalize(''));
+        $this->assertSame('test', self::$ref::decapitalize('Test'));
+        $this->assertSame('t T', self::$ref::decapitalize('T T'));
+        $this->assertSame(' T ', self::$ref::decapitalize(' T '));
+        $this->assertSame('é', self::$ref::decapitalize('É'));
+        $this->assertSame('🔡', self::$ref::decapitalize('🔡'));
     }
 
     public function test_doesNotContain(): void
     {
-        self::assertTrue(Unicode::doesNotContain('abcde', 'ac'));
-        self::assertFalse(Unicode::doesNotContain('abcde', 'ab'));
-        self::assertFalse(Unicode::doesNotContain('a', ''));
-        self::assertTrue(Unicode::doesNotContain('', 'a'));
-        self::assertTrue(Unicode::doesNotContain('👨‍👨‍👧‍👧‍', '👨'));
+        self::assertTrue(self::$ref::doesNotContain('abcde', 'ac'));
+        self::assertFalse(self::$ref::doesNotContain('abcde', 'ab'));
+        self::assertFalse(self::$ref::doesNotContain('a', ''));
+        self::assertTrue(self::$ref::doesNotContain('', 'a'));
+        self::assertTrue(self::$ref::doesNotContain('👨‍👨‍👧‍👧‍', '👨'));
     }
 
     public function test_doesNotEndWith(): void
     {
-        self::assertFalse(Unicode::doesNotEndWith('abc', 'c'));
-        self::assertTrue(Unicode::doesNotEndWith('abc', 'b'));
-        self::assertFalse(Unicode::doesNotEndWith('abc', ['c']));
-        self::assertFalse(Unicode::doesNotEndWith('abc', ['a', 'b', 'c']));
-        self::assertTrue(Unicode::doesNotEndWith('abc', ['a', 'b']));
-        self::assertFalse(Unicode::doesNotEndWith('aabbcc', 'cc'));
-        self::assertFalse(Unicode::doesNotEndWith('aabbcc' . PHP_EOL, PHP_EOL));
-        self::assertFalse(Unicode::doesNotEndWith('abc0', '0'));
-        self::assertFalse(Unicode::doesNotEndWith('abcfalse', 'false'));
-        self::assertFalse(Unicode::doesNotEndWith('a', ''));
-        self::assertFalse(Unicode::doesNotEndWith('', ''));
-        self::assertFalse(Unicode::doesNotEndWith('あいう', 'う'));
-        self::assertTrue(Unicode::doesNotEndWith("あ\n", 'あ'));
-        self::assertTrue(Unicode::doesNotEndWith('👋🏻', '🏻'));
+        self::assertFalse(self::$ref::doesNotEndWith('abc', 'c'));
+        self::assertTrue(self::$ref::doesNotEndWith('abc', 'b'));
+        self::assertFalse(self::$ref::doesNotEndWith('abc', ['c']));
+        self::assertFalse(self::$ref::doesNotEndWith('abc', ['a', 'b', 'c']));
+        self::assertTrue(self::$ref::doesNotEndWith('abc', ['a', 'b']));
+        self::assertFalse(self::$ref::doesNotEndWith('aabbcc', 'cc'));
+        self::assertFalse(self::$ref::doesNotEndWith('aabbcc' . PHP_EOL, PHP_EOL));
+        self::assertFalse(self::$ref::doesNotEndWith('abc0', '0'));
+        self::assertFalse(self::$ref::doesNotEndWith('abcfalse', 'false'));
+        self::assertFalse(self::$ref::doesNotEndWith('a', ''));
+        self::assertFalse(self::$ref::doesNotEndWith('', ''));
+        self::assertFalse(self::$ref::doesNotEndWith('あいう', 'う'));
+        self::assertTrue(self::$ref::doesNotEndWith("あ\n", 'あ'));
+        self::assertTrue(self::$ref::doesNotEndWith('👋🏻', '🏻'));
     }
 
 
     public function test_doesNotStartWith(): void
     {
-        self::assertFalse(Unicode::doesNotStartWith('', ''));
-        self::assertFalse(Unicode::doesNotStartWith('bb', ''));
-        self::assertFalse(Unicode::doesNotStartWith('bb', 'b'));
-        self::assertTrue(Unicode::doesNotStartWith('bb', 'ab'));
-        self::assertFalse(Unicode::doesNotStartWith('あ-い-う', 'あ'));
-        self::assertTrue(Unicode::doesNotStartWith('あ-い-う', 'え'));
-        self::assertTrue(Unicode::doesNotStartWith('👨‍👨‍👧‍👦', '👨‍'));
-        self::assertFalse(Unicode::doesNotStartWith('🏴󠁧󠁢󠁳󠁣󠁴󠁿 👨‍👨‍👧‍👦', '🏴󠁧󠁢󠁳󠁣󠁴󠁿'));
-        self::assertTrue(Unicode::doesNotStartWith('🏴󠁧󠁢󠁳󠁣󠁴󠁿 👨‍👨‍👧‍👦', '👨‍👨‍👧‍👦'));
-        self::assertFalse(Unicode::doesNotStartWith('🏴󠁧󠁢󠁳󠁣󠁴󠁿a🏴󠁧󠁢󠁳󠁣󠁴󠁿a🏴󠁧󠁢󠁳󠁣󠁴󠁿', '🏴󠁧󠁢󠁳󠁣󠁴󠁿a'));
-        self::assertTrue(Unicode::doesNotStartWith('ba', 'a'));
-        self::assertTrue(Unicode::doesNotStartWith('', 'a'));
-        self::assertTrue(Unicode::doesNotStartWith('abc', ['d', 'e']));
-        self::assertFalse(Unicode::doesNotStartWith('abc', ['d', 'a']));
-        self::assertTrue(Unicode::doesNotStartWith("\nあ", 'あ'));
+        self::assertFalse(self::$ref::doesNotStartWith('', ''));
+        self::assertFalse(self::$ref::doesNotStartWith('bb', ''));
+        self::assertFalse(self::$ref::doesNotStartWith('bb', 'b'));
+        self::assertTrue(self::$ref::doesNotStartWith('bb', 'ab'));
+        self::assertFalse(self::$ref::doesNotStartWith('あ-い-う', 'あ'));
+        self::assertTrue(self::$ref::doesNotStartWith('あ-い-う', 'え'));
+        self::assertTrue(self::$ref::doesNotStartWith('👨‍👨‍👧‍👦', '👨‍'));
+        self::assertFalse(self::$ref::doesNotStartWith('🏴󠁧󠁢󠁳󠁣󠁴󠁿 👨‍👨‍👧‍👦', '🏴󠁧󠁢󠁳󠁣󠁴󠁿'));
+        self::assertTrue(self::$ref::doesNotStartWith('🏴󠁧󠁢󠁳󠁣󠁴󠁿 👨‍👨‍👧‍👦', '👨‍👨‍👧‍👦'));
+        self::assertFalse(self::$ref::doesNotStartWith('🏴󠁧󠁢󠁳󠁣󠁴󠁿a🏴󠁧󠁢󠁳󠁣󠁴󠁿a🏴󠁧󠁢󠁳󠁣󠁴󠁿', '🏴󠁧󠁢󠁳󠁣󠁴󠁿a'));
+        self::assertTrue(self::$ref::doesNotStartWith('ba', 'a'));
+        self::assertTrue(self::$ref::doesNotStartWith('', 'a'));
+        self::assertTrue(self::$ref::doesNotStartWith('abc', ['d', 'e']));
+        self::assertFalse(self::$ref::doesNotStartWith('abc', ['d', 'a']));
+        self::assertTrue(self::$ref::doesNotStartWith("\nあ", 'あ'));
     }
 
     public function test_drop(): void
     {
         // empty
-        self::assertSame('', Unicode::dropFirst('', 1));
+        $this->assertSame('', self::$ref::dropFirst('', 1));
 
         // zero amount
-        self::assertSame('a', Unicode::dropFirst('a', 0));
+        $this->assertSame('a', self::$ref::dropFirst('a', 0));
 
         // mid amount
-        self::assertSame('e', Unicode::dropFirst('abcde', 4));
+        $this->assertSame('e', self::$ref::dropFirst('abcde', 4));
 
         // exact amount
-        self::assertSame('', Unicode::dropFirst('abc', 3));
+        $this->assertSame('', self::$ref::dropFirst('abc', 3));
 
         // over overflow
-        self::assertSame('', Unicode::dropFirst('abc', 4));
+        $this->assertSame('', self::$ref::dropFirst('abc', 4));
 
         // grapheme
-        self::assertSame('def', Unicode::dropFirst('abc🏴󠁧󠁢󠁳󠁣󠁴󠁿def', 4));
+        $this->assertSame('def', self::$ref::dropFirst('abc🏴󠁧󠁢󠁳󠁣󠁴󠁿def', 4));
 
         // grapheme cluster (positive)
-        self::assertSame('', Unicode::dropFirst('👋🏿', 1));
+        $this->assertSame('', self::$ref::dropFirst('👋🏿', 1));
     }
 
     public function test_drop_negative_amount(): void
     {
         $this->expectExceptionMessage('Expected a value greater than or equal to 0. Got: -4');
-        Unicode::dropFirst('abc', -4);
+        self::$ref::dropFirst('abc', -4);
     }
 
     public function test_dropLast(): void
     {
         // empty
-        self::assertSame('', Unicode::dropLast('', 1));
+        $this->assertSame('', self::$ref::dropLast('', 1));
 
         // zero length
-        self::assertSame('a', Unicode::dropLast('a', 0));
+        $this->assertSame('a', self::$ref::dropLast('a', 0));
 
         // mid amount
-        self::assertSame('ab', Unicode::dropLast('abc', 1));
+        $this->assertSame('ab', self::$ref::dropLast('abc', 1));
 
         // exact amount
-        self::assertSame('', Unicode::dropLast('abc', 3));
+        $this->assertSame('', self::$ref::dropLast('abc', 3));
 
         // overflow
-        self::assertSame('', Unicode::dropLast('abc', 4));
+        $this->assertSame('', self::$ref::dropLast('abc', 4));
 
         // grapheme
-        self::assertSame('abc', Unicode::dropLast('abc🏴󠁧󠁢󠁳󠁣󠁴󠁿def', 4));
+        $this->assertSame('abc', self::$ref::dropLast('abc🏴󠁧󠁢󠁳󠁣󠁴󠁿def', 4));
 
         // grapheme cluster (positive)
-        self::assertSame('', Unicode::dropLast('👋🏿', 1));
+        $this->assertSame('', self::$ref::dropLast('👋🏿', 1));
     }
 
     public function test_dropLast_negative_amount(): void
     {
         $this->expectExceptionMessage('Expected a value greater than or equal to 0. Got: -4');
-        Unicode::dropLast('abc', -4);
+        self::$ref::dropLast('abc', -4);
     }
 
     public function test_endsWith(): void
     {
-        self::assertTrue(Unicode::endsWith('abc', 'c'));
-        self::assertFalse(Unicode::endsWith('abc', 'b'));
-        self::assertTrue(Unicode::endsWith('abc', ['c']));
-        self::assertTrue(Unicode::endsWith('abc', ['a', 'b', 'c']));
-        self::assertFalse(Unicode::endsWith('abc', ['a', 'b']));
-        self::assertTrue(Unicode::endsWith('aabbcc', 'cc'));
-        self::assertTrue(Unicode::endsWith('aabbcc' . PHP_EOL, PHP_EOL));
-        self::assertTrue(Unicode::endsWith('abc0', '0'));
-        self::assertTrue(Unicode::endsWith('abcfalse', 'false'));
-        self::assertTrue(Unicode::endsWith('a', ''));
-        self::assertTrue(Unicode::endsWith('', ''));
-        self::assertTrue(Unicode::endsWith('あいう', 'う'));
-        self::assertFalse(Unicode::endsWith("あ\n", 'あ'));
-        self::assertFalse(Unicode::endsWith('👋🏻', '🏻'));
+        self::assertTrue(self::$ref::endsWith('abc', 'c'));
+        self::assertFalse(self::$ref::endsWith('abc', 'b'));
+        self::assertTrue(self::$ref::endsWith('abc', ['c']));
+        self::assertTrue(self::$ref::endsWith('abc', ['a', 'b', 'c']));
+        self::assertFalse(self::$ref::endsWith('abc', ['a', 'b']));
+        self::assertTrue(self::$ref::endsWith('aabbcc', 'cc'));
+        self::assertTrue(self::$ref::endsWith('aabbcc' . PHP_EOL, PHP_EOL));
+        self::assertTrue(self::$ref::endsWith('abc0', '0'));
+        self::assertTrue(self::$ref::endsWith('abcfalse', 'false'));
+        self::assertTrue(self::$ref::endsWith('a', ''));
+        self::assertTrue(self::$ref::endsWith('', ''));
+        self::assertTrue(self::$ref::endsWith('あいう', 'う'));
+        self::assertFalse(self::$ref::endsWith("あ\n", 'あ'));
+        self::assertFalse(self::$ref::endsWith('👋🏻', '🏻'));
     }
 
     public function test_indexOfFirst(): void
     {
         // empty string
-        self::assertNull(Unicode::indexOfFirst('', 'a'));
+        self::assertNull(self::$ref::indexOfFirst('', 'a'));
 
         // empty search
-        self::assertSame(0, Unicode::indexOfFirst('ab', ''));
+        $this->assertSame(0, self::$ref::indexOfFirst('ab', ''));
 
         // find at 0
-        self::assertSame(0, Unicode::indexOfFirst('a', 'a'));
+        $this->assertSame(0, self::$ref::indexOfFirst('a', 'a'));
 
         // multiple matches
-        self::assertSame(1, Unicode::indexOfFirst('abb', 'b'));
+        $this->assertSame(1, self::$ref::indexOfFirst('abb', 'b'));
 
         // offset (within bound)
-        self::assertSame(1, Unicode::indexOfFirst('abb', 'b', 1));
-        self::assertSame(5, Unicode::indexOfFirst('aaaaaa', 'a', 5));
+        $this->assertSame(1, self::$ref::indexOfFirst('abb', 'b', 1));
+        $this->assertSame(5, self::$ref::indexOfFirst('aaaaaa', 'a', 5));
 
         // offset (out of bound)
-        self::assertNull(Unicode::indexOfFirst('abb', 'b', 4));
+        self::assertNull(self::$ref::indexOfFirst('abb', 'b', 4));
 
         // offset (negative)
-        self::assertSame(2, Unicode::indexOfFirst('abb', 'b', -1));
+        $this->assertSame(2, self::$ref::indexOfFirst('abb', 'b', -1));
 
         // offset (negative)
-        self::assertNull(Unicode::indexOfFirst('abb', 'b', -100));
+        self::assertNull(self::$ref::indexOfFirst('abb', 'b', -100));
 
         // offset utf-8
-        self::assertSame(0, Unicode::indexOfFirst('👨‍👨‍👧‍👦', '👨‍👨‍👧‍👦'));
-        self::assertNull(Unicode::indexOfFirst('👨‍👨‍👧‍👦', '👨'));
-        self::assertSame(1, Unicode::indexOfFirst('あいう', 'い', 1));
-        self::assertSame(1, Unicode::indexOfFirst('🏴󠁧󠁢󠁳󠁣󠁴󠁿👨‍👨‍👧‍👦', '👨‍👨‍👧‍👦', 1));
-        self::assertNull(Unicode::indexOfFirst('🏴󠁧󠁢󠁳󠁣󠁴󠁿👨‍👨‍👧‍👦', '👨‍👨‍👧‍👦', 2));
+        $this->assertSame(0, self::$ref::indexOfFirst('👨‍👨‍👧‍👦', '👨‍👨‍👧‍👦'));
+        self::assertNull(self::$ref::indexOfFirst('👨‍👨‍👧‍👦', '👨'));
+        $this->assertSame(1, self::$ref::indexOfFirst('あいう', 'い', 1));
+        $this->assertSame(1, self::$ref::indexOfFirst('🏴󠁧󠁢󠁳󠁣󠁴󠁿👨‍👨‍👧‍👦', '👨‍👨‍👧‍👦', 1));
+        self::assertNull(self::$ref::indexOfFirst('🏴󠁧󠁢󠁳󠁣󠁴󠁿👨‍👨‍👧‍👦', '👨‍👨‍👧‍👦', 2));
     }
 
     public function test_indexOfLast(): void
     {
         // empty string
-        self::assertNull(Unicode::indexOfLast('', 'a'));
+        self::assertNull(self::$ref::indexOfLast('', 'a'));
 
         // empty search
-        self::assertSame(2, Unicode::indexOfLast('ab', ''));
+        $this->assertSame(2, self::$ref::indexOfLast('ab', ''));
 
         // find at 0
-        self::assertSame(0, Unicode::indexOfLast('a', 'a'));
+        $this->assertSame(0, self::$ref::indexOfLast('a', 'a'));
 
         // multiple matches
-        self::assertSame(2, Unicode::indexOfLast('abb', 'b'));
+        $this->assertSame(2, self::$ref::indexOfLast('abb', 'b'));
 
         // offset (within bound)
-        self::assertSame(2, Unicode::indexOfLast('abb', 'b', 1));
-        self::assertSame(5, Unicode::indexOfLast('aaaaaa', 'a', 5));
+        $this->assertSame(2, self::$ref::indexOfLast('abb', 'b', 1));
+        $this->assertSame(5, self::$ref::indexOfLast('aaaaaa', 'a', 5));
 
         // offset (out of bound)
-        self::assertNull(Unicode::indexOfLast('abb', 'b', 4));
+        self::assertNull(self::$ref::indexOfLast('abb', 'b', 4));
 
         // offset (negative)
-        self::assertSame(3, Unicode::indexOfLast('abbb', 'b', -1));
+        $this->assertSame(3, self::$ref::indexOfLast('abbb', 'b', -1));
 
         // offset (negative)
-        self::assertNull(Unicode::indexOfLast('abb', 'b', -100));
+        self::assertNull(self::$ref::indexOfLast('abb', 'b', -100));
 
         // offset utf-8
-        self::assertSame(0, Unicode::indexOfLast('👨‍👨‍👧‍👦', '👨‍👨‍👧‍👦'));
-        self::assertNull(Unicode::indexOfLast('👨‍👨‍👧‍👦', '👨'));
-        self::assertSame(1, Unicode::indexOfLast('あいう', 'い', 1));
-        self::assertSame(1, Unicode::indexOfLast('🏴󠁧󠁢󠁳󠁣󠁴󠁿👨‍👨‍👧‍👦', '👨‍👨‍👧‍👦', 1));
-        self::assertNull(Unicode::indexOfLast('🏴󠁧󠁢󠁳󠁣󠁴󠁿👨‍👨‍👧‍👦', '👨‍👨‍👧‍👦', 2));
+        $this->assertSame(0, self::$ref::indexOfLast('👨‍👨‍👧‍👦', '👨‍👨‍👧‍👦'));
+        self::assertNull(self::$ref::indexOfLast('👨‍👨‍👧‍👦', '👨'));
+        $this->assertSame(1, self::$ref::indexOfLast('あいう', 'い', 1));
+        $this->assertSame(1, self::$ref::indexOfLast('🏴󠁧󠁢󠁳󠁣󠁴󠁿👨‍👨‍👧‍👦', '👨‍👨‍👧‍👦', 1));
+        self::assertNull(self::$ref::indexOfLast('🏴󠁧󠁢󠁳󠁣󠁴󠁿👨‍👨‍👧‍👦', '👨‍👨‍👧‍👦', 2));
     }
 
     public function test_insert(): void
     {
-        self::assertSame('xyzabc', Unicode::insert('abc', 'xyz', 0));
-        self::assertSame('axyzbc', Unicode::insert('abc', 'xyz', 1));
-        self::assertSame('xyzabc', Unicode::insert('abc', 'xyz', -1));
-        self::assertSame('abcxyz', Unicode::insert('abc', 'xyz', 3));
-        self::assertSame('あxyzい', Unicode::insert('あい', 'xyz', 1));
-        self::assertSame('xyzあい', Unicode::insert('あい', 'xyz', -1));
+        $this->assertSame('xyzabc', self::$ref::insert('abc', 'xyz', 0));
+        $this->assertSame('axyzbc', self::$ref::insert('abc', 'xyz', 1));
+        $this->assertSame('xyzabc', self::$ref::insert('abc', 'xyz', -1));
+        $this->assertSame('abcxyz', self::$ref::insert('abc', 'xyz', 3));
+        $this->assertSame('あxyzい', self::$ref::insert('あい', 'xyz', 1));
+        $this->assertSame('xyzあい', self::$ref::insert('あい', 'xyz', -1));
     }
 
     public function test_isBlank(): void
     {
-        self::assertTrue(Unicode::isBlank(''));
-        self::assertFalse(Unicode::isBlank('0'));
-        self::assertFalse(Unicode::isBlank(' '));
+        self::assertTrue(self::$ref::isBlank(''));
+        self::assertFalse(self::$ref::isBlank('0'));
+        self::assertFalse(self::$ref::isBlank(' '));
     }
 
     public function test_isNotBlank(): void
     {
-        self::assertFalse(Unicode::isNotBlank(''));
-        self::assertTrue(Unicode::isNotBlank('0'));
-        self::assertTrue(Unicode::isNotBlank(' '));
+        self::assertFalse(self::$ref::isNotBlank(''));
+        self::assertTrue(self::$ref::isNotBlank('0'));
+        self::assertTrue(self::$ref::isNotBlank(' '));
     }
 
     public function test_kebabCase(): void
     {
-        self::assertSame('test', Unicode::toKebabCase('test'));
-        self::assertSame('test', Unicode::toKebabCase('Test'));
-        self::assertSame('ttt', Unicode::toKebabCase('TTT'));
-        self::assertSame('tt-test', Unicode::toKebabCase('TTTest'));
-        self::assertSame('test-test', Unicode::toKebabCase('testTest'));
-        self::assertSame('test-t-test', Unicode::toKebabCase('testTTest'));
-        self::assertSame('test-test', Unicode::toKebabCase('test-test'));
-        self::assertSame('test-test', Unicode::toKebabCase('test_test'));
-        self::assertSame('test-test', Unicode::toKebabCase('test test'));
-        self::assertSame('test-test-test', Unicode::toKebabCase('test test test'));
-        self::assertSame('-test--test--', Unicode::toKebabCase(' test  test  '));
-        self::assertSame('--test-test-test--', Unicode::toKebabCase("--test_test-test__"));
+        $this->assertSame('test', self::$ref::toKebabCase('test'));
+        $this->assertSame('test', self::$ref::toKebabCase('Test'));
+        $this->assertSame('ttt', self::$ref::toKebabCase('TTT'));
+        $this->assertSame('tt-test', self::$ref::toKebabCase('TTTest'));
+        $this->assertSame('test-test', self::$ref::toKebabCase('testTest'));
+        $this->assertSame('test-t-test', self::$ref::toKebabCase('testTTest'));
+        $this->assertSame('test-test', self::$ref::toKebabCase('test-test'));
+        $this->assertSame('test-test', self::$ref::toKebabCase('test_test'));
+        $this->assertSame('test-test', self::$ref::toKebabCase('test test'));
+        $this->assertSame('test-test-test', self::$ref::toKebabCase('test test test'));
+        $this->assertSame('-test--test--', self::$ref::toKebabCase(' test  test  '));
+        $this->assertSame('--test-test-test--', self::$ref::toKebabCase("--test_test-test__"));
     }
 
     public function test_length(): void
     {
         // empty
-        self::assertSame(0, Unicode::length(''));
+        $this->assertSame(0, self::$ref::length(''));
 
         // ascii
-        self::assertSame(4, Unicode::length('Test'));
-        self::assertSame(9, Unicode::length(' T e s t '));
+        $this->assertSame(4, self::$ref::length('Test'));
+        $this->assertSame(9, self::$ref::length(' T e s t '));
 
         // utf8
-        self::assertSame(2, Unicode::length('あい'));
-        self::assertSame(4, Unicode::length('あいzう'));
+        $this->assertSame(2, self::$ref::length('あい'));
+        $this->assertSame(4, self::$ref::length('あいzう'));
 
         // emoji
-        self::assertSame(1, Unicode::length('👨‍👨‍👧‍👦'));
+        $this->assertSame(1, self::$ref::length('👨‍👨‍👧‍👦'));
     }
 
     public function test_length_invalid_string(): void
     {
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('Error converting input string to UTF-16: U_INVALID_CHAR_FOUND');
-        Unicode::length(substr('あ', 1));
+        self::$ref::length(substr('あ', 1));
     }
 
     public function test_matchAll(): void
     {
-        self::assertSame([['a', 'a']], Unicode::matchAll('abcabc', '/a/'));
-        self::assertSame([['abc', 'abc'], 'p1' => ['a', 'a'], ['a', 'a']], Unicode::matchAll('abcabc', '/(?<p1>a)bc/'));
-        self::assertSame([[]], Unicode::matchAll('abcabc', '/bcd/'));
-        self::assertSame([['cd', 'c']], Unicode::matchAll('abcdxabc', '/c[^x]*/'));
-        self::assertSame([[]], Unicode::matchAll('abcabcx', '/^abcx/'));
-        self::assertSame([['cx']], Unicode::matchAll('abcabcx', '/cx$/'));
+        $this->assertSame([['a', 'a']], self::$ref::matchAll('abcabc', '/a/'));
+        $this->assertSame([['abc', 'abc'], 'p1' => ['a', 'a'], ['a', 'a']], self::$ref::matchAll('abcabc', '/(?<p1>a)bc/'));
+        $this->assertSame([[]], self::$ref::matchAll('abcabc', '/bcd/'));
+        $this->assertSame([['cd', 'c']], self::$ref::matchAll('abcdxabc', '/c[^x]*/'));
+        $this->assertSame([[]], self::$ref::matchAll('abcabcx', '/^abcx/'));
+        $this->assertSame([['cx']], self::$ref::matchAll('abcabcx', '/cx$/'));
     }
 
     public function test_matchAll_without_slashes(): void
     {
         $this->expectWarning();
         $this->expectWarningMessage('preg_match_all(): Delimiter must not be alphanumeric, backslash, or NUL');
-        Unicode::matchAll('abcabc', 'a');
+        self::$ref::matchAll('abcabc', 'a');
     }
 
     public function test_matchFirst(): void
     {
-        self::assertSame('a', Unicode::matchFirst('abcabc', '/a/'));
-        self::assertSame('abc', Unicode::matchFirst('abcabc', '/(?<p1>a)bc/'));
-        self::assertSame('cd', Unicode::matchFirst('abcdxabc', '/c[^x]*/'));
-        self::assertSame('cx', Unicode::matchFirst('abcabcx', '/cx$/'));
+        $this->assertSame('a', self::$ref::matchFirst('abcabc', '/a/'));
+        $this->assertSame('abc', self::$ref::matchFirst('abcabc', '/(?<p1>a)bc/'));
+        $this->assertSame('cd', self::$ref::matchFirst('abcdxabc', '/c[^x]*/'));
+        $this->assertSame('cx', self::$ref::matchFirst('abcabcx', '/cx$/'));
     }
 
     public function test_matchFirst_no_match(): void
     {
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('"aaa" does not match /z/');
-        Unicode::matchFirst('aaa', '/z/');
+        self::$ref::matchFirst('aaa', '/z/');
     }
 
     public function test_matchFirst_without_slashes(): void
     {
         $this->expectException(Warning::class);
         $this->expectExceptionMessage('preg_match(): Delimiter must not be alphanumeric, backslash, or NUL');
-        Unicode::matchFirst('abcabc', 'a');
+        self::$ref::matchFirst('abcabc', 'a');
     }
 
     public function test_matchFirstOrNull(): void
     {
-        self::assertSame('a', Unicode::matchFirstOrNull('abcabc', '/a/'));
-        self::assertSame('abc', Unicode::matchFirstOrNull('abcabc', '/(?<p1>a)bc/'));
-        self::assertSame(null, Unicode::matchFirstOrNull('abcabc', '/bcd/'));
-        self::assertSame('cd', Unicode::matchFirstOrNull('abcdxabc', '/c[^x]*/'));
-        self::assertSame(null, Unicode::matchFirstOrNull('abcabcx', '/^abcx/'));
-        self::assertSame('cx', Unicode::matchFirstOrNull('abcabcx', '/cx$/'));
+        $this->assertSame('a', self::$ref::matchFirstOrNull('abcabc', '/a/'));
+        $this->assertSame('abc', self::$ref::matchFirstOrNull('abcabc', '/(?<p1>a)bc/'));
+        $this->assertSame(null, self::$ref::matchFirstOrNull('abcabc', '/bcd/'));
+        $this->assertSame('cd', self::$ref::matchFirstOrNull('abcdxabc', '/c[^x]*/'));
+        $this->assertSame(null, self::$ref::matchFirstOrNull('abcabcx', '/^abcx/'));
+        $this->assertSame('cx', self::$ref::matchFirstOrNull('abcabcx', '/cx$/'));
     }
 
     public function test_matchFirstOrNull_without_slashes(): void
     {
-        Unicode::matchFirstOrNull('abcabc', 'a');
+        self::$ref::matchFirstOrNull('abcabc', 'a');
     }
 
     public function test_pad(): void
     {
         // empty string
-        self::assertSame('', Unicode::pad('', -1, '_'));
+        $this->assertSame('', self::$ref::pad('', -1, '_'));
 
         // pad string
-        self::assertSame('abc', Unicode::pad('abc', 3, ''));
+        $this->assertSame('abc', self::$ref::pad('abc', 3, ''));
 
         // defaults to pad right
-        self::assertSame('a', Unicode::pad('a', -1, '_'));
-        self::assertSame('a', Unicode::pad('a', 0, '_'));
-        self::assertSame('a_', Unicode::pad('a', 2, '_'));
-        self::assertSame('__', Unicode::pad('_', 2, '_'));
-        self::assertSame('ab', Unicode::pad('ab', 1, '_'));
+        $this->assertSame('a', self::$ref::pad('a', -1, '_'));
+        $this->assertSame('a', self::$ref::pad('a', 0, '_'));
+        $this->assertSame('a_', self::$ref::pad('a', 2, '_'));
+        $this->assertSame('__', self::$ref::pad('_', 2, '_'));
+        $this->assertSame('ab', self::$ref::pad('ab', 1, '_'));
 
         // overflow padding
-        self::assertSame('abcd', Unicode::pad('a', 4, 'bcde'));
+        $this->assertSame('abcd', self::$ref::pad('a', 4, 'bcde'));
     }
 
     public function test_pad_invalid_pad(): void
     {
         $this->expectExceptionMessage('Invalid padding type: 3');
-        self::assertSame('ab', Unicode::pad('ab', 1, '_', 3));
+        $this->assertSame('ab', self::$ref::pad('ab', 1, '_', 3));
     }
 
     public function test_padBoth(): void
     {
-        self::assertSame('a', Unicode::padBoth('a', -1, '_'));
-        self::assertSame('a', Unicode::padBoth('a', 0, '_'));
-        self::assertSame('a_', Unicode::padBoth('a', 2, '_'));
-        self::assertSame('__', Unicode::padBoth('_', 2, '_'));
-        self::assertSame('_a_', Unicode::padBoth('a', 3, '_'));
-        self::assertSame('__a__', Unicode::padBoth('a', 5, '_'));
-        self::assertSame('__a___', Unicode::padBoth('a', 6, '_'));
-        self::assertSame('12hello123', Unicode::padBoth('hello', 10, '123'));
-        self::assertSame('いあい', Unicode::padBoth('あ', 3, 'い'));
+        $this->assertSame('a', self::$ref::padBoth('a', -1, '_'));
+        $this->assertSame('a', self::$ref::padBoth('a', 0, '_'));
+        $this->assertSame('a_', self::$ref::padBoth('a', 2, '_'));
+        $this->assertSame('__', self::$ref::padBoth('_', 2, '_'));
+        $this->assertSame('_a_', self::$ref::padBoth('a', 3, '_'));
+        $this->assertSame('__a__', self::$ref::padBoth('a', 5, '_'));
+        $this->assertSame('__a___', self::$ref::padBoth('a', 6, '_'));
+        $this->assertSame('12hello123', self::$ref::padBoth('hello', 10, '123'));
+        $this->assertSame('いあい', self::$ref::padBoth('あ', 3, 'い'));
     }
 
     public function test_padEnd(): void
     {
-        self::assertSame('a', Unicode::padEnd('a', -1, '_'));
-        self::assertSame('a', Unicode::padEnd('a', 0, '_'));
-        self::assertSame('a_', Unicode::padEnd('a', 2, '_'));
-        self::assertSame('__', Unicode::padEnd('_', 2, '_'));
-        self::assertSame('ab', Unicode::padEnd('ab', 1, '_'));
-        self::assertSame('あいういう', Unicode::padEnd('あ', 5, 'いう'), 'multi byte');
-        self::assertSame('עִברִיתכן', Unicode::padEnd('עִברִית', 7, 'כן'), 'rtol languages');
+        $this->assertSame('a', self::$ref::padEnd('a', -1, '_'));
+        $this->assertSame('a', self::$ref::padEnd('a', 0, '_'));
+        $this->assertSame('a_', self::$ref::padEnd('a', 2, '_'));
+        $this->assertSame('__', self::$ref::padEnd('_', 2, '_'));
+        $this->assertSame('ab', self::$ref::padEnd('ab', 1, '_'));
+        $this->assertSame('あいういう', self::$ref::padEnd('あ', 5, 'いう'), 'multi byte');
+        $this->assertSame('עִברִיתכן', self::$ref::padEnd('עִברִית', 7, 'כן'), 'rtol languages');
     }
 
     public function test_padStart(): void
     {
-        self::assertSame('a', Unicode::padStart('a', -1, '_'));
-        self::assertSame('a', Unicode::padStart('a', 0, '_'));
-        self::assertSame('_a', Unicode::padStart('a', 2, '_'));
-        self::assertSame('__', Unicode::padStart('_', 2, '_'));
-        self::assertSame('ab', Unicode::padStart('ab', 1, '_'));
-        self::assertSame('いういうあ', Unicode::padStart('あ', 5, 'いう'), 'multi byte');
+        $this->assertSame('a', self::$ref::padStart('a', -1, '_'));
+        $this->assertSame('a', self::$ref::padStart('a', 0, '_'));
+        $this->assertSame('_a', self::$ref::padStart('a', 2, '_'));
+        $this->assertSame('__', self::$ref::padStart('_', 2, '_'));
+        $this->assertSame('ab', self::$ref::padStart('ab', 1, '_'));
+        $this->assertSame('いういうあ', self::$ref::padStart('あ', 5, 'いう'), 'multi byte');
     }
 
     public function test_remove(): void
     {
-        self::assertSame('', Unicode::remove('', ''), 'empty');
-        self::assertSame('', Unicode::remove('aaa', 'a'), 'delete everything');
-        self::assertSame('a  a', Unicode::remove('aaa aa a', 'aa'), 'no traceback check');
-        self::assertSame('no match', Unicode::remove('no match', 'hctam on'), 'out of order chars');
-        self::assertSame('aa', Unicode::remove('aa', 'a', 0), 'limit to 0');
-        self::assertSame('a', Unicode::remove('aaa', 'a', 2), 'limit to 2');
+        $this->assertSame('', self::$ref::remove('', ''), 'empty');
+        $this->assertSame('', self::$ref::remove('aaa', 'a'), 'delete everything');
+        $this->assertSame('a  a', self::$ref::remove('aaa aa a', 'aa'), 'no traceback check');
+        $this->assertSame('no match', self::$ref::remove('no match', 'hctam on'), 'out of order chars');
+        $this->assertSame('aa', self::$ref::remove('aa', 'a', 0), 'limit to 0');
+        $this->assertSame('a', self::$ref::remove('aaa', 'a', 2), 'limit to 2');
 
         $count = 0;
-        self::assertSame('aaa', Unicode::remove('aaa', 'a', 0, $count), 'count none');
-        self::assertSame(0, $count);
+        $this->assertSame('aaa', self::$ref::remove('aaa', 'a', 0, $count), 'count none');
+        $this->assertSame(0, $count);
 
-        self::assertSame('a', Unicode::remove('aaa', 'a', 2, $count), 'count several');
-        self::assertSame(2, $count);
+        $this->assertSame('a', self::$ref::remove('aaa', 'a', 2, $count), 'count several');
+        $this->assertSame(2, $count);
 
-        self::assertSame('', Unicode::remove('aaa', 'a', null, $count), 'count unlimited');
-        self::assertSame(3, $count);
+        $this->assertSame('', self::$ref::remove('aaa', 'a', null, $count), 'count unlimited');
+        $this->assertSame(3, $count);
     }
 
     public function test_remove_with_negative_limit(): void
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Expected a value greater than or equal to 0. Got: -1');
-        Unicode::remove('', '', -1);
+        self::$ref::remove('', '', -1);
     }
 
     public function test_repeat(): void
     {
-        self::assertSame('aaa', Unicode::repeat('a', 3));
-        self::assertSame('', Unicode::repeat('a', 0));
+        $this->assertSame('aaa', self::$ref::repeat('a', 3));
+        $this->assertSame('', self::$ref::repeat('a', 0));
     }
 
     public function test_repeat_negative_times(): void
     {
         $this->expectException(\Kirameki\Core\Exceptions\InvalidArgumentException::class);
         $this->expectExceptionMessage('Expected: $times >= 0. Got: -1.');
-        Unicode::repeat('a', -1);
+        self::$ref::repeat('a', -1);
     }
 
     public function test_replace(): void
     {
-        self::assertSame('', Unicode::replace('', '', ''));
-        self::assertSame('b', Unicode::replace('b', '', 'a'));
-        self::assertSame('aa', Unicode::replace('bb', 'b', 'a'));
-        self::assertSame('', Unicode::replace('b', 'b', ''));
-        self::assertSame('あえいえう', Unicode::replace('あ-い-う', '-', 'え'));
-        self::assertSame('__🏴󠁧󠁢󠁳󠁣󠁴󠁿', Unicode::replace('🏴󠁧󠁢󠁳󠁣󠁴󠁿a🏴󠁧󠁢󠁳󠁣󠁴󠁿a🏴󠁧󠁢󠁳󠁣󠁴󠁿', '🏴󠁧󠁢󠁳󠁣󠁴󠁿a', '_'));
+        $this->assertSame('', self::$ref::replace('', '', ''));
+        $this->assertSame('b', self::$ref::replace('b', '', 'a'));
+        $this->assertSame('aa', self::$ref::replace('bb', 'b', 'a'));
+        $this->assertSame('', self::$ref::replace('b', 'b', ''));
+        $this->assertSame('あえいえう', self::$ref::replace('あ-い-う', '-', 'え'));
+        $this->assertSame('__🏴󠁧󠁢󠁳󠁣󠁴󠁿', self::$ref::replace('🏴󠁧󠁢󠁳󠁣󠁴󠁿a🏴󠁧󠁢󠁳󠁣󠁴󠁿a🏴󠁧󠁢󠁳󠁣󠁴󠁿', '🏴󠁧󠁢󠁳󠁣󠁴󠁿a', '_'));
 
         // slash
-        self::assertSame('abc', Unicode::replace('ab\c', '\\', ''));
+        $this->assertSame('abc', self::$ref::replace('ab\c', '\\', ''));
 
         // dot
-        self::assertSame('abc', Unicode::replace('abc.*', '.*', ''));
+        $this->assertSame('abc', self::$ref::replace('abc.*', '.*', ''));
 
         // regex chars
-        self::assertSame('a', Unicode::replace('[]/\\!?', '[]/\\!?', 'a'));
+        $this->assertSame('a', self::$ref::replace('[]/\\!?', '[]/\\!?', 'a'));
 
         // with limit and count
         $count = 0;
-        self::assertSame('a', Unicode::replace('aaa', 'a', '', 2, $count));
-        self::assertSame(2, $count);
+        $this->assertSame('a', self::$ref::replace('aaa', 'a', '', 2, $count));
+        $this->assertSame(2, $count);
 
         // 0 count for no match
         $count = 0;
-        self::assertSame('', Unicode::replace('', '', '', null, $count));
-        self::assertSame(0, $count);
+        $this->assertSame('', self::$ref::replace('', '', '', null, $count));
+        $this->assertSame(0, $count);
 
         // should treat emoji cluster as one character
-        self::assertSame('👋🏿', Unicode::replace('👋🏿', '👋', ''));
+        $this->assertSame('👋🏿', self::$ref::replace('👋🏿', '👋', ''));
     }
 
     public function test_replace_with_negative_limit(): void
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Expected a value greater than or equal to 0. Got: -1');
-        Unicode::replace('', 'a', 'a', -1);
+        self::$ref::replace('', 'a', 'a', -1);
     }
 
     public function test_replaceEach(): void
     {
         // empty string
-        self::assertSame('', Unicode::replaceEach('', ['?'], ['!']));
+        $this->assertSame('', self::$ref::replaceEach('', ['?'], ['!']));
 
         // empty search string
-        self::assertSame('test', Unicode::replaceEach('test', [''], ['a']));
+        $this->assertSame('test', self::$ref::replaceEach('test', [''], ['a']));
 
         // replace each ?
-        self::assertSame('x & y', Unicode::replaceEach('? & ?', ['?', '?'], ['x', 'y']));
+        $this->assertSame('x & y', self::$ref::replaceEach('? & ?', ['?', '?'], ['x', 'y']));
 
         // utf-8
-        self::assertSame('うえ', Unicode::replaceEach('あい', ['あ', 'い'], ['う', 'え']));
+        $this->assertSame('うえ', self::$ref::replaceEach('あい', ['あ', 'い'], ['う', 'え']));
 
         // should treat emoji cluster as one character
-        self::assertSame('👋🏿', Unicode::replaceEach('👋🏿', ['👋'], ['']));
+        $this->assertSame('👋🏿', self::$ref::replaceEach('👋🏿', ['👋'], ['']));
     }
 
     public function test_replaceFirst(): void
     {
-        self::assertSame('', Unicode::replaceFirst('', '', ''), 'empty string');
-        self::assertSame('bb', Unicode::replaceFirst('bb', '', 'a'), 'empty search');
-        self::assertSame('abb', Unicode::replaceFirst('bbb', 'b', 'a'), 'basic');
-        self::assertSame('b', Unicode::replaceFirst('bb', 'b', ''), 'empty replacement');
-        self::assertSame('あえい-う', Unicode::replaceFirst('あ-い-う', '-', 'え'), 'mbstring');
-        self::assertSame('🏴󠁧󠁢󠁳󠁣󠁴󠁿 a', Unicode::replaceFirst('🏴󠁧󠁢󠁳󠁣󠁴󠁿 👨‍👨‍👧‍👦', '👨‍👨‍👧‍👦', 'a'), 'multiple codepoints');
-        self::assertSame('_🏴󠁧󠁢󠁳󠁣󠁴󠁿a🏴󠁧󠁢󠁳󠁣󠁴󠁿', Unicode::replaceFirst('🏴󠁧󠁢󠁳󠁣󠁴󠁿a🏴󠁧󠁢󠁳󠁣󠁴󠁿a🏴󠁧󠁢󠁳󠁣󠁴󠁿', '🏴󠁧󠁢󠁳󠁣󠁴󠁿a', '_'));
-        self::assertSame('👋🏿', Unicode::replaceFirst('👋🏿', '👋', ''), 'treat emoji cluster as one character');
+        $this->assertSame('', self::$ref::replaceFirst('', '', ''), 'empty string');
+        $this->assertSame('bb', self::$ref::replaceFirst('bb', '', 'a'), 'empty search');
+        $this->assertSame('abb', self::$ref::replaceFirst('bbb', 'b', 'a'), 'basic');
+        $this->assertSame('b', self::$ref::replaceFirst('bb', 'b', ''), 'empty replacement');
+        $this->assertSame('あえい-う', self::$ref::replaceFirst('あ-い-う', '-', 'え'), 'mbstring');
+        $this->assertSame('🏴󠁧󠁢󠁳󠁣󠁴󠁿 a', self::$ref::replaceFirst('🏴󠁧󠁢󠁳󠁣󠁴󠁿 👨‍👨‍👧‍👦', '👨‍👨‍👧‍👦', 'a'), 'multiple codepoints');
+        $this->assertSame('_🏴󠁧󠁢󠁳󠁣󠁴󠁿a🏴󠁧󠁢󠁳󠁣󠁴󠁿', self::$ref::replaceFirst('🏴󠁧󠁢󠁳󠁣󠁴󠁿a🏴󠁧󠁢󠁳󠁣󠁴󠁿a🏴󠁧󠁢󠁳󠁣󠁴󠁿', '🏴󠁧󠁢󠁳󠁣󠁴󠁿a', '_'));
+        $this->assertSame('👋🏿', self::$ref::replaceFirst('👋🏿', '👋', ''), 'treat emoji cluster as one character');
 
         $replaced = false;
-        Unicode::replaceFirst('bbb', 'b', 'a', $replaced);
+        self::$ref::replaceFirst('bbb', 'b', 'a', $replaced);
         self::assertTrue($replaced, 'validate flag');
 
         $replaced = true;
-        Unicode::replaceFirst('b', 'z', '', $replaced);
+        self::$ref::replaceFirst('b', 'z', '', $replaced);
         self::assertFalse($replaced, 'flag is overridden with false');
     }
 
     public function test_replaceLast(): void
     {
-        self::assertSame('', Unicode::replaceLast('', '', ''), 'empty string');
-        self::assertSame('bb', Unicode::replaceLast('bb', '', 'a'), 'empty search');
-        self::assertSame('bba', Unicode::replaceLast('bbb', 'b', 'a'), 'basic');
-        self::assertSame('b', Unicode::replaceLast('bb', 'b', ''), 'empty replacement');
-        self::assertSame('あ-いえう', Unicode::replaceLast('あ-い-う', '-', 'え'), 'mbstring');
-        self::assertSame('🏴󠁧󠁢󠁳󠁣󠁴󠁿 a', Unicode::replaceLast('🏴󠁧󠁢󠁳󠁣󠁴󠁿 👨‍👨‍👧‍👦', '👨‍👨‍👧‍👦', 'a'), 'multiple codepoints');
-        self::assertSame('🏴󠁧󠁢󠁳󠁣󠁴󠁿a_🏴󠁧󠁢󠁳󠁣󠁴󠁿', Unicode::replaceLast('🏴󠁧󠁢󠁳󠁣󠁴󠁿a🏴󠁧󠁢󠁳󠁣󠁴󠁿a🏴󠁧󠁢󠁳󠁣󠁴󠁿', '🏴󠁧󠁢󠁳󠁣󠁴󠁿a', '_'));
-        self::assertSame('👋🏿', Unicode::replaceLast('👋🏿', '👋', ''), 'treat emoji cluster as one character');
+        $this->assertSame('', self::$ref::replaceLast('', '', ''), 'empty string');
+        $this->assertSame('bb', self::$ref::replaceLast('bb', '', 'a'), 'empty search');
+        $this->assertSame('bba', self::$ref::replaceLast('bbb', 'b', 'a'), 'basic');
+        $this->assertSame('b', self::$ref::replaceLast('bb', 'b', ''), 'empty replacement');
+        $this->assertSame('あ-いえう', self::$ref::replaceLast('あ-い-う', '-', 'え'), 'mbstring');
+        $this->assertSame('🏴󠁧󠁢󠁳󠁣󠁴󠁿 a', self::$ref::replaceLast('🏴󠁧󠁢󠁳󠁣󠁴󠁿 👨‍👨‍👧‍👦', '👨‍👨‍👧‍👦', 'a'), 'multiple codepoints');
+        $this->assertSame('🏴󠁧󠁢󠁳󠁣󠁴󠁿a_🏴󠁧󠁢󠁳󠁣󠁴󠁿', self::$ref::replaceLast('🏴󠁧󠁢󠁳󠁣󠁴󠁿a🏴󠁧󠁢󠁳󠁣󠁴󠁿a🏴󠁧󠁢󠁳󠁣󠁴󠁿', '🏴󠁧󠁢󠁳󠁣󠁴󠁿a', '_'));
+        $this->assertSame('👋🏿', self::$ref::replaceLast('👋🏿', '👋', ''), 'treat emoji cluster as one character');
 
         $replaced = false;
-        Unicode::replaceLast('bbb', 'b', 'a', $replaced);
+        self::$ref::replaceLast('bbb', 'b', 'a', $replaced);
         self::assertTrue($replaced, 'validate flag');
 
         $replaced = true;
-        Unicode::replaceLast('b', 'z', '', $replaced);
+        self::$ref::replaceLast('b', 'z', '', $replaced);
         self::assertFalse($replaced, 'flag is overridden with false');
     }
 
     public function test_replaceMatch(): void
     {
-        self::assertSame('', Unicode::replaceMatch('', '', ''));
-        self::assertSame('abb', Unicode::replaceMatch('abc', '/c/', 'b'));
-        self::assertSame('abbb', Unicode::replaceMatch('abcc', '/c/', 'b'));
-        self::assertSame('あいい', Unicode::replaceMatch('あいう', '/う/', 'い'));
-        self::assertSame('x', Unicode::replaceMatch('abcde', '/[A-Za-z]+/', 'x'));
-        self::assertSame('a-b', Unicode::replaceMatch('a🏴󠁧󠁢󠁳󠁣󠁴󠁿b', '/🏴󠁧󠁢󠁳󠁣󠁴󠁿/', '-'));
+        $this->assertSame('', self::$ref::replaceMatch('', '', ''));
+        $this->assertSame('abb', self::$ref::replaceMatch('abc', '/c/', 'b'));
+        $this->assertSame('abbb', self::$ref::replaceMatch('abcc', '/c/', 'b'));
+        $this->assertSame('あいい', self::$ref::replaceMatch('あいう', '/う/', 'い'));
+        $this->assertSame('x', self::$ref::replaceMatch('abcde', '/[A-Za-z]+/', 'x'));
+        $this->assertSame('a-b', self::$ref::replaceMatch('a🏴󠁧󠁢󠁳󠁣󠁴󠁿b', '/🏴󠁧󠁢󠁳󠁣󠁴󠁿/', '-'));
 
         // with null count no match
         $count = 0;
-        self::assertSame('', Unicode::replaceMatch('', '', '', null, $count));
-        self::assertSame(0, $count);
+        $this->assertSame('', self::$ref::replaceMatch('', '', '', null, $count));
+        $this->assertSame(0, $count);
 
         // with null count
         $count = 0;
-        self::assertSame('', Unicode::replaceMatch('aaa', '/a/', '', null, $count));
-        self::assertSame(3, $count);
+        $this->assertSame('', self::$ref::replaceMatch('aaa', '/a/', '', null, $count));
+        $this->assertSame(3, $count);
 
         // with counter reset
         $count = 1;
-        self::assertSame('', Unicode::replaceMatch('aaa', '/a/', '', null, $count));
-        self::assertSame(3, $count);
+        $this->assertSame('', self::$ref::replaceMatch('aaa', '/a/', '', null, $count));
+        $this->assertSame(3, $count);
 
         // with limit
-        self::assertSame('a', Unicode::replaceMatch('aaa', '/a/', '', 2));
+        $this->assertSame('a', self::$ref::replaceMatch('aaa', '/a/', '', 2));
     }
 
     public function test_replaceMatch_with_negative_limit(): void
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Expected a value greater than or equal to 0. Got: -1');
-        Unicode::replaceMatch('', '/a/', 'a', -1);
+        self::$ref::replaceMatch('', '/a/', 'a', -1);
     }
 
     public function test_reverse(): void
     {
-        self::assertSame('', Unicode::reverse(''));
-        self::assertSame('ba', Unicode::reverse('ab'));
-        self::assertSame('ういあ', Unicode::reverse('あいう'));
-        self::assertSame('cbあ🏴󠁧󠁢󠁳󠁣󠁴󠁿', Unicode::reverse('🏴󠁧󠁢󠁳󠁣󠁴󠁿あbc'));
+        $this->assertSame('', self::$ref::reverse(''));
+        $this->assertSame('ba', self::$ref::reverse('ab'));
+        $this->assertSame('ういあ', self::$ref::reverse('あいう'));
+        $this->assertSame('cbあ🏴󠁧󠁢󠁳󠁣󠁴󠁿', self::$ref::reverse('🏴󠁧󠁢󠁳󠁣󠁴󠁿あbc'));
     }
 
     public function test_startsWith(): void
     {
-        self::assertTrue(Unicode::startsWith('', ''));
-        self::assertTrue(Unicode::startsWith('bb', ''));
-        self::assertTrue(Unicode::startsWith('bb', 'b'));
-        self::assertTrue(Unicode::startsWith('あ-い-う', 'あ'));
-        self::assertFalse(Unicode::startsWith('👨‍👨‍👧‍👦', '👨‍'));
-        self::assertTrue(Unicode::startsWith('🏴󠁧󠁢󠁳󠁣󠁴󠁿 👨‍👨‍👧‍👦', '🏴󠁧󠁢󠁳󠁣󠁴󠁿'));
-        self::assertFalse(Unicode::startsWith('🏴󠁧󠁢󠁳󠁣󠁴󠁿 👨‍👨‍👧‍👦', '👨‍👨‍👧‍👦'));
-        self::assertTrue(Unicode::startsWith('🏴󠁧󠁢󠁳󠁣󠁴󠁿a🏴󠁧󠁢󠁳󠁣󠁴󠁿a🏴󠁧󠁢󠁳󠁣󠁴󠁿', '🏴󠁧󠁢󠁳󠁣󠁴󠁿a'));
-        self::assertFalse(Unicode::startsWith('ba', 'a'));
-        self::assertFalse(Unicode::startsWith('', 'a'));
+        self::assertTrue(self::$ref::startsWith('', ''));
+        self::assertTrue(self::$ref::startsWith('bb', ''));
+        self::assertTrue(self::$ref::startsWith('bb', 'b'));
+        self::assertTrue(self::$ref::startsWith('あ-い-う', 'あ'));
+        self::assertFalse(self::$ref::startsWith('👨‍👨‍👧‍👦', '👨‍'));
+        self::assertTrue(self::$ref::startsWith('🏴󠁧󠁢󠁳󠁣󠁴󠁿 👨‍👨‍👧‍👦', '🏴󠁧󠁢󠁳󠁣󠁴󠁿'));
+        self::assertFalse(self::$ref::startsWith('🏴󠁧󠁢󠁳󠁣󠁴󠁿 👨‍👨‍👧‍👦', '👨‍👨‍👧‍👦'));
+        self::assertTrue(self::$ref::startsWith('🏴󠁧󠁢󠁳󠁣󠁴󠁿a🏴󠁧󠁢󠁳󠁣󠁴󠁿a🏴󠁧󠁢󠁳󠁣󠁴󠁿', '🏴󠁧󠁢󠁳󠁣󠁴󠁿a'));
+        self::assertFalse(self::$ref::startsWith('ba', 'a'));
+        self::assertFalse(self::$ref::startsWith('', 'a'));
     }
 
     public function test_split(): void
     {
         // empty
-        self::assertSame(['', ''], Unicode::split(' ', ' '));
+        $this->assertSame(['', ''], self::$ref::split(' ', ' '));
 
         // no match
-        self::assertSame(['abc'], Unicode::split('abc', '_'));
+        $this->assertSame(['abc'], self::$ref::split('abc', '_'));
 
         // match
-        self::assertSame(['a', 'c', 'd'], Unicode::split('abcbd', 'b'));
+        $this->assertSame(['a', 'c', 'd'], self::$ref::split('abcbd', 'b'));
 
         // match utf-8
-        self::assertSame(['あ', 'う'], Unicode::split('あいう', 'い'));
+        $this->assertSame(['あ', 'う'], self::$ref::split('あいう', 'い'));
 
         // match with limit
-        self::assertSame(['a', 'cbd'], Unicode::split('abcbd', 'b', 2));
+        $this->assertSame(['a', 'cbd'], self::$ref::split('abcbd', 'b', 2));
 
         // match with limit
-        self::assertSame(['a', 'b', 'c'], Unicode::split('abc', ''));
+        $this->assertSame(['a', 'b', 'c'], self::$ref::split('abc', ''));
 
         // match emoji
-        self::assertSame(['👨‍👨‍👧‍👦'], Unicode::split('👨‍👨‍👧‍👦', '‍👦'));
+        $this->assertSame(['👨‍👨‍👧‍👦'], self::$ref::split('👨‍👨‍👧‍👦', '‍👦'));
     }
 
     public function test_split_with_negative_limit(): void
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Expected a value greater than or equal to 0. Got: -1');
-        Unicode::split('a', 'b', -1);
+        self::$ref::split('a', 'b', -1);
     }
 
     public function test_substring(): void
     {
         // empty
-        self::assertSame('', Unicode::substring('', 0));
-        self::assertSame('', Unicode::substring('', 0, 1));
+        $this->assertSame('', self::$ref::substring('', 0));
+        $this->assertSame('', self::$ref::substring('', 0, 1));
 
         // ascii
-        self::assertSame('abc', Unicode::substring('abc', 0));
-        self::assertSame('bc', Unicode::substring('abc', 1));
-        self::assertSame('c', Unicode::substring('abc', -1));
-        self::assertSame('a', Unicode::substring('abc', 0, 1));
-        self::assertSame('b', Unicode::substring('abc', 1, 1));
-        self::assertSame('b', Unicode::substring('abc', -2, 1));
-        self::assertSame('bc', Unicode::substring('abc', -2, 2));
-        self::assertSame('ab', Unicode::substring('abc', -9999, 2));
-        self::assertSame('ab', Unicode::substring('abc', 0, -1));
-        self::assertSame('a', Unicode::substring('abc', 0, -2));
-        self::assertSame('', Unicode::substring('abc', 0, -3));
-        self::assertSame('', Unicode::substring('abc', 2, -1));
+        $this->assertSame('abc', self::$ref::substring('abc', 0));
+        $this->assertSame('bc', self::$ref::substring('abc', 1));
+        $this->assertSame('c', self::$ref::substring('abc', -1));
+        $this->assertSame('a', self::$ref::substring('abc', 0, 1));
+        $this->assertSame('b', self::$ref::substring('abc', 1, 1));
+        $this->assertSame('b', self::$ref::substring('abc', -2, 1));
+        $this->assertSame('bc', self::$ref::substring('abc', -2, 2));
+        $this->assertSame('ab', self::$ref::substring('abc', -9999, 2));
+        $this->assertSame('ab', self::$ref::substring('abc', 0, -1));
+        $this->assertSame('a', self::$ref::substring('abc', 0, -2));
+        $this->assertSame('', self::$ref::substring('abc', 0, -3));
+        $this->assertSame('', self::$ref::substring('abc', 2, -1));
 
         // utf-8
-        self::assertSame('あいう', Unicode::substring('あいう', 0));
-        self::assertSame('いう', Unicode::substring('あいう', 1));
-        self::assertSame('う', Unicode::substring('あいう', -1));
-        self::assertSame('い', Unicode::substring('あいう', -2, 1));
-        self::assertSame('いう', Unicode::substring('あいう', -2, 2));
-        self::assertSame('あい', Unicode::substring('あいう', -9999, 2));
+        $this->assertSame('あいう', self::$ref::substring('あいう', 0));
+        $this->assertSame('いう', self::$ref::substring('あいう', 1));
+        $this->assertSame('う', self::$ref::substring('あいう', -1));
+        $this->assertSame('い', self::$ref::substring('あいう', -2, 1));
+        $this->assertSame('いう', self::$ref::substring('あいう', -2, 2));
+        $this->assertSame('あい', self::$ref::substring('あいう', -9999, 2));
 
         // grapheme
-        self::assertSame('👨‍👨‍👧‍👦', Unicode::substring('👨‍👨‍👧‍👦', 0));
-        self::assertSame('', Unicode::substring('👨‍👨‍👧‍👦', 1));
-        self::assertSame('🏴󠁧󠁢󠁳󠁣󠁴󠁿', Unicode::substring('👨‍👨‍👧‍👦🏴󠁧󠁢󠁳󠁣󠁴󠁿', 1));
-        self::assertSame('👨‍👨‍👧‍👦', Unicode::substring('👨‍👨‍👧‍👦👨‍👨‍👧‍👦', 1, 1));
-        self::assertSame('🏴󠁧󠁢󠁳󠁣󠁴󠁿', Unicode::substring('👨‍👨‍👧‍👦🏴󠁧󠁢󠁳󠁣󠁴󠁿', -1, 1));
+        $this->assertSame('👨‍👨‍👧‍👦', self::$ref::substring('👨‍👨‍👧‍👦', 0));
+        $this->assertSame('', self::$ref::substring('👨‍👨‍👧‍👦', 1));
+        $this->assertSame('🏴󠁧󠁢󠁳󠁣󠁴󠁿', self::$ref::substring('👨‍👨‍👧‍👦🏴󠁧󠁢󠁳󠁣󠁴󠁿', 1));
+        $this->assertSame('👨‍👨‍👧‍👦', self::$ref::substring('👨‍👨‍👧‍👦👨‍👨‍👧‍👦', 1, 1));
+        $this->assertSame('🏴󠁧󠁢󠁳󠁣󠁴󠁿', self::$ref::substring('👨‍👨‍👧‍👦🏴󠁧󠁢󠁳󠁣󠁴󠁿', -1, 1));
     }
 
     public function test_substring_invalid_input(): void
     {
         $this->expectExceptionMessage('Error converting input string to UTF-16: U_INVALID_CHAR_FOUND');
-        self::assertSame('', Unicode::substring(substr('あ', 1), 0, 2));
+        $this->assertSame('', self::$ref::substring(substr('あ', 1), 0, 2));
     }
 
     public function test_takeFirst(): void
     {
         // empty string
-        self::assertSame('', Unicode::takeFirst('', 1));
+        $this->assertSame('', self::$ref::takeFirst('', 1));
 
         // empty string
-        self::assertSame('', Unicode::takeFirst('', 1));
+        $this->assertSame('', self::$ref::takeFirst('', 1));
 
         // zero amount
-        self::assertSame('', Unicode::takeFirst('a', 0));
+        $this->assertSame('', self::$ref::takeFirst('a', 0));
 
         // mid amount
-        self::assertSame('abcd', Unicode::takeFirst('abcde', 4));
+        $this->assertSame('abcd', self::$ref::takeFirst('abcde', 4));
 
         // exact length
-        self::assertSame('abc', Unicode::takeFirst('abc', 3));
+        $this->assertSame('abc', self::$ref::takeFirst('abc', 3));
 
         // grapheme
-        self::assertSame('abc🏴󠁧󠁢󠁳󠁣󠁴󠁿', Unicode::takeFirst('abc🏴󠁧󠁢󠁳󠁣󠁴󠁿d🏴󠁧󠁢󠁳󠁣󠁴󠁿e🏴󠁧󠁢󠁳󠁣󠁴󠁿f', 4));
+        $this->assertSame('abc🏴󠁧󠁢󠁳󠁣󠁴󠁿', self::$ref::takeFirst('abc🏴󠁧󠁢󠁳󠁣󠁴󠁿d🏴󠁧󠁢󠁳󠁣󠁴󠁿e🏴󠁧󠁢󠁳󠁣󠁴󠁿f', 4));
 
         // grapheme cluster
-        self::assertSame('👋🏿', Unicode::takeFirst('👋🏿', 1));
+        $this->assertSame('👋🏿', self::$ref::takeFirst('👋🏿', 1));
     }
 
     public function test_takeFirst_out_of_range_negative(): void
     {
         $this->expectExceptionMessage('Expected a value greater than or equal to 0. Got: -4');
-        Unicode::takeFirst('abc', -4);
+        self::$ref::takeFirst('abc', -4);
     }
 
     public function test_takeLast(): void
     {
         // empty string
-        self::assertSame('', Unicode::takeLast('', 1));
+        $this->assertSame('', self::$ref::takeLast('', 1));
 
         // empty string
-        self::assertSame('', Unicode::takeLast('', 1));
+        $this->assertSame('', self::$ref::takeLast('', 1));
 
         // zero amount
-        self::assertSame('a', Unicode::takeLast('a', 0));
+        $this->assertSame('a', self::$ref::takeLast('a', 0));
 
         // mid amount
-        self::assertSame('bcde', Unicode::takeLast('abcde', 4));
+        $this->assertSame('bcde', self::$ref::takeLast('abcde', 4));
 
         // exact length
-        self::assertSame('abc', Unicode::takeLast('abc', 3));
+        $this->assertSame('abc', self::$ref::takeLast('abc', 3));
 
         // over length
-        self::assertSame('abc', Unicode::takeLast('abc', 4));
+        $this->assertSame('abc', self::$ref::takeLast('abc', 4));
 
         // grapheme
-        self::assertSame('🏴󠁧󠁢󠁳󠁣󠁴󠁿e🏴󠁧󠁢󠁳󠁣󠁴󠁿f', Unicode::takeLast('abc🏴󠁧󠁢󠁳󠁣󠁴󠁿d🏴󠁧󠁢󠁳󠁣󠁴󠁿e🏴󠁧󠁢󠁳󠁣󠁴󠁿f', 4));
+        $this->assertSame('🏴󠁧󠁢󠁳󠁣󠁴󠁿e🏴󠁧󠁢󠁳󠁣󠁴󠁿f', self::$ref::takeLast('abc🏴󠁧󠁢󠁳󠁣󠁴󠁿d🏴󠁧󠁢󠁳󠁣󠁴󠁿e🏴󠁧󠁢󠁳󠁣󠁴󠁿f', 4));
 
         // grapheme cluster
-        self::assertSame('👋🏿', Unicode::takeLast('👋🏿', 1));
+        $this->assertSame('👋🏿', self::$ref::takeLast('👋🏿', 1));
     }
 
     public function test_takeLast_out_of_range_negative(): void
     {
         $this->expectExceptionMessage('Expected a value greater than or equal to 0. Got: -4');
-        Unicode::takeLast('abc', -4);
+        self::$ref::takeLast('abc', -4);
     }
 
     public function test_toBool(): void
     {
-        self::assertTrue(Unicode::toBool('true'), 'true as string');
-        self::assertTrue(Unicode::toBool('TRUE'), 'TRUE as string');
-        self::assertFalse(Unicode::toBool('false'), 'false as string');
-        self::assertFalse(Unicode::toBool('FALSE'), 'FALSE as string');
-        self::assertTrue(Unicode::toBool('1'), 'empty as string');
+        self::assertTrue(self::$ref::toBool('true'), 'true as string');
+        self::assertTrue(self::$ref::toBool('TRUE'), 'TRUE as string');
+        self::assertFalse(self::$ref::toBool('false'), 'false as string');
+        self::assertFalse(self::$ref::toBool('FALSE'), 'FALSE as string');
+        self::assertTrue(self::$ref::toBool('1'), 'empty as string');
     }
 
     public function test_toBool_empty(): void
@@ -1191,7 +1203,7 @@ class UnicodeTest extends TestCase
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('"" is not a valid boolean string.');
         // empty as string
-        Unicode::toBool('');
+        self::$ref::toBool('');
     }
 
     public function test_toBool_with_negative(): void
@@ -1199,7 +1211,7 @@ class UnicodeTest extends TestCase
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('"-2" is not a valid boolean string.');
         // invalid boolean (number)
-        Unicode::toBool('-2');
+        self::$ref::toBool('-2');
     }
 
     public function test_toBool_with_yes(): void
@@ -1207,483 +1219,483 @@ class UnicodeTest extends TestCase
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('"yes" is not a valid boolean string.');
         // truthy will fail
-        Unicode::toBool('yes');
+        self::$ref::toBool('yes');
     }
 
     public function test_toBoolOrNull(): void
     {
-        self::assertTrue(Unicode::toBoolOrNull('true'), 'true as string');
-        self::assertTrue(Unicode::toBoolOrNull('TRUE'), 'TRUE as string');
-        self::assertFalse(Unicode::toBoolOrNull('false'), 'false as string');
-        self::assertFalse(Unicode::toBoolOrNull('FALSE'), 'FALSE as string');
-        self::assertTrue(Unicode::toBoolOrNull('1'), 'empty as string');
-        self::assertNull(Unicode::toBoolOrNull(''), 'empty as string');
-        self::assertNull(Unicode::toBoolOrNull('-2'), 'invalid boolean (number)');
-        self::assertNull(Unicode::toBoolOrNull('yes'), 'truthy will fail');
+        self::assertTrue(self::$ref::toBoolOrNull('true'), 'true as string');
+        self::assertTrue(self::$ref::toBoolOrNull('TRUE'), 'TRUE as string');
+        self::assertFalse(self::$ref::toBoolOrNull('false'), 'false as string');
+        self::assertFalse(self::$ref::toBoolOrNull('FALSE'), 'FALSE as string');
+        self::assertTrue(self::$ref::toBoolOrNull('1'), 'empty as string');
+        self::assertNull(self::$ref::toBoolOrNull(''), 'empty as string');
+        self::assertNull(self::$ref::toBoolOrNull('-2'), 'invalid boolean (number)');
+        self::assertNull(self::$ref::toBoolOrNull('yes'), 'truthy will fail');
     }
 
     public function test_toCamelCase(): void
     {
-        self::assertSame('test', Unicode::toCamelCase('test'));
-        self::assertSame('test', Unicode::toCamelCase('Test'));
-        self::assertSame('testTest', Unicode::toCamelCase('test-test'));
-        self::assertSame('testTest', Unicode::toCamelCase('test_test'));
-        self::assertSame('testTest', Unicode::toCamelCase('test test'));
-        self::assertSame('testTestTest', Unicode::toCamelCase('test test test'));
-        self::assertSame('testTest', Unicode::toCamelCase(' test  test  '));
-        self::assertSame('testTestTest', Unicode::toCamelCase("--test_test-test__"));
+        $this->assertSame('test', self::$ref::toCamelCase('test'));
+        $this->assertSame('test', self::$ref::toCamelCase('Test'));
+        $this->assertSame('testTest', self::$ref::toCamelCase('test-test'));
+        $this->assertSame('testTest', self::$ref::toCamelCase('test_test'));
+        $this->assertSame('testTest', self::$ref::toCamelCase('test test'));
+        $this->assertSame('testTestTest', self::$ref::toCamelCase('test test test'));
+        $this->assertSame('testTest', self::$ref::toCamelCase(' test  test  '));
+        $this->assertSame('testTestTest', self::$ref::toCamelCase("--test_test-test__"));
     }
 
     public function test_toFloat(): void
     {
-        self::assertSame(1.0, Unicode::toFloat('1'), 'positive int');
-        self::assertSame(-1.0, Unicode::toFloat('-1'), 'negative int');
-        self::assertSame(1.23, Unicode::toFloat('1.23'), 'positive float');
-        self::assertSame(-1.23, Unicode::toFloat('-1.23'), 'negative float');
-        self::assertSame(0.0, Unicode::toFloat('0'), 'zero int');
-        self::assertSame(0.0, Unicode::toFloat('0.0'), 'zero float');
-        self::assertSame(0.0, Unicode::toFloat('-0'), 'negative zero int');
-        self::assertSame(0.0, Unicode::toFloat('-0.0'), 'negative zero float');
-        self::assertSame(0.123, Unicode::toFloat('0.123'), 'start from zero');
-        self::assertSame(123.456, Unicode::toFloat('123.456'), 'multiple digits');
-        self::assertSame(1230.0, Unicode::toFloat('1.23e3'), 'scientific notation with e');
-        self::assertSame(1230.0, Unicode::toFloat('1.23E3'), 'scientific notation with E');
-        self::assertSame(-1230.0, Unicode::toFloat('-1.23e3'), 'scientific notation as negative');
-        self::assertSame(1.234, Unicode::toFloatOrNull('123.4E-2'), 'scientific notation irregular');
-        self::assertSame(1230.0, Unicode::toFloat('1.23e+3'), 'with +e');
-        self::assertSame(1230.0, Unicode::toFloat('1.23E+3'), 'with +E');
-        self::assertSame(0.012, Unicode::toFloat('1.2e-2'), 'with -e');
-        self::assertSame(0.012, Unicode::toFloat('1.2E-2'), 'with -E');
-        self::assertNan(Unicode::toFloat('NAN'), 'NAN');
-        self::assertNan(Unicode::toFloat('-NAN'), 'Negative NAN');
-        self::assertNan(Unicode::toFloat('NaN'), 'NaN from Javascript');
-        self::assertNan(Unicode::toFloat('-NaN'), 'Negative NaN');
-        self::assertInfinite(Unicode::toFloat('INF'), 'upper case INF');
-        self::assertInfinite(Unicode::toFloat('Infinity'), 'INF from Javascript');
+        $this->assertSame(1.0, self::$ref::toFloat('1'), 'positive int');
+        $this->assertSame(-1.0, self::$ref::toFloat('-1'), 'negative int');
+        $this->assertSame(1.23, self::$ref::toFloat('1.23'), 'positive float');
+        $this->assertSame(-1.23, self::$ref::toFloat('-1.23'), 'negative float');
+        $this->assertSame(0.0, self::$ref::toFloat('0'), 'zero int');
+        $this->assertSame(0.0, self::$ref::toFloat('0.0'), 'zero float');
+        $this->assertSame(0.0, self::$ref::toFloat('-0'), 'negative zero int');
+        $this->assertSame(0.0, self::$ref::toFloat('-0.0'), 'negative zero float');
+        $this->assertSame(0.123, self::$ref::toFloat('0.123'), 'start from zero');
+        $this->assertSame(123.456, self::$ref::toFloat('123.456'), 'multiple digits');
+        $this->assertSame(1230.0, self::$ref::toFloat('1.23e3'), 'scientific notation with e');
+        $this->assertSame(1230.0, self::$ref::toFloat('1.23E3'), 'scientific notation with E');
+        $this->assertSame(-1230.0, self::$ref::toFloat('-1.23e3'), 'scientific notation as negative');
+        $this->assertSame(1.234, self::$ref::toFloatOrNull('123.4E-2'), 'scientific notation irregular');
+        $this->assertSame(1230.0, self::$ref::toFloat('1.23e+3'), 'with +e');
+        $this->assertSame(1230.0, self::$ref::toFloat('1.23E+3'), 'with +E');
+        $this->assertSame(0.012, self::$ref::toFloat('1.2e-2'), 'with -e');
+        $this->assertSame(0.012, self::$ref::toFloat('1.2E-2'), 'with -E');
+        self::assertNan(self::$ref::toFloat('NAN'), 'NAN');
+        self::assertNan(self::$ref::toFloat('-NAN'), 'Negative NAN');
+        self::assertNan(self::$ref::toFloat('NaN'), 'NaN from Javascript');
+        self::assertNan(self::$ref::toFloat('-NaN'), 'Negative NaN');
+        self::assertInfinite(self::$ref::toFloat('INF'), 'upper case INF');
+        self::assertInfinite(self::$ref::toFloat('Infinity'), 'INF from Javascript');
     }
 
     public function test_toFloat_overflow_e_notation(): void
     {
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('Float precision lost for "1e20"');
-        Unicode::toFloat('1e20');
+        self::$ref::toFloat('1e20');
     }
 
     public function test_toFloat_empty_string(): void
     {
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('"" is not a valid float.');
-        Unicode::toFloat('');
+        self::$ref::toFloat('');
     }
 
     public function test_toFloat_invalid_string(): void
     {
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('"1a" is not a valid float.');
-        Unicode::toFloat('1a');
+        self::$ref::toFloat('1a');
     }
 
     public function test_toFloat_dot_start(): void
     {
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('".1" is not a valid float.');
-        Unicode::toFloat('.1');
+        self::$ref::toFloat('.1');
     }
 
     public function test_toFloat_zero_start(): void
     {
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('"00.1" is not a valid float.');
-        Unicode::toFloat('00.1');
+        self::$ref::toFloat('00.1');
     }
 
     public function test_toFloat_overflow_number(): void
     {
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('Float precision lost for "1.11111111111111"');
-        Unicode::toFloat('1.' . str_repeat('1', 14));
+        self::$ref::toFloat('1.' . str_repeat('1', 14));
     }
 
     public function test_toFloatOrNull(): void
     {
-        self::assertSame(1.0, Unicode::toFloatOrNull('1'), 'positive int');
-        self::assertSame(-1.0, Unicode::toFloatOrNull('-1'), 'negative int');
-        self::assertSame(1.23, Unicode::toFloatOrNull('1.23'), 'positive float');
-        self::assertSame(-1.23, Unicode::toFloatOrNull('-1.23'), 'negative float');
-        self::assertSame(0.0, Unicode::toFloatOrNull('0'), 'zero int');
-        self::assertSame(0.0, Unicode::toFloatOrNull('0.0'), 'zero float');
-        self::assertSame(0.0, Unicode::toFloatOrNull('-0'), 'negative zero int');
-        self::assertSame(0.0, Unicode::toFloatOrNull('-0.0'), 'negative zero float');
-        self::assertSame(0.123, Unicode::toFloatOrNull('0.123'), 'start from zero');
-        self::assertSame(123.456, Unicode::toFloatOrNull('123.456'), 'multiple digits');
-        self::assertSame(1230.0, Unicode::toFloatOrNull('1.23e3'), 'scientific notation with e');
-        self::assertSame(1230.0, Unicode::toFloatOrNull('1.23E3'), 'scientific notation with E');
-        self::assertSame(-1230.0, Unicode::toFloatOrNull('-1.23e3'), 'scientific notation as negative');
-        self::assertSame(1230.0, Unicode::toFloatOrNull('1.23e+3'), 'with +e');
-        self::assertSame(1230.0, Unicode::toFloatOrNull('1.23E+3'), 'with +E');
-        self::assertSame(0.012, Unicode::toFloatOrNull('1.2e-2'), 'with -e');
-        self::assertSame(0.012, Unicode::toFloatOrNull('1.2E-2'), 'with -E');
-        self::assertSame(1.234, Unicode::toFloatOrNull('123.4E-2'), 'scientific notation irregular');
-        self::assertNull(Unicode::toFloatOrNull('1e+20'), 'overflowing +e notation');
-        self::assertNull(Unicode::toFloatOrNull('1e-20'), 'overflowing -e notation');
-        self::assertNull(Unicode::toFloatOrNull('nan'), 'Lowercase nan is not NAN');
-        self::assertNan(Unicode::toFloatOrNull('NAN'), 'NAN');
-        self::assertNan(Unicode::toFloatOrNull('-NAN'), 'Negative NAN');
-        self::assertNan(Unicode::toFloatOrNull('NaN'), 'NaN from Javascript');
-        self::assertNan(Unicode::toFloatOrNull('-NaN'), 'Negative NaN');
-        self::assertNull(Unicode::toFloatOrNull('inf'), 'Lowercase inf is not INF');
-        self::assertInfinite(Unicode::toFloatOrNull('INF'), 'upper case INF');
-        self::assertInfinite(Unicode::toFloatOrNull('Infinity'), 'INF from Javascript');
-        self::assertNull(Unicode::toFloatOrNull(''), 'empty');
-        self::assertNull(Unicode::toFloatOrNull('a1'), 'invalid string');
-        self::assertNull(Unicode::toFloatOrNull('01.1'), 'zero start');
-        self::assertNull(Unicode::toFloatOrNull('.1'), 'dot start');
-        self::assertNull(Unicode::toFloatOrNull('1.' . str_repeat('1', 100)), 'overflow');
+        $this->assertSame(1.0, self::$ref::toFloatOrNull('1'), 'positive int');
+        $this->assertSame(-1.0, self::$ref::toFloatOrNull('-1'), 'negative int');
+        $this->assertSame(1.23, self::$ref::toFloatOrNull('1.23'), 'positive float');
+        $this->assertSame(-1.23, self::$ref::toFloatOrNull('-1.23'), 'negative float');
+        $this->assertSame(0.0, self::$ref::toFloatOrNull('0'), 'zero int');
+        $this->assertSame(0.0, self::$ref::toFloatOrNull('0.0'), 'zero float');
+        $this->assertSame(0.0, self::$ref::toFloatOrNull('-0'), 'negative zero int');
+        $this->assertSame(0.0, self::$ref::toFloatOrNull('-0.0'), 'negative zero float');
+        $this->assertSame(0.123, self::$ref::toFloatOrNull('0.123'), 'start from zero');
+        $this->assertSame(123.456, self::$ref::toFloatOrNull('123.456'), 'multiple digits');
+        $this->assertSame(1230.0, self::$ref::toFloatOrNull('1.23e3'), 'scientific notation with e');
+        $this->assertSame(1230.0, self::$ref::toFloatOrNull('1.23E3'), 'scientific notation with E');
+        $this->assertSame(-1230.0, self::$ref::toFloatOrNull('-1.23e3'), 'scientific notation as negative');
+        $this->assertSame(1230.0, self::$ref::toFloatOrNull('1.23e+3'), 'with +e');
+        $this->assertSame(1230.0, self::$ref::toFloatOrNull('1.23E+3'), 'with +E');
+        $this->assertSame(0.012, self::$ref::toFloatOrNull('1.2e-2'), 'with -e');
+        $this->assertSame(0.012, self::$ref::toFloatOrNull('1.2E-2'), 'with -E');
+        $this->assertSame(1.234, self::$ref::toFloatOrNull('123.4E-2'), 'scientific notation irregular');
+        self::assertNull(self::$ref::toFloatOrNull('1e+20'), 'overflowing +e notation');
+        self::assertNull(self::$ref::toFloatOrNull('1e-20'), 'overflowing -e notation');
+        self::assertNull(self::$ref::toFloatOrNull('nan'), 'Lowercase nan is not NAN');
+        self::assertNan(self::$ref::toFloatOrNull('NAN'), 'NAN');
+        self::assertNan(self::$ref::toFloatOrNull('-NAN'), 'Negative NAN');
+        self::assertNan(self::$ref::toFloatOrNull('NaN'), 'NaN from Javascript');
+        self::assertNan(self::$ref::toFloatOrNull('-NaN'), 'Negative NaN');
+        self::assertNull(self::$ref::toFloatOrNull('inf'), 'Lowercase inf is not INF');
+        self::assertInfinite(self::$ref::toFloatOrNull('INF'), 'upper case INF');
+        self::assertInfinite(self::$ref::toFloatOrNull('Infinity'), 'INF from Javascript');
+        self::assertNull(self::$ref::toFloatOrNull(''), 'empty');
+        self::assertNull(self::$ref::toFloatOrNull('a1'), 'invalid string');
+        self::assertNull(self::$ref::toFloatOrNull('01.1'), 'zero start');
+        self::assertNull(self::$ref::toFloatOrNull('.1'), 'dot start');
+        self::assertNull(self::$ref::toFloatOrNull('1.' . str_repeat('1', 100)), 'overflow');
     }
 
     public function test_toInt(): void
     {
-        self::assertSame(123, Unicode::toIntOrNull('123'));
+        $this->assertSame(123, self::$ref::toIntOrNull('123'));
     }
 
     public function test_toInt_blank(): void
     {
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('"" is not a valid integer.');
-        Unicode::toInt('');
+        self::$ref::toInt('');
     }
 
     public function test_toInt_float(): void
     {
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('"1.0" is not a valid integer.');
-        Unicode::toInt('1.0');
+        self::$ref::toInt('1.0');
     }
 
     public function test_toInt_with_e_notation(): void
     {
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('"1.23E+3" is not a valid integer.');
-        Unicode::toInt('1.23E+3');
+        self::$ref::toInt('1.23E+3');
     }
 
     public function test_toInt_float_with_e_notation(): void
     {
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('"1.0e-2" is not a valid integer.');
-        Unicode::toInt('1.0e-2');
+        self::$ref::toInt('1.0e-2');
     }
 
     public function test_toInt_zero_start(): void
     {
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('"01" is not a valid integer.');
-        Unicode::toInt('01');
+        self::$ref::toInt('01');
     }
 
     public function test_toInt_not_compatible(): void
     {
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('"a1" is not a valid integer.');
-        Unicode::toInt('a1');
+        self::$ref::toInt('a1');
     }
 
     public function test_toInt_positive_overflow(): void
     {
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('"11111111111111111111" is not a valid integer.');
-        Unicode::toInt(str_repeat('1', 20));
+        self::$ref::toInt(str_repeat('1', 20));
     }
 
     public function test_toInt_negative_overflow(): void
     {
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('"-11111111111111111111" is not a valid integer.');
-        Unicode::toInt('-' . str_repeat('1', 20));
+        self::$ref::toInt('-' . str_repeat('1', 20));
     }
 
     public function test_toIntOrNull(): void
     {
-        self::assertSame(123, Unicode::toIntOrNull('123'));
-        self::assertNull(Unicode::toIntOrNull(str_repeat('1', 20)), 'overflow positive');
-        self::assertNull(Unicode::toIntOrNull('-' . str_repeat('1', 20)), 'overflow positive');
-        self::assertNull(Unicode::toIntOrNull(''), 'blank');
-        self::assertNull(Unicode::toIntOrNull('1.0'), 'float value');
-        self::assertNull(Unicode::toIntOrNull('1.0e-2'), 'float value with e notation');
-        self::assertNull(Unicode::toIntOrNull('a1'), 'invalid string');
-        self::assertNull(Unicode::toIntOrNull('01'), 'zero start');
+        $this->assertSame(123, self::$ref::toIntOrNull('123'));
+        self::assertNull(self::$ref::toIntOrNull(str_repeat('1', 20)), 'overflow positive');
+        self::assertNull(self::$ref::toIntOrNull('-' . str_repeat('1', 20)), 'overflow positive');
+        self::assertNull(self::$ref::toIntOrNull(''), 'blank');
+        self::assertNull(self::$ref::toIntOrNull('1.0'), 'float value');
+        self::assertNull(self::$ref::toIntOrNull('1.0e-2'), 'float value with e notation');
+        self::assertNull(self::$ref::toIntOrNull('a1'), 'invalid string');
+        self::assertNull(self::$ref::toIntOrNull('01'), 'zero start');
     }
 
     public function test_toLowerCase(): void
     {
         // empty (nothing happens)
-        self::assertSame('', Unicode::toLowerCase(''));
+        $this->assertSame('', self::$ref::toLowerCase(''));
 
         // basic
-        self::assertSame('abc', Unicode::toLowerCase('ABC'));
+        $this->assertSame('abc', self::$ref::toLowerCase('ABC'));
 
         // utf-8 chars (nothing happens)
-        self::assertSame('あいう', Unicode::toLowerCase('あいう'));
+        $this->assertSame('あいう', self::$ref::toLowerCase('あいう'));
 
         // utf-8 special chars
-        self::assertSame('çği̇öşü', Unicode::toLowerCase('ÇĞİÖŞÜ'));
+        $this->assertSame('çği̇öşü', self::$ref::toLowerCase('ÇĞİÖŞÜ'));
 
         // grapheme (nothing happens)
-        self::assertSame('👨‍👨‍👧‍👦🏴󠁧󠁢󠁳󠁣󠁴󠁿', Unicode::toLowerCase('👨‍👨‍👧‍👦🏴󠁧󠁢󠁳󠁣󠁴󠁿'));
+        $this->assertSame('👨‍👨‍👧‍👦🏴󠁧󠁢󠁳󠁣󠁴󠁿', self::$ref::toLowerCase('👨‍👨‍👧‍👦🏴󠁧󠁢󠁳󠁣󠁴󠁿'));
     }
 
     public function test_toPascalCase(): void
     {
-        self::assertSame('A', Unicode::toPascalCase('a'));
-        self::assertSame('TestMe', Unicode::toPascalCase('test_me'));
-        self::assertSame('TestMe', Unicode::toPascalCase('test-me'));
-        self::assertSame('TestMe', Unicode::toPascalCase('test me'));
-        self::assertSame('TestMe', Unicode::toPascalCase('testMe'));
-        self::assertSame('TestMe', Unicode::toPascalCase('TestMe'));
-        self::assertSame('TestMe', Unicode::toPascalCase(' test_me '));
-        self::assertSame('TestMeNow!', Unicode::toPascalCase('test_me now-!'));
+        $this->assertSame('A', self::$ref::toPascalCase('a'));
+        $this->assertSame('TestMe', self::$ref::toPascalCase('test_me'));
+        $this->assertSame('TestMe', self::$ref::toPascalCase('test-me'));
+        $this->assertSame('TestMe', self::$ref::toPascalCase('test me'));
+        $this->assertSame('TestMe', self::$ref::toPascalCase('testMe'));
+        $this->assertSame('TestMe', self::$ref::toPascalCase('TestMe'));
+        $this->assertSame('TestMe', self::$ref::toPascalCase(' test_me '));
+        $this->assertSame('TestMeNow!', self::$ref::toPascalCase('test_me now-!'));
     }
 
     public function test_toSnakeCase(): void
     {
         // empty
-        self::assertSame('', Unicode::toSnakeCase(''));
+        $this->assertSame('', self::$ref::toSnakeCase(''));
 
         // no-change
-        self::assertSame('abc', Unicode::toSnakeCase('abc'));
+        $this->assertSame('abc', self::$ref::toSnakeCase('abc'));
 
         // case
-        self::assertSame('the_test_for_case', Unicode::toSnakeCase('the test for case'));
-        self::assertSame('the_test_for_case', Unicode::toSnakeCase('the-test-for-case'));
-        self::assertSame('the_test_for_case', Unicode::toSnakeCase('theTestForCase'));
-        self::assertSame('ttt', Unicode::toSnakeCase('TTT'));
-        self::assertSame('tt_t', Unicode::toSnakeCase('TtT'));
-        self::assertSame('tt_t', Unicode::toSnakeCase('TtT'));
-        self::assertSame('the__test', Unicode::toSnakeCase('the  test'));
-        self::assertSame('__test', Unicode::toSnakeCase('  test'));
-        self::assertSame("test\nabc", Unicode::toSnakeCase("test\nabc"));
-        self::assertSame('__test_test_test__', Unicode::toSnakeCase("--test_test-test__"));
+        $this->assertSame('the_test_for_case', self::$ref::toSnakeCase('the test for case'));
+        $this->assertSame('the_test_for_case', self::$ref::toSnakeCase('the-test-for-case'));
+        $this->assertSame('the_test_for_case', self::$ref::toSnakeCase('theTestForCase'));
+        $this->assertSame('ttt', self::$ref::toSnakeCase('TTT'));
+        $this->assertSame('tt_t', self::$ref::toSnakeCase('TtT'));
+        $this->assertSame('tt_t', self::$ref::toSnakeCase('TtT'));
+        $this->assertSame('the__test', self::$ref::toSnakeCase('the  test'));
+        $this->assertSame('__test', self::$ref::toSnakeCase('  test'));
+        $this->assertSame("test\nabc", self::$ref::toSnakeCase("test\nabc"));
+        $this->assertSame('__test_test_test__', self::$ref::toSnakeCase("--test_test-test__"));
     }
 
     public function test_toUpperCase(): void
     {
         // empty (nothing happens)
-        self::assertSame('', Unicode::toUpperCase(''));
+        $this->assertSame('', self::$ref::toUpperCase(''));
 
         // basic
-        self::assertSame('ABC', Unicode::toUpperCase('abc'));
+        $this->assertSame('ABC', self::$ref::toUpperCase('abc'));
 
         // utf-8 chars (nothing happens)
-        self::assertSame('あいう', Unicode::toUpperCase('あいう'));
+        $this->assertSame('あいう', self::$ref::toUpperCase('あいう'));
 
         // utf-8 special chars
-        self::assertSame('ÇĞİÖŞÜ', Unicode::toUpperCase('çği̇öşü'));
+        $this->assertSame('ÇĞİÖŞÜ', self::$ref::toUpperCase('çği̇öşü'));
 
         // grapheme (nothing happens)
-        self::assertSame('👨‍👨‍👧‍👦🏴󠁧󠁢󠁳󠁣󠁴󠁿', Unicode::toUpperCase('👨‍👨‍👧‍👦🏴󠁧󠁢󠁳󠁣󠁴󠁿'));
+        $this->assertSame('👨‍👨‍👧‍👦🏴󠁧󠁢󠁳󠁣󠁴󠁿', self::$ref::toUpperCase('👨‍👨‍👧‍👦🏴󠁧󠁢󠁳󠁣󠁴󠁿'));
     }
 
     public function test_trim(): void
     {
         // empty (nothing happens)
-        self::assertSame('', Unicode::trim(''));
+        $this->assertSame('', self::$ref::trim(''));
 
         // left only
-        self::assertSame('a', Unicode::trim("\ta"));
+        $this->assertSame('a', self::$ref::trim("\ta"));
 
         // right only
-        self::assertSame('a', Unicode::trim("a\t"));
+        $this->assertSame('a', self::$ref::trim("a\t"));
 
         // new line on both ends
-        self::assertSame('abc', Unicode::trim("\nabc\n"));
+        $this->assertSame('abc', self::$ref::trim("\nabc\n"));
 
         // tab and mixed line on both ends
-        self::assertSame('abc', Unicode::trim("\t\nabc\n\t"));
+        $this->assertSame('abc', self::$ref::trim("\t\nabc\n\t"));
 
         // tab and mixed line on both ends
-        self::assertSame('abc', Unicode::trim("\t\nabc\n\t"));
+        $this->assertSame('abc', self::$ref::trim("\t\nabc\n\t"));
 
         // multibyte spaces (https://3v4l.org/s16FF)
-        self::assertSame('abc', Unicode::trim("\u{2000}\u{2001}abc\u{2002}\u{2003}"));
+        $this->assertSame('abc', self::$ref::trim("\u{2000}\u{2001}abc\u{2002}\u{2003}"));
 
         // grapheme (nothing happens)
-        self::assertSame('👨‍👨‍👧‍👦🏴󠁧󠁢󠁳󠁣󠁴󠁿', Unicode::trim('👨‍👨‍👧‍👦🏴󠁧󠁢󠁳󠁣󠁴󠁿'));
+        $this->assertSame('👨‍👨‍👧‍👦🏴󠁧󠁢󠁳󠁣󠁴󠁿', self::$ref::trim('👨‍👨‍👧‍👦🏴󠁧󠁢󠁳󠁣󠁴󠁿'));
 
         // custom
-        self::assertSame('b', Unicode::trim('aba', 'a'));
+        $this->assertSame('b', self::$ref::trim('aba', 'a'));
 
         // custom empty
-        self::assertSame('a', Unicode::trim('a', ''));
+        $this->assertSame('a', self::$ref::trim('a', ''));
 
         // custom overrides delimiter
-        self::assertSame("\nb\n", Unicode::trim("a\nb\na", 'a'));
+        $this->assertSame("\nb\n", self::$ref::trim("a\nb\na", 'a'));
 
         // custom multiple
-        self::assertSame('b', Unicode::trim("_ab_a_", 'a_'));
+        $this->assertSame('b', self::$ref::trim("_ab_a_", 'a_'));
     }
 
     public function test_trimEnd(): void
     {
         // empty (nothing happens)
-        self::assertSame('', Unicode::trimEnd(''));
+        $this->assertSame('', self::$ref::trimEnd(''));
 
         // left only
-        self::assertSame("\ta", Unicode::trimEnd("\ta"));
+        $this->assertSame("\ta", self::$ref::trimEnd("\ta"));
 
         // right only
-        self::assertSame('a', Unicode::trimEnd("a\t"));
+        $this->assertSame('a', self::$ref::trimEnd("a\t"));
 
         // new line on both ends
-        self::assertSame("\nabc", Unicode::trimEnd("\nabc\n"));
+        $this->assertSame("\nabc", self::$ref::trimEnd("\nabc\n"));
 
         // tab and mixed line on both ends
-        self::assertSame('abc', Unicode::trimEnd("abc\n\t"));
+        $this->assertSame('abc', self::$ref::trimEnd("abc\n\t"));
 
         // multibyte spaces (https://3v4l.org/s16FF)
-        self::assertSame(' abc', Unicode::trimEnd(" abc\n\t\u{0009}\u{2028}\u{2029}\v "));
+        $this->assertSame(' abc', self::$ref::trimEnd(" abc\n\t\u{0009}\u{2028}\u{2029}\v "));
 
         // grapheme (nothing happens)
-        self::assertSame('👨‍👨‍👧‍👦🏴󠁧󠁢󠁳󠁣󠁴󠁿', Unicode::trimEnd('👨‍👨‍👧‍👦🏴󠁧󠁢󠁳󠁣󠁴󠁿'));
+        $this->assertSame('👨‍👨‍👧‍👦🏴󠁧󠁢󠁳󠁣󠁴󠁿', self::$ref::trimEnd('👨‍👨‍👧‍👦🏴󠁧󠁢󠁳󠁣󠁴󠁿'));
 
         // custom
-        self::assertSame('ab', Unicode::trimEnd('aba', 'a'));
+        $this->assertSame('ab', self::$ref::trimEnd('aba', 'a'));
 
         // custom empty
-        self::assertSame('a', Unicode::trimEnd('a', ''));
+        $this->assertSame('a', self::$ref::trimEnd('a', ''));
 
         // custom overrides delimiter
-        self::assertSame("ab\n", Unicode::trimEnd("ab\na", 'a'));
+        $this->assertSame("ab\n", self::$ref::trimEnd("ab\na", 'a'));
 
         // custom multiple
-        self::assertSame('_ab', Unicode::trimEnd("_ab_a_", 'a_'));
+        $this->assertSame('_ab', self::$ref::trimEnd("_ab_a_", 'a_'));
     }
 
     public function test_trimStart(): void
     {
         // empty (nothing happens)
-        self::assertSame('', Unicode::trimStart(''));
+        $this->assertSame('', self::$ref::trimStart(''));
 
         // left only
-        self::assertSame("a", Unicode::trimStart("\ta"));
+        $this->assertSame("a", self::$ref::trimStart("\ta"));
 
         // right only
-        self::assertSame("a\t", Unicode::trimStart("a\t"));
+        $this->assertSame("a\t", self::$ref::trimStart("a\t"));
 
         // new line on both ends
-        self::assertSame("abc\n", Unicode::trimStart("\nabc\n"));
+        $this->assertSame("abc\n", self::$ref::trimStart("\nabc\n"));
 
         // tab and new line
-        self::assertSame('abc', Unicode::trimStart("\n\tabc"));
+        $this->assertSame('abc', self::$ref::trimStart("\n\tabc"));
 
         // multibyte spaces (https://3v4l.org/s16FF)
-        self::assertSame('abc ', Unicode::trimStart("\n\t\u{0009}\u{2028}\u{2029}\v abc "));
+        $this->assertSame('abc ', self::$ref::trimStart("\n\t\u{0009}\u{2028}\u{2029}\v abc "));
 
         // grapheme (nothing happens)
-        self::assertSame('👨‍👨‍👧‍👦🏴󠁧󠁢󠁳󠁣󠁴󠁿', Unicode::trimStart('👨‍👨‍👧‍👦🏴󠁧󠁢󠁳󠁣󠁴󠁿'));
+        $this->assertSame('👨‍👨‍👧‍👦🏴󠁧󠁢󠁳󠁣󠁴󠁿', self::$ref::trimStart('👨‍👨‍👧‍👦🏴󠁧󠁢󠁳󠁣󠁴󠁿'));
 
         // custom
-        self::assertSame('ba', Unicode::trimStart('aba', 'a'));
+        $this->assertSame('ba', self::$ref::trimStart('aba', 'a'));
 
         // custom empty
-        self::assertSame('a', Unicode::trimStart('a', ''));
+        $this->assertSame('a', self::$ref::trimStart('a', ''));
 
         // custom overrides delimiter
-        self::assertSame("\nba", Unicode::trimStart("a\nba", 'a'));
+        $this->assertSame("\nba", self::$ref::trimStart("a\nba", 'a'));
 
         // custom multiple
-        self::assertSame('b_a_', Unicode::trimStart("_ab_a_", 'a_'));
+        $this->assertSame('b_a_', self::$ref::trimStart("_ab_a_", 'a_'));
     }
 
     public function test_withPrefix(): void
     {
         // empty string always adds
-        self::assertSame('foo', Unicode::withPrefix('', 'foo'));
+        $this->assertSame('foo', self::$ref::withPrefix('', 'foo'));
 
         // empty start does nothing
-        self::assertSame('foo', Unicode::withPrefix('foo', ''));
+        $this->assertSame('foo', self::$ref::withPrefix('foo', ''));
 
         // has match
-        self::assertSame('foo', Unicode::withPrefix('foo', 'f'));
+        $this->assertSame('foo', self::$ref::withPrefix('foo', 'f'));
 
         // no match
-        self::assertSame('_foo', Unicode::withPrefix('foo', '_'));
+        $this->assertSame('_foo', self::$ref::withPrefix('foo', '_'));
 
         // partial matching doesn't count
-        self::assertSame('___foo', Unicode::withPrefix('_foo', '__'));
+        $this->assertSame('___foo', self::$ref::withPrefix('_foo', '__'));
 
         // repeats handled properly
-        self::assertSame('__foo', Unicode::withPrefix('__foo', '_'));
+        $this->assertSame('__foo', self::$ref::withPrefix('__foo', '_'));
 
         // try escape chars
-        self::assertSame('\s foo', Unicode::withPrefix(' foo', "\s"));
+        $this->assertSame('\s foo', self::$ref::withPrefix(' foo', "\s"));
 
         // new line
-        self::assertSame("\n foo", Unicode::withPrefix(' foo', "\n"));
+        $this->assertSame("\n foo", self::$ref::withPrefix(' foo', "\n"));
 
         // slashes
-        self::assertSame('/foo', Unicode::withPrefix('foo', '/'));
+        $this->assertSame('/foo', self::$ref::withPrefix('foo', '/'));
 
         // utf8 match
-        self::assertSame('あい', Unicode::withPrefix('あい', 'あ'));
+        $this->assertSame('あい', self::$ref::withPrefix('あい', 'あ'));
 
         // utf8 no match
-        self::assertSame('うえあい', Unicode::withPrefix('あい', 'うえ'));
+        $this->assertSame('うえあい', self::$ref::withPrefix('あい', 'うえ'));
 
         // grapheme (treats combined grapheme as 1 whole character)
-        self::assertSame('👨👨‍👨‍👧‍👧', Unicode::withPrefix('👨‍👨‍👧‍👧', '👨'));
+        $this->assertSame('👨👨‍👨‍👧‍👧', self::$ref::withPrefix('👨‍👨‍👧‍👧', '👨'));
     }
 
     public function test_withSuffix(): void
     {
         // empty string always adds
-        self::assertSame('foo', Unicode::withSuffix('', 'foo'));
+        $this->assertSame('foo', self::$ref::withSuffix('', 'foo'));
 
         // empty start does nothing
-        self::assertSame('foo', Unicode::withSuffix('foo', ''));
+        $this->assertSame('foo', self::$ref::withSuffix('foo', ''));
 
         // has match
-        self::assertSame('foo', Unicode::withSuffix('foo', 'oo'));
+        $this->assertSame('foo', self::$ref::withSuffix('foo', 'oo'));
 
         // no match
-        self::assertSame('foo bar', Unicode::withSuffix('foo', ' bar'));
+        $this->assertSame('foo bar', self::$ref::withSuffix('foo', ' bar'));
 
         // partial matching doesn't count
-        self::assertSame('foo___', Unicode::withSuffix('foo_', '__'));
+        $this->assertSame('foo___', self::$ref::withSuffix('foo_', '__'));
 
         // repeats handled properly
-        self::assertSame('foo__', Unicode::withSuffix('foo__', '_'));
+        $this->assertSame('foo__', self::$ref::withSuffix('foo__', '_'));
 
         // try escape chars
-        self::assertSame('foo \s', Unicode::withSuffix('foo ', "\s"));
+        $this->assertSame('foo \s', self::$ref::withSuffix('foo ', "\s"));
 
         // new line
-        self::assertSame("foo \n", Unicode::withSuffix('foo ', "\n"));
+        $this->assertSame("foo \n", self::$ref::withSuffix('foo ', "\n"));
 
         // slashes
-        self::assertSame('foo/', Unicode::withSuffix('foo', '/'));
+        $this->assertSame('foo/', self::$ref::withSuffix('foo', '/'));
 
         // utf8 match
-        self::assertSame('あい', Unicode::withSuffix('あい', 'い'));
+        $this->assertSame('あい', self::$ref::withSuffix('あい', 'い'));
 
         // utf8 no match
-        self::assertSame('あいうえ', Unicode::withSuffix('あい', 'うえ'));
+        $this->assertSame('あいうえ', self::$ref::withSuffix('あい', 'うえ'));
 
         // grapheme (treats combined grapheme as 1 whole character)
-        self::assertSame('👨‍👨‍👧‍👧‍👧‍', Unicode::withSuffix('👨‍👨‍👧‍👧‍', '👧‍'));
+        $this->assertSame('👨‍👨‍👧‍👧‍👧‍', self::$ref::withSuffix('👨‍👨‍👧‍👧‍', '👧‍'));
     }
 
     public function test_wrap(): void
     {
         // blanks
-        self::assertSame('', Unicode::wrap('', '', ''));
+        $this->assertSame('', self::$ref::wrap('', '', ''));
 
         // simple case
-        self::assertSame('[a]', Unicode::wrap('a', '[', ']'));
+        $this->assertSame('[a]', self::$ref::wrap('a', '[', ']'));
 
         // multibyte
-        self::assertSame('１a２', Unicode::wrap('a', '１', '２'));
+        $this->assertSame('１a２', self::$ref::wrap('a', '１', '２'));
 
         // grapheme
-        self::assertSame('👨‍👨‍👧‍a🏴󠁧󠁢󠁳󠁣󠁴󠁿', Unicode::wrap('a', '👨‍👨‍👧‍', '🏴󠁧󠁢󠁳󠁣󠁴󠁿'));
+        $this->assertSame('👨‍👨‍👧‍a🏴󠁧󠁢󠁳󠁣󠁴󠁿', self::$ref::wrap('a', '👨‍👨‍👧‍', '🏴󠁧󠁢󠁳󠁣󠁴󠁿'));
     }
 }

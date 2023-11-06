@@ -132,6 +132,7 @@ class StringBuilderTest extends BaseTestCase
         self::assertFalse($sb->contains('baz'));
         self::assertTrue($sb->contains('foo'));
         self::assertTrue($sb->contains(''));
+        self::assertFalse($sb->contains('  '));
     }
 
     public function test_containsAll(): void

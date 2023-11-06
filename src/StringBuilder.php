@@ -177,7 +177,7 @@ class StringBuilder implements Stringable
      */
     public function contains(string $needle): bool
     {
-        return Unicode::contains($this->value, $needle);
+        return static::$ref::contains($this->value, $needle);
     }
 
     /**
@@ -186,7 +186,7 @@ class StringBuilder implements Stringable
      */
     public function containsAll(array $needles): bool
     {
-        return Unicode::containsAll($this->value, $needles);
+        return static::$ref::containsAll($this->value, $needles);
     }
 
     /**
@@ -195,7 +195,7 @@ class StringBuilder implements Stringable
      */
     public function containsAny(array $needles): bool
     {
-        return Unicode::containsAny($this->value, $needles);
+        return static::$ref::containsAny($this->value, $needles);
     }
 
     /**
@@ -204,7 +204,7 @@ class StringBuilder implements Stringable
      */
     public function containsPattern(string $pattern): bool
     {
-        return Unicode::containsPattern($this->value, $pattern);
+        return static::$ref::containsPattern($this->value, $pattern);
     }
     /**
      * @param int $position

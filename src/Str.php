@@ -382,7 +382,7 @@ class Str
      * Example:
      * ```php
      * Str::contains('Foo bar', 'bar'); // true
-     * Str::contains('👨‍👨‍👧‍👧‍', '👨'); // false
+     * Str::contains('👨‍👨‍👧‍👧‍', '👨'); // true
      * Str::contains('a', ''); // true
      * Str::contains('', ''); // true
      * ```
