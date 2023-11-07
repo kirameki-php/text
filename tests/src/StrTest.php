@@ -3,12 +3,8 @@
 namespace Tests\Kirameki\Text;
 
 use Kirameki\Core\Testing\TestCase;
-use Kirameki\Text\Exceptions\NotFoundException;
 use Kirameki\Text\Str;
-use Kirameki\Text\Unicode;
-use function dump;
 use function strlen;
-use function substr;
 
 class StrTest extends TestCase
 {

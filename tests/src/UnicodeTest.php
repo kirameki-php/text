@@ -2,7 +2,8 @@
 
 namespace Tests\Kirameki\Text;
 
-use Error;
+use IntlException;
+use Kirameki\Core\Testing\TestCase;
 use Kirameki\Text\Unicode;
 use PHPUnit\Framework\TestStatus\Warning;
 use RuntimeException;
@@ -364,47 +365,46 @@ class UnicodeTest extends TestCase
 
     public function test_containsAny(): void
     {
-        self::assertTrue(self::$ref::containsAny('', []), 'blank and empty substrings');
-        self::assertTrue(self::$ref::containsAny('abcde', []), 'empty substrings');
-        self::assertTrue(self::$ref::containsAny('', ['']), 'blank match blank');
-        self::assertTrue(self::$ref::containsAny('abcde', ['']), 'blank matchs anything');
-        self::assertTrue(self::$ref::containsAny('abcde', ['a', 'z']), 'one match of many (first one matched)');
-        self::assertTrue(self::$ref::containsAny('abcde', ['z', 'a']), 'one match of many (last one matched)');
-        self::assertTrue(self::$ref::containsAny('abcde', ['a']), 'match single');
-        self::assertFalse(self::$ref::containsAny('abcde', ['z']), 'no match single');
-        self::assertFalse(self::$ref::containsAny('abcde', ['y', 'z']), 'no match all');
+        $this->assertTrue(self::$ref::containsAny('', []), 'blank and empty substrings');
+        $this->assertTrue(self::$ref::containsAny('abcde', []), 'empty substrings');
+        $this->assertTrue(self::$ref::containsAny('', ['']), 'blank match blank');
+        $this->assertTrue(self::$ref::containsAny('abcde', ['']), 'blank matchs anything');
+        $this->assertTrue(self::$ref::containsAny('abcde', ['a', 'z']), 'one match of many (first one matched)');
+        $this->assertTrue(self::$ref::containsAny('abcde', ['z', 'a']), 'one match of many (last one matched)');
+        $this->assertTrue(self::$ref::containsAny('abcde', ['a']), 'match single');
+        $this->assertFalse(self::$ref::containsAny('abcde', ['z']), 'no match single');
+        $this->assertFalse(self::$ref::containsAny('abcde', ['y', 'z']), 'no match all');
     }
 
     public function test_containsNone(): void
     {
-        self::assertTrue(self::$ref::containsNone('', []), 'blank and empty substrings');
-        self::assertTrue(self::$ref::containsNone('abcde', []), 'empty substrings');
-        self::assertFalse(self::$ref::containsNone('', ['']), 'blank match blank');
-        self::assertFalse(self::$ref::containsNone('abcde', ['']), 'blank matchs anything');
-        self::assertFalse(self::$ref::containsNone('abcde', ['a', 'z']), 'one match of many (first one matched)');
-        self::assertFalse(self::$ref::containsNone('abcde', ['z', 'a']), 'one match of many (last one matched)');
-        self::assertFalse(self::$ref::containsNone('abcde', ['a']), 'match single');
-        self::assertTrue(self::$ref::containsNone('abcde', ['z']), 'no match single');
-        self::assertTrue(self::$ref::containsNone('abcde', ['y', 'z']), 'no match all');
+        $this->assertTrue(self::$ref::containsNone('', []), 'blank and empty substrings');
+        $this->assertTrue(self::$ref::containsNone('abcde', []), 'empty substrings');
+        $this->assertFalse(self::$ref::containsNone('', ['']), 'blank match blank');
+        $this->assertFalse(self::$ref::containsNone('abcde', ['']), 'blank matchs anything');
+        $this->assertFalse(self::$ref::containsNone('abcde', ['a', 'z']), 'one match of many (first one matched)');
+        $this->assertFalse(self::$ref::containsNone('abcde', ['z', 'a']), 'one match of many (last one matched)');
+        $this->assertFalse(self::$ref::containsNone('abcde', ['a']), 'match single');
+        $this->assertTrue(self::$ref::containsNone('abcde', ['z']), 'no match single');
+        $this->assertTrue(self::$ref::containsNone('abcde', ['y', 'z']), 'no match all');
     }
 
     public function test_containsPattern(): void
     {
-        self::assertTrue(self::$ref::containsPattern('abc', '/b/'));
-        self::assertTrue(self::$ref::containsPattern('abc', '/ab/'));
-        self::assertTrue(self::$ref::containsPattern('abc', '/abc/'));
-        self::assertTrue(self::$ref::containsPattern('ABC', '/abc/i'));
-        self::assertTrue(self::$ref::containsPattern('aaaz', '/a{3}/'));
-        self::assertTrue(self::$ref::containsPattern('ABC1', '/[A-z\d]+/'));
-        self::assertTrue(self::$ref::containsPattern('ABC1]', '/\d]$/'));
-        self::assertFalse(self::$ref::containsPattern('AB1C', '/\d]$/'));
+        $this->assertTrue(self::$ref::containsPattern('abc', '/b/'));
+        $this->assertTrue(self::$ref::containsPattern('abc', '/ab/'));
+        $this->assertTrue(self::$ref::containsPattern('abc', '/abc/'));
+        $this->assertTrue(self::$ref::containsPattern('ABC', '/abc/i'));
+        $this->assertTrue(self::$ref::containsPattern('aaaz', '/a{3}/'));
+        $this->assertTrue(self::$ref::containsPattern('ABC1', '/[A-z\d]+/'));
+        $this->assertTrue(self::$ref::containsPattern('ABC1]', '/\d]$/'));
+        $this->assertFalse(self::$ref::containsPattern('AB1C', '/\d]$/'));
     }
 
     public function test_containsPattern_warning_as_error(): void
     {
-        $this->expectExceptionMessage('preg_match(): Unknown modifier \'a\'');
-        $this->expectException(Error::class);
-        self::assertFalse(self::$ref::containsPattern('', '/a/a'));
+        $this->expectWarningMessage('preg_match(): Unknown modifier \'a\'');
+        $this->assertFalse(self::$ref::containsPattern('', '/a/a'));
     }
 
     public function test_count(): void
@@ -741,8 +741,8 @@ class UnicodeTest extends TestCase
 
     public function test_length_invalid_string(): void
     {
-        $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('Error converting input string to UTF-16: U_INVALID_CHAR_FOUND');
+        $this->expectExceptionMessage('Error converting input string to UTF-16');
+        $this->expectException(IntlException::class);
         self::$ref::length(substr('あ', 1));
     }
 
@@ -758,7 +758,6 @@ class UnicodeTest extends TestCase
 
     public function test_matchAll_without_slashes(): void
     {
-        $this->expectWarning();
         $this->expectWarningMessage('preg_match_all(): Delimiter must not be alphanumeric, backslash, or NUL');
         self::$ref::matchAll('abcabc', 'a');
     }
@@ -780,8 +779,7 @@ class UnicodeTest extends TestCase
 
     public function test_matchFirst_without_slashes(): void
     {
-        $this->expectException(Warning::class);
-        $this->expectExceptionMessage('preg_match(): Delimiter must not be alphanumeric, backslash, or NUL');
+        $this->expectWarningMessage('preg_match(): Delimiter must not be alphanumeric, backslash, or NUL');
         self::$ref::matchFirst('abcabc', 'a');
     }
 
@@ -797,6 +795,7 @@ class UnicodeTest extends TestCase
 
     public function test_matchFirstOrNull_without_slashes(): void
     {
+        $this->expectWarningMessage('preg_match(): Delimiter must not be alphanumeric, backslash, or NUL');
         self::$ref::matchFirstOrNull('abcabc', 'a');
     }
 
@@ -1122,7 +1121,8 @@ class UnicodeTest extends TestCase
 
     public function test_substring_invalid_input(): void
     {
-        $this->expectExceptionMessage('Error converting input string to UTF-16: U_INVALID_CHAR_FOUND');
+        $this->expectExceptionMessage('Error converting input string to UTF-16');
+        $this->expectException(IntlException::class);
         $this->assertSame('', self::$ref::substring(substr('あ', 1), 0, 2));
     }
 

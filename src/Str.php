@@ -2,6 +2,7 @@
 
 namespace Kirameki\Text;
 
+use Kirameki\Core\Exceptions\ErrorException;
 use Kirameki\Core\Exceptions\InvalidArgumentException;
 use LogicException;
 use RuntimeException;
@@ -520,9 +521,14 @@ class Str
     {
         $result = preg_match($pattern, $string);
 
-        Assert::integer($result);
+        if ($result !== false) {
+            return $result > 0;
+        }
 
-        return $result > 0;
+        throw ErrorException::fromErrorGetLast([
+            'string' => $string,
+            'pattern' => $pattern,
+        ]);
     }
 
     /**

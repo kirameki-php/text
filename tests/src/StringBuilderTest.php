@@ -2,11 +2,10 @@
 
 namespace Tests\Kirameki\Text;
 
-use Kirameki\Text\Exceptions\NotFoundException;
+use Kirameki\Core\Testing\TestCase;
 use Kirameki\Text\StringBuilder;
-use PHPUnit\Framework\TestCase as BaseTestCase;
 
-class StringBuilderTest extends BaseTestCase
+class StringBuilderTest extends TestCase
 {
     public function test_from(): void
     {
