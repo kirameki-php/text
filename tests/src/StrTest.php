@@ -18,146 +18,67 @@ class StrTest extends TestCase
 
     public function test_after(): void
     {
-        // match first
-        $this->assertSame('est', self::$ref::after('test', 't'));
-
-        // match last
-        $this->assertSame('', self::$ref::after('test1', '1'));
-
-        // match empty string
-        $this->assertSame('test', self::$ref::after('test', ''));
-
-        // no match
-        $this->assertSame('test', self::$ref::after('test', 'a'));
-
-        // multi byte
-        $this->assertSame('うえ', self::$ref::after('ああいうえ', 'い'));
-
-        // grapheme
-        $this->assertSame('def', self::$ref::after('abc🏴󠁧󠁢󠁳󠁣󠁴󠁿def', '🏴󠁧󠁢󠁳󠁣󠁴󠁿'));
-
-        // grapheme cluster
-        $this->assertSame('🏿', self::$ref::after('👋🏿', '👋'));
+        $this->assertSame('est', self::$ref::after('test', 't'), 'match first');
+        $this->assertSame('', self::$ref::after('test1', '1'), 'match last');
+        $this->assertSame('test', self::$ref::after('test', ''), 'match empty string');
+        $this->assertSame('test', self::$ref::after('test', 'a'), 'no match');
+        $this->assertSame('うえ', self::$ref::after('ああいうえ', 'い'), 'multi byte');
+        $this->assertSame('def', self::$ref::after('abc🏴󠁧󠁢󠁳󠁣󠁴󠁿def', '🏴󠁧󠁢󠁳󠁣󠁴󠁿'), 'grapheme');
+        $this->assertSame('🏿', self::$ref::after('👋🏿', '👋'), 'grapheme cluster');
     }
 
     public function test_afterLast(): void
     {
-        // match first (single occurrence)
-        $this->assertSame('bc', self::$ref::afterLast('abc', 'a'));
-
-        // match first (multiple occurrence)
-        $this->assertSame('1', self::$ref::afterLast('test1', 't'));
-
-        // match last
-        $this->assertSame('', self::$ref::afterLast('test1', '1'));
-
-        // should match the last string
-        $this->assertSame('Foo', self::$ref::afterLast('----Foo', '---'));
-
-        // match empty string
-        $this->assertSame('test', self::$ref::afterLast('test', ''));
-
-        // no match
-        $this->assertSame('test', self::$ref::afterLast('test', 'a'));
-
-        // multi byte
-        $this->assertSame('え', self::$ref::afterLast('ああいういえ', 'い'));
-
-        // grapheme
-        $this->assertSame('🏴󠁧󠁢󠁳󠁣󠁴󠁿f', self::$ref::afterLast('abc🏴󠁧󠁢󠁳󠁣󠁴󠁿d🏴󠁧󠁢󠁳󠁣󠁴󠁿e🏴󠁧󠁢󠁳󠁣󠁴󠁿f', 'e'));
-
-        // grapheme cluster
-        $this->assertSame('🏿', self::$ref::afterLast('👋🏿', '👋'));
+        $this->assertSame('bc', self::$ref::afterLast('abc', 'a'), 'match first (single occurrence)');
+        $this->assertSame('1', self::$ref::afterLast('test1', 't'), 'match first (multiple occurrence)');
+        $this->assertSame('', self::$ref::afterLast('test1', '1'), 'match last');
+        $this->assertSame('Foo', self::$ref::afterLast('----Foo', '---'), 'should match the last string');
+        $this->assertSame('test', self::$ref::afterLast('test', ''), 'match empty string');
+        $this->assertSame('test', self::$ref::afterLast('test', 'a'), 'no match');
+        $this->assertSame('え', self::$ref::afterLast('ああいういえ', 'い'), 'multi byte');
+        $this->assertSame('🏴󠁧󠁢󠁳󠁣󠁴󠁿f', self::$ref::afterLast('abc🏴󠁧󠁢󠁳󠁣󠁴󠁿d🏴󠁧󠁢󠁳󠁣󠁴󠁿e🏴󠁧󠁢󠁳󠁣󠁴󠁿f', 'e'), 'grapheme');
+        $this->assertSame('🏿', self::$ref::afterLast('👋🏿', '👋'), 'grapheme cluster');
     }
 
     public function test_before(): void
     {
-        // match first (single occurrence)
-        $this->assertSame('a', self::$ref::before('abc', 'b'));
-
-        // match first (multiple occurrence)
-        $this->assertSame('a', self::$ref::before('abc-abc', 'b'));
-
-        // match last
-        $this->assertSame('test', self::$ref::before('test1', '1'));
-
-        // match multiple chars
-        $this->assertSame('test', self::$ref::before('test123', '12'));
-
-        // match empty string
-        $this->assertSame('test', self::$ref::before('test', ''));
-
-        // no match
-        $this->assertSame('test', self::$ref::before('test', 'a'));
-
-        // multi byte
-        $this->assertSame('ああ', self::$ref::before('ああいういえ', 'い'));
-
-        // grapheme
-        $this->assertSame('abc', self::$ref::before('abc🏴󠁧󠁢󠁳󠁣󠁴󠁿d🏴󠁧󠁢󠁳󠁣󠁴󠁿e🏴󠁧󠁢󠁳󠁣󠁴󠁿f', '🏴󠁧󠁢󠁳󠁣󠁴󠁿'));
-        $this->assertSame('abc🏴󠁧󠁢󠁳󠁣󠁴󠁿d🏴󠁧󠁢󠁳󠁣󠁴󠁿', self::$ref::before('abc🏴󠁧󠁢󠁳󠁣󠁴󠁿d🏴󠁧󠁢󠁳󠁣󠁴󠁿e🏴󠁧󠁢󠁳󠁣󠁴󠁿f', 'e'));
-
-        // grapheme cluster
-        $this->assertSame('👋', self::$ref::before('👋🏿', '🏿'));
+        $this->assertSame('a', self::$ref::before('abc', 'b'), 'match first (single occurrence)');
+        $this->assertSame('a', self::$ref::before('abc-abc', 'b'), 'match first (multiple occurrence)');
+        $this->assertSame('test', self::$ref::before('test1', '1'), 'match last');
+        $this->assertSame('test', self::$ref::before('test123', '12'), 'match multiple chars');
+        $this->assertSame('test', self::$ref::before('test', ''), 'match empty string');
+        $this->assertSame('test', self::$ref::before('test', 'a'), 'no match');
+        $this->assertSame('ああ', self::$ref::before('ああいういえ', 'い'), 'multi byte');
+        $this->assertSame('abc', self::$ref::before('abc🏴󠁧󠁢󠁳󠁣󠁴󠁿d🏴󠁧󠁢󠁳󠁣󠁴󠁿e🏴󠁧󠁢󠁳󠁣󠁴󠁿f', '🏴󠁧󠁢󠁳󠁣󠁴󠁿'), 'grapheme substring');
+        $this->assertSame('abc🏴󠁧󠁢󠁳󠁣󠁴󠁿d🏴󠁧󠁢󠁳󠁣󠁴󠁿', self::$ref::before('abc🏴󠁧󠁢󠁳󠁣󠁴󠁿d🏴󠁧󠁢󠁳󠁣󠁴󠁿e🏴󠁧󠁢󠁳󠁣󠁴󠁿f', 'e'), 'grapheme string');
+        $this->assertSame('👋', self::$ref::before('👋🏿', '🏿'), 'substring is grapheme codepoint');
     }
 
     public function test_beforeLast(): void
     {
-        // match first (single occurrence)
-        $this->assertSame('a', self::$ref::beforeLast('abc', 'b'));
-
-        // match first (multiple occurrence)
-        $this->assertSame('abc-a', self::$ref::beforeLast('abc-abc', 'b'));
-
-        // match last
-        $this->assertSame('test', self::$ref::beforeLast('test1', '1'));
-
-        // match empty string
-        $this->assertSame('test', self::$ref::beforeLast('test', ''));
-
-        // no match
-        $this->assertSame('test', self::$ref::beforeLast('test', 'a'));
-
-        // multi byte
-        $this->assertSame('ああいう', self::$ref::beforeLast('ああいういえ', 'い'));
-
-        // grapheme
-        $this->assertSame('abc🏴󠁧󠁢󠁳󠁣󠁴󠁿d🏴󠁧󠁢󠁳󠁣󠁴󠁿e', self::$ref::beforeLast('abc🏴󠁧󠁢󠁳󠁣󠁴󠁿d🏴󠁧󠁢󠁳󠁣󠁴󠁿e🏴󠁧󠁢󠁳󠁣󠁴󠁿f', '🏴󠁧󠁢󠁳󠁣󠁴󠁿'));
-
-        // grapheme cluster
-        $this->assertSame('👋', self::$ref::beforeLast('👋🏿', '🏿'));
+        $this->assertSame('a', self::$ref::beforeLast('abc', 'b'), 'match first (single occurrence)');
+        $this->assertSame('abc-a', self::$ref::beforeLast('abc-abc', 'b'), 'match first (multiple occurrence)');
+        $this->assertSame('test', self::$ref::beforeLast('test1', '1'), 'match last');
+        $this->assertSame('test', self::$ref::beforeLast('test', ''), 'match empty string');
+        $this->assertSame('test', self::$ref::beforeLast('test', 'a'), 'no match');
+        $this->assertSame('ああいう', self::$ref::beforeLast('ああいういえ', 'い'), 'multi byte');
+        $this->assertSame('abc🏴󠁧󠁢󠁳󠁣󠁴󠁿d🏴󠁧󠁢󠁳󠁣󠁴󠁿e', self::$ref::beforeLast('abc🏴󠁧󠁢󠁳󠁣󠁴󠁿d🏴󠁧󠁢󠁳󠁣󠁴󠁿e🏴󠁧󠁢󠁳󠁣󠁴󠁿f', '🏴󠁧󠁢󠁳󠁣󠁴󠁿'), 'substring is grapheme');
+        $this->assertSame('👋', self::$ref::beforeLast('👋🏿', '🏿'), 'substring is grapheme codepoint');
     }
 
     public function test_between(): void
     {
-        // basic
-        $this->assertSame('1', self::$ref::between('test(1)', '(', ')'));
-
-        // edge
-        $this->assertSame('', self::$ref::between('()', '(', ')'));
-        $this->assertSame('1', self::$ref::between('(1)', '(', ')'));
-
-        // missing from
-        $this->assertSame('test)', self::$ref::between('test)', '(', ')'));
-
-        // missing to
-        $this->assertSame('test(', self::$ref::between('test(', '(', ')'));
-
-        // nested
-        $this->assertSame('test(1', self::$ref::between('(test(1))', '(', ')'));
-        $this->assertSame('1', self::$ref::between('(1) to (2)', '(', ')'));
-
-        // multi char
-        $this->assertSame('_ab_', self::$ref::between('ab_ab_ba_ba', 'ab', 'ba'));
-
-        // utf8
-        $this->assertSame('い', self::$ref::between('あいういう', 'あ', 'う'));
-
-        // grapheme
-        $this->assertSame('😃', self::$ref::between('👋🏿😃👋🏿😃👋🏿', '👋🏿', '👋🏿'));
-
-        // grapheme between codepoints
-        $this->assertSame('', self::$ref::between('👋🏿', '👋', '🏿'));
+        $this->assertSame('1', self::$ref::between('test(1)', '(', ')'), 'basic');
+        $this->assertSame('', self::$ref::between('()', '(', ')'), 'match edge: nothing in between');
+        $this->assertSame('1', self::$ref::between('(1)', '(', ')'), 'match edge: char in between');
+        $this->assertSame('test)', self::$ref::between('test)', '(', ')'), 'missing from');
+        $this->assertSame('test(', self::$ref::between('test(', '(', ')'), 'missing to');
+        $this->assertSame('test(1', self::$ref::between('(test(1))', '(', ')'), 'nested');
+        $this->assertSame('1', self::$ref::between('(1) to (2)', '(', ')'), 'multi occurrence');
+        $this->assertSame('_ab_', self::$ref::between('ab_ab_ba_ba', 'ab', 'ba'), 'multi char');
+        $this->assertSame('い', self::$ref::between('あいういう', 'あ', 'う'), 'utf8');
+        $this->assertSame('😃', self::$ref::between('👋🏿😃👋🏿😃👋🏿', '👋🏿', '👋🏿'), 'substring is grapheme');
+        $this->assertSame('', self::$ref::between('👋🏿', '👋', '🏿'), 'grapheme between codepoints');
     }
 
     public function test_between_empty_from(): void

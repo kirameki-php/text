@@ -8,8 +8,7 @@
     "ext-bcmath": "*",
     "ext-intl": "*",
     "ext-mbstring": "*",
-    "kirameki/core": "dev-main",
-    "webmozart/assert": "~1.11.0"
+    "kirameki/core": "dev-main"
   },
   "require-dev": {
     "kirameki/dumper": "dev-main",

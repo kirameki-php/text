@@ -3,11 +3,10 @@
 namespace Tests\Kirameki\Text;
 
 use IntlException;
+use Kirameki\Core\Exceptions\InvalidArgumentException;
 use Kirameki\Core\Testing\TestCase;
 use Kirameki\Text\Unicode;
-use PHPUnit\Framework\TestStatus\Warning;
 use RuntimeException;
-use Webmozart\Assert\InvalidArgumentException;
 use function str_repeat;
 use function substr;
 
@@ -235,34 +234,17 @@ class UnicodeTest extends TestCase
 
     public function test_betweenLast(): void
     {
-        // basic
-        $this->assertSame('1', self::$ref::betweenLast('test(1)', '(', ')'));
-
-        // edge
-        $this->assertSame('', self::$ref::betweenLast('()', '(', ')'));
-        $this->assertSame('1', self::$ref::betweenLast('(1)', '(', ')'));
-
-        // missing from
-        $this->assertSame('test)', self::$ref::between('test)', '(', ')'));
-
-        // missing to
-        $this->assertSame('test(', self::$ref::between('test(', '(', ')'));
-
-        // nested
-        $this->assertSame('1)', self::$ref::betweenLast('(test(1))', '(', ')'));
-        $this->assertSame('2', self::$ref::betweenLast('(1) to (2)', '(', ')'));
-
-        // multi char
-        $this->assertSame('_ba_', self::$ref::betweenLast('ab_ab_ba_ba', 'ab', 'ba'));
-
-        // utf8
-        $this->assertSame('いうい', self::$ref::betweenLast('あいういう', 'あ', 'う'));
-
-        // grapheme
-        $this->assertSame('🥹', self::$ref::betweenLast('👋🏿😃👋🏿🥹👋', '👋🏿', '👋'));
-
-        // grapheme between codepoints
-        $this->assertSame('👋🏿', self::$ref::between('👋🏿', '👋', '🏿'));
+        $this->assertSame('1', self::$ref::betweenLast('test(1)', '(', ')'), 'basic');
+        $this->assertSame('', self::$ref::betweenLast('()', '(', ')'), 'edge no char in between');
+        $this->assertSame('1', self::$ref::betweenLast('(1)', '(', ')'), 'edge with char in between');
+        $this->assertSame('test)', self::$ref::between('test)', '(', ')'), 'missing from');
+        $this->assertSame('test(', self::$ref::between('test(', '(', ')'), 'missing to');
+        $this->assertSame('1)', self::$ref::betweenLast('(test(1))', '(', ')'), 'nested');
+        $this->assertSame('2', self::$ref::betweenLast('(1) to (2)', '(', ')'), 'multiple occurrence');
+        $this->assertSame('_ba_', self::$ref::betweenLast('ab_ab_ba_ba', 'ab', 'ba'), 'multi char');
+        $this->assertSame('いうい', self::$ref::betweenLast('あいういう', 'あ', 'う'), 'utf8');
+        $this->assertSame('🥹', self::$ref::betweenLast('👋🏿😃👋🏿🥹👋', '👋🏿', '👋'), 'grapheme');
+        $this->assertSame('👋🏿', self::$ref::between('👋🏿', '👋', '🏿'), 'grapheme between codepoints');
     }
 
     public function test_betweenLast_empty_from(): void
@@ -285,17 +267,10 @@ class UnicodeTest extends TestCase
 
     public function test_byteLength(): void
     {
-        // empty
-        $this->assertSame(0, self::$ref::byteLength(''));
-
-        // ascii
-        $this->assertSame(1, self::$ref::byteLength('a'));
-
-        // utf8
-        $this->assertSame(3, self::$ref::byteLength('あ'));
-
-        // emoji
-        $this->assertSame(25, self::$ref::byteLength('👨‍👨‍👧‍👦'));
+        $this->assertSame(0, self::$ref::byteLength(''), 'empty');
+        $this->assertSame(1, self::$ref::byteLength('a'), 'ascii');
+        $this->assertSame(3, self::$ref::byteLength('あ'), 'utf8');
+        $this->assertSame(25, self::$ref::byteLength('👨‍👨‍👧‍👦'), 'emoji');
     }
 
     public function test_capitalize(): void
@@ -446,7 +421,7 @@ class UnicodeTest extends TestCase
 
     public function test_count_with_empty_search(): void
     {
-        $this->expectExceptionMessage('Search string must be non-empty');
+        $this->expectExceptionMessage('$substring must not be empty.');
         self::assertFalse(self::$ref::count('a', ''));
     }
 
@@ -560,7 +535,7 @@ class UnicodeTest extends TestCase
 
     public function test_drop_negative_amount(): void
     {
-        $this->expectExceptionMessage('Expected a value greater than or equal to 0. Got: -4');
+        $this->expectExceptionMessage('Expected: $amount >= 0. Got: -4.');
         self::$ref::dropFirst('abc', -4);
     }
 
@@ -590,7 +565,7 @@ class UnicodeTest extends TestCase
 
     public function test_dropLast_negative_amount(): void
     {
-        $this->expectExceptionMessage('Expected a value greater than or equal to 0. Got: -4');
+        $this->expectExceptionMessage('Expected: $amount >= 0. Got: -4.');
         self::$ref::dropLast('abc', -4);
     }
 
@@ -881,7 +856,7 @@ class UnicodeTest extends TestCase
     public function test_remove_with_negative_limit(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Expected a value greater than or equal to 0. Got: -1');
+        $this->expectExceptionMessage('Expected: $limit >= 0. Got: -1.');
         self::$ref::remove('', '', -1);
     }
 
@@ -893,7 +868,7 @@ class UnicodeTest extends TestCase
 
     public function test_repeat_negative_times(): void
     {
-        $this->expectException(\Kirameki\Core\Exceptions\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Expected: $times >= 0. Got: -1.');
         self::$ref::repeat('a', -1);
     }
@@ -933,7 +908,7 @@ class UnicodeTest extends TestCase
     public function test_replace_with_negative_limit(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Expected a value greater than or equal to 0. Got: -1');
+        $this->expectExceptionMessage('Expected: $limit >= 0. Got: -1.');
         self::$ref::replace('', 'a', 'a', -1);
     }
 
@@ -1026,7 +1001,7 @@ class UnicodeTest extends TestCase
     public function test_replaceMatch_with_negative_limit(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Expected a value greater than or equal to 0. Got: -1');
+        $this->expectExceptionMessage('Expected: $limit >= 0. Got: -1.');
         self::$ref::replaceMatch('', '/a/', 'a', -1);
     }
 
@@ -1079,7 +1054,7 @@ class UnicodeTest extends TestCase
     public function test_split_with_negative_limit(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Expected a value greater than or equal to 0. Got: -1');
+        $this->expectExceptionMessage('Expected: $remains >= 0. Got: -1.');
         self::$ref::split('a', 'b', -1);
     }
 
@@ -1152,7 +1127,7 @@ class UnicodeTest extends TestCase
 
     public function test_takeFirst_out_of_range_negative(): void
     {
-        $this->expectExceptionMessage('Expected a value greater than or equal to 0. Got: -4');
+        $this->expectExceptionMessage('Expected: $amount >= 0. Got: -4.');
         self::$ref::takeFirst('abc', -4);
     }
 
@@ -1185,7 +1160,7 @@ class UnicodeTest extends TestCase
 
     public function test_takeLast_out_of_range_negative(): void
     {
-        $this->expectExceptionMessage('Expected a value greater than or equal to 0. Got: -4');
+        $this->expectExceptionMessage('Expected: $amount >= 0. Got: -4.');
         self::$ref::takeLast('abc', -4);
     }
 

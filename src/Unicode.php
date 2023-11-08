@@ -2,18 +2,24 @@
 
 namespace Kirameki\Text;
 
+use IntlException;
 use RuntimeException;
 use ValueError;
 use function array_reverse;
+use function assert;
+use function dump;
 use function grapheme_extract;
 use function grapheme_strlen;
 use function grapheme_strpos;
 use function grapheme_strrpos;
 use function grapheme_substr;
 use function implode;
+use function ini_get;
+use function ini_set;
 use function intl_get_error_message;
 use function mb_strtolower;
 use function mb_strtoupper;
+use function set_error_handler;
 use function strlen;
 use function strrev;
 use const GRAPHEME_EXTR_COUNT;
@@ -81,22 +87,30 @@ class Unicode extends Str
      */
     public static function cut(string $string, int $position, string $ellipsis = self::EMPTY): string
     {
+        if ($string === '') {
+            return $string;
+        }
+
         $addEllipsis = true;
         $offset = 0;
         $parts = [];
-        while ($offset <= $position) {
-            $char = grapheme_extract($string, 1, GRAPHEME_EXTR_COUNT, $offset, $offset);
 
-            if ($offset > $position) {
-                break;
+        assert(ini_get('intl.use_exceptions'), 'intl.use_exceptions must be enabled to use this method.');
+
+        try {
+            while ($offset <= $position) {
+                $char = grapheme_extract($string, 1, GRAPHEME_EXTR_COUNT, $offset, $offset);
+                if ($offset > $position) {
+                    break;
+                }
+                $parts[] = $char;
             }
-
-            if ($char === false) {
+        } catch (IntlException $e) {
+            if ($e->getMessage() === 'grapheme_extract: start not contained in string') {
                 $addEllipsis = false;
-                break;
+            } else {
+                throw $e;
             }
-
-            $parts[] = $char;
         }
 
         if ($ellipsis !== self::EMPTY && $addEllipsis) {

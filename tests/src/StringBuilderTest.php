@@ -205,14 +205,9 @@ class StringBuilderTest extends TestCase
 
     public function test_dropFirst(): void
     {
-        $sb = StringBuilder::from('abc');
-        $afterPos = $sb->dropFirst(+1);
-        $afterNeg = $sb->dropFirst(-1);
-
-        self::assertInstanceOf(StringBuilder::class, $afterPos);
-        self::assertInstanceOf(StringBuilder::class, $afterNeg);
-        self::assertSame('bc', $afterPos->toString());
-        self::assertSame('c', $afterNeg->toString());
+        $after = StringBuilder::from('abc')->dropFirst(1);
+        self::assertInstanceOf(StringBuilder::class, $after);
+        self::assertSame('bc', $after->toString());
     }
 
     public function test_endsWith(): void
@@ -267,13 +262,9 @@ class StringBuilderTest extends TestCase
 
     public function test_takeFirst(): void
     {
-        $sb = StringBuilder::from('abc');
-        $afterPos = $sb->takeFirst(+1);
-        $afterNeg = $sb->takeFirst(-1);
-        self::assertInstanceOf(StringBuilder::class, $afterPos);
-        self::assertInstanceOf(StringBuilder::class, $afterNeg);
-        self::assertSame('a', $afterPos->toString());
-        self::assertSame('ab', $afterNeg->toString());
+        $after = StringBuilder::from('abc')->takeFirst(1);
+        self::assertInstanceOf(StringBuilder::class, $after);
+        self::assertSame('a', $after->toString());
     }
 
     public function test_toCamelCase(): void

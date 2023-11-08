@@ -7,7 +7,6 @@ use Kirameki\Core\Exceptions\InvalidArgumentException;
 use LogicException;
 use RuntimeException;
 use Traversable;
-use Webmozart\Assert\Assert;
 use function abs;
 use function array_is_list;
 use function array_key_exists;
@@ -335,7 +334,7 @@ class Str
     {
         $remains = $limit ?? INF;
 
-        static::assertGreaterThanEqual('$size', $size, 1, compact('string', 'size', 'remains'));
+        static::assertGreaterThanEqual('size', $size, 1, compact('string', 'size', 'remains'));
 
         $chunk = [];
         $offset = 0;
@@ -553,7 +552,7 @@ class Str
      */
     public static function count(string $string, string $substring): int
     {
-        Assert::notEmpty($substring, 'Search string must be non-empty');
+        static::assertNotEmpty('$substring', $substring, compact('string', 'substring'));
 
         $counter = 0;
         $offset = 0;
@@ -679,7 +678,7 @@ class Str
      */
     public static function dropFirst(string $string, int $amount): string
     {
-        Assert::greaterThanEq($amount, 0);
+        static::assertGreaterThanEqual('amount', $amount, 0, compact('string', 'amount'));
 
         return static::substring($string, $amount);
     }
@@ -703,7 +702,7 @@ class Str
      */
     public static function dropLast(string $string, int $amount): string
     {
-        Assert::greaterThanEq($amount, 0);
+        static::assertGreaterThanEqual('amount', $amount, 0, compact('string', 'amount'));
 
         if ($amount === 0) {
             return $string;
@@ -831,7 +830,7 @@ class Str
      * @param int|float|string ...$replace
      * @return string
      */
-    public function interpolate(string $text, int|float|string ...$replace): string
+    public static function interpolate(string $text, int|float|string ...$replace): string
     {
         return preg_replace_callback('/(?<slashes>\\\\*)\{(?<var>\w+)}/', function ($m) use ($replace) {
             // even number of backslashes means it's escaped
@@ -1245,7 +1244,7 @@ class Str
         $max = $limit ?? INF;
         $count = 0;
 
-        Assert::greaterThanEq($limit, 0);
+        static::assertGreaterThanEqual('limit', $max, 0, compact('string', 'limit'));
 
         if ($search === self::EMPTY) {
             return $string;
@@ -1431,7 +1430,9 @@ class Str
         int &$count = 0,
     ): string
     {
-        Assert::greaterThanEq($limit, 0);
+        if ($limit !== null) {
+            static::assertGreaterThanEqual('limit', $limit, 0, compact('string', 'limit'));
+        }
 
         $count = 0;
 
@@ -1483,7 +1484,7 @@ class Str
     {
         $remains = $limit ?? INF;
 
-        Assert::greaterThanEq($remains, 0);
+        static::assertGreaterThanEqual('remains', $remains, 0, compact('string', 'remains'));
 
         $splits = [];
         $offset = 0;
@@ -1583,7 +1584,7 @@ class Str
      */
     public static function takeFirst(string $string, int $amount): string
     {
-        Assert::greaterThanEq($amount, 0);
+        static::assertGreaterThanEqual('amount', $amount, 0, compact('string', 'amount'));
 
         return static::substring($string, 0, $amount);
     }
@@ -1607,7 +1608,7 @@ class Str
      */
     public static function takeLast(string $string, int $amount): string
     {
-        Assert::greaterThanEq($amount, 0);
+        static::assertGreaterThanEqual('amount', $amount, 0, compact('string', 'amount'));
 
         return static::substring($string, -$amount);
     }
@@ -2148,7 +2149,7 @@ class Str
     ): void
     {
         if ($value < $limit) {
-            throw new InvalidArgumentException("Expected: {$name} >= {$limit}. Got: {$value}.", $context);
+            throw new InvalidArgumentException("Expected: \${$name} >= {$limit}. Got: {$value}.", $context);
         }
     }
 }
