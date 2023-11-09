@@ -206,6 +206,17 @@ class StringBuilder implements Stringable
     {
         return static::$ref::containsPattern($this->value, $pattern);
     }
+
+    /**
+     * @param string $substring
+     * @param bool $overlapping
+     * @return int
+     */
+    public function count(string $substring, bool $overlapping = false): int
+    {
+        return static::$ref::count($this->value, $substring, $overlapping);
+    }
+
     /**
      * @param int $position
      * @param string $ellipsis

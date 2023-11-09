@@ -156,6 +156,16 @@ class StringBuilderTest extends TestCase
         self::assertFalse($sb->containsPattern('/[0-9]+/'));
     }
 
+    public function test_count(): void
+    {
+        $sb = StringBuilder::from('foo bar');
+        self::assertSame(1, $sb->count('foo'));
+
+        $sb = StringBuilder::from('あああ');
+        self::assertSame(1, $sb->count('ああ'));
+        self::assertSame(2, $sb->count('ああ', true));
+    }
+
     public function test_cut(): void
     {
         $after = StringBuilder::from('あいう')->cut(7, '...');

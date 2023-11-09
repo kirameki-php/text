@@ -550,13 +550,14 @@ class Str
      * @return int
      * Number of substrings that occurred in given string.
      */
-    public static function count(string $string, string $substring): int
+    public static function count(string $string, string $substring, bool $overlapping = false): int
     {
         static::assertNotEmpty('$substring', $substring, compact('string', 'substring'));
 
         $counter = 0;
         $offset = 0;
         $length = static::length($string);
+        $nextOffset = $overlapping ? 1 : static::length($substring);
 
         while ($offset < $length) {
             $position = static::indexOfFirst($string, $substring, $offset);
@@ -566,7 +567,7 @@ class Str
             }
 
             ++$counter;
-            $offset = $position + 1;
+            $offset = $position + $nextOffset;
         }
 
         return $counter;

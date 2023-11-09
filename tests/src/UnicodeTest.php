@@ -349,6 +349,8 @@ class UnicodeTest extends TestCase
         $this->assertTrue(self::$ref::containsAny('abcde', ['a']), 'match single');
         $this->assertFalse(self::$ref::containsAny('abcde', ['z']), 'no match single');
         $this->assertFalse(self::$ref::containsAny('abcde', ['y', 'z']), 'no match all');
+        $this->assertFalse(self::$ref::containsAny('👨‍👨‍👧‍👧‍', ['👨', '🐌']), 'grapheme partial');
+        $this->assertFalse(self::$ref::containsAny('👨‍👨‍👧‍👧‍', ['👀', '🐌']), 'grapheme no match');
     }
 
     public function test_containsNone(): void
@@ -362,6 +364,8 @@ class UnicodeTest extends TestCase
         $this->assertFalse(self::$ref::containsNone('abcde', ['a']), 'match single');
         $this->assertTrue(self::$ref::containsNone('abcde', ['z']), 'no match single');
         $this->assertTrue(self::$ref::containsNone('abcde', ['y', 'z']), 'no match all');
+        $this->assertTrue(self::$ref::containsNone('👨‍👨‍👧‍👧‍', ['👀', '👨']), 'grapheme partial');
+        $this->assertTrue(self::$ref::containsNone('👨‍👨‍👧‍👧‍', ['👀', '🐌']), 'grapheme no match');
     }
 
     public function test_containsPattern(): void
@@ -374,6 +378,7 @@ class UnicodeTest extends TestCase
         $this->assertTrue(self::$ref::containsPattern('ABC1', '/[A-z\d]+/'));
         $this->assertTrue(self::$ref::containsPattern('ABC1]', '/\d]$/'));
         $this->assertFalse(self::$ref::containsPattern('AB1C', '/\d]$/'));
+        $this->assertTrue(self::$ref::containsPattern('👨‍👨‍👧‍👧‍', '/👨/'));
     }
 
     public function test_containsPattern_warning_as_error(): void
@@ -384,39 +389,20 @@ class UnicodeTest extends TestCase
 
     public function test_count(): void
     {
-        // empty string
-        $this->assertSame(0, self::$ref::count('', 'aaa'));
-
-        // exact match
-        $this->assertSame(1, self::$ref::count('abc', 'abc'));
-
-        // no match
-        $this->assertSame(0, self::$ref::count('ab', 'abc'));
-
-        // simple
-        $this->assertSame(1, self::$ref::count('This is a cat', ' is '));
-        $this->assertSame(2, self::$ref::count('This is a cat', 'is'));
-
-        // overlapping
-        $this->assertSame(2, self::$ref::count('ababab', 'aba'));
-
-        // utf8
-        $this->assertSame(2, self::$ref::count('あいあ', 'あ'));
-
-        // utf8 overlapping
-        $this->assertSame(2, self::$ref::count('あああ', 'ああ'));
-
-        // check half-width is not counted.
-        $this->assertSame(0, self::$ref::count('ア', 'ｱ'));
-
-        // grapheme
-        $this->assertSame(1, self::$ref::count('👨‍👨‍👧‍👦', '👨‍👨‍👧‍👦'));
-
-        // grapheme subset should not match
-        $this->assertSame(0, self::$ref::count('👨‍👨‍👧‍👦', '👨'));
-
-        // grapheme overlapping
-        $this->assertSame(2, self::$ref::count('👨‍👨‍👧‍👦👨‍👨‍👧‍👦👨‍👨‍👧‍👦', '👨‍👨‍👧‍👦👨‍👨‍👧‍👦'));
+        $this->assertSame(0, self::$ref::count('', 'aaa'), 'empty string');
+        $this->assertSame(1, self::$ref::count('abc', 'abc'), 'exact match');
+        $this->assertSame(0, self::$ref::count('ab', 'abc'), 'no match');
+        $this->assertSame(1, self::$ref::count('This is a cat', ' is '), 'single match');
+        $this->assertSame(2, self::$ref::count('This is a cat', 'is'), 'multi match');
+        $this->assertSame(2, self::$ref::count('abababa', 'aba'), 'no overlapping');
+        $this->assertSame(2, self::$ref::count('あいあ', 'あ'), 'utf8');
+        $this->assertSame(1, self::$ref::count('あああ', 'ああ'), 'utf8 no overlapping');
+        $this->assertSame(0, self::$ref::count('ア', 'ｱ'), 'check half-width is not counted.');
+        $this->assertSame(1, self::$ref::count('👨‍👨‍👧‍👦', '👨‍👨‍👧‍👦'), 'grapheme');
+        $this->assertSame(0, self::$ref::count('👨‍👨‍👧‍👦', '👨'), 'grapheme subset should not match');
+        $this->assertSame(3, self::$ref::count('abababa', 'aba', true), 'overlapping');
+        $this->assertSame(2, self::$ref::count('あああ', 'ああ', true), 'utf8 overlapping');
+        $this->assertSame(2, self::$ref::count('👨‍👨‍👧‍👦👨‍👨‍👧‍👦👨‍👨‍👧‍👦', '👨‍👨‍👧‍👦👨‍👨‍👧‍👦', true), 'grapheme overlapping');
     }
 
     public function test_count_with_empty_search(): void

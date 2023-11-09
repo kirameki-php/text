@@ -101,34 +101,17 @@ class StrTest extends TestCase
 
     public function test_betweenFurthest(): void
     {
-        // basic
-        $this->assertSame('1', self::$ref::betweenFurthest('test(1)', '(', ')'));
-
-        // edge
-        $this->assertSame('', self::$ref::betweenFurthest('()', '(', ')'));
-        $this->assertSame('1', self::$ref::betweenFurthest('(1)', '(', ')'));
-
-        // missing from
-        $this->assertSame('test)', self::$ref::betweenFurthest('test)', '(', ')'));
-
-        // missing to
-        $this->assertSame('test(', self::$ref::betweenFurthest('test(', '(', ')'));
-
-        // nested
-        $this->assertSame('test(1)', self::$ref::betweenFurthest('(test(1))', '(', ')'));
-        $this->assertSame('1) to (2', self::$ref::betweenFurthest('(1) to (2)', '(', ')'));
-
-        // multichar
-        $this->assertSame('_', self::$ref::betweenFurthest('ab_ba', 'ab', 'ba'));
-
-        // utf8
-        $this->assertSame('い', self::$ref::betweenFurthest('あいう', 'あ', 'う'));
-
-        // grapheme
-        $this->assertSame('😃', self::$ref::betweenFurthest('👋🏿😃👋🏿😃', '👋🏿', '👋🏿'));
-
-        // grapheme between codepoints
-        $this->assertSame('', self::$ref::between('👋🏿', '👋', '🏿'));
+        $this->assertSame('1', self::$ref::betweenFurthest('test(1)', '(', ')'), 'basic');
+        $this->assertSame('', self::$ref::betweenFurthest('()', '(', ')'), 'match edge: nothing in between');
+        $this->assertSame('1', self::$ref::betweenFurthest('(1)', '(', ')'), 'match edge: char in between');
+        $this->assertSame('test)', self::$ref::betweenFurthest('test)', '(', ')'), 'missing from');
+        $this->assertSame('test(', self::$ref::betweenFurthest('test(', '(', ')'), 'missing to');
+        $this->assertSame('test(1)', self::$ref::betweenFurthest('(test(1))', '(', ')'), 'nested');
+        $this->assertSame('1) to (2', self::$ref::betweenFurthest('(1) to (2)', '(', ')'), 'multi occurrence');
+        $this->assertSame('_', self::$ref::betweenFurthest('ab_ba', 'ab', 'ba'), 'multi char');
+        $this->assertSame('い', self::$ref::betweenFurthest('あいう', 'あ', 'う'), 'utf8');
+        $this->assertSame('😃', self::$ref::betweenFurthest('👋🏿😃👋🏿😃', '👋🏿', '👋🏿'), 'grapheme');
+        $this->assertSame('', self::$ref::between('👋🏿', '👋', '🏿'), 'grapheme between codepoints');
     }
 
     public function test_betweenFurthest_empty_from(): void
@@ -151,34 +134,17 @@ class StrTest extends TestCase
 
     public function test_betweenLast(): void
     {
-        // basic
-        $this->assertSame('1', self::$ref::betweenLast('test(1)', '(', ')'));
-
-        // edge
-        $this->assertSame('', self::$ref::betweenLast('()', '(', ')'));
-        $this->assertSame('1', self::$ref::betweenLast('(1)', '(', ')'));
-
-        // missing from
-        $this->assertSame('test)', self::$ref::between('test)', '(', ')'));
-
-        // missing to
-        $this->assertSame('test(', self::$ref::between('test(', '(', ')'));
-
-        // nested
-        $this->assertSame('1)', self::$ref::betweenLast('(test(1))', '(', ')'));
-        $this->assertSame('2', self::$ref::betweenLast('(1) to (2)', '(', ')'));
-
-        // multi char
-        $this->assertSame('_ba_', self::$ref::betweenLast('ab_ab_ba_ba', 'ab', 'ba'));
-
-        // utf8
-        $this->assertSame('いうい', self::$ref::betweenLast('あいういう', 'あ', 'う'));
-
-        // grapheme
-        $this->assertSame('🥹', self::$ref::betweenLast('👋🏿😃👋🏿🥹👋', '👋🏿', '👋'));
-
-        // grapheme between codepoints
-        $this->assertSame('', self::$ref::between('👋🏿', '👋', '🏿'));
+        $this->assertSame('1', self::$ref::betweenLast('test(1)', '(', ')'), 'basic');
+        $this->assertSame('', self::$ref::betweenLast('()', '(', ')'), 'match edge: nothing in between');
+        $this->assertSame('1', self::$ref::betweenLast('(1)', '(', ')'), 'match edge: char in between');
+        $this->assertSame('test)', self::$ref::between('test)', '(', ')'), 'missing from');
+        $this->assertSame('test(', self::$ref::between('test(', '(', ')'), 'missing to');
+        $this->assertSame('1)', self::$ref::betweenLast('(test(1))', '(', ')'), 'nested');
+        $this->assertSame('2', self::$ref::betweenLast('(1) to (2)', '(', ')'), 'multi occurrence');
+        $this->assertSame('_ba_', self::$ref::betweenLast('ab_ab_ba_ba', 'ab', 'ba'), 'multi char');
+        $this->assertSame('いうい', self::$ref::betweenLast('あいういう', 'あ', 'う'), 'utf8');
+        $this->assertSame('🥹', self::$ref::betweenLast('👋🏿😃👋🏿🥹👋', '👋🏿', '👋'), 'grapheme');
+        $this->assertSame('', self::$ref::between('👋🏿', '👋', '🏿'), 'grapheme between codepoints');
     }
 
     public function test_betweenLast_empty_from(): void
@@ -250,5 +216,88 @@ class StrTest extends TestCase
         $this->assertFalse(self::$ref::contains('ab', 'abc'), 'needle is longer');
         $this->assertTrue(self::$ref::contains('👨‍👨‍👧‍👧‍', '👨'), 'grapheme partial');
         $this->assertFalse(self::$ref::contains('👨‍👨‍👧‍👧‍abc', '👨‍👨‍👧‍👧‍ abc'), 'grapheme');
+    }
+
+    public function test_containsAll(): void
+    {
+        $this->assertTrue(self::$ref::containsAll('', []), 'empty substrings with blank');
+        $this->assertTrue(self::$ref::containsAll('abc', []), 'empty substrings');
+        $this->assertTrue(self::$ref::containsAll('', ['']), 'blank match blank');
+        $this->assertTrue(self::$ref::containsAll('abcde', ['']), 'blank match string');
+        $this->assertFalse(self::$ref::containsAll('abcde', ['a', 'z']), 'partial match first');
+        $this->assertFalse(self::$ref::containsAll('abcde', ['z', 'a']), 'partial match last');
+        $this->assertTrue(self::$ref::containsAll('abcde', ['a']), 'match single');
+        $this->assertFalse(self::$ref::containsAll('abcde', ['z']), 'no match single');
+        $this->assertTrue(self::$ref::containsAll('abcde', ['a', 'b']), 'match all first');
+        $this->assertTrue(self::$ref::containsAll('abcde', ['c', 'b']), 'match all reversed');
+        $this->assertFalse(self::$ref::containsAll('abcde', ['y', 'z']), 'no match all');
+        $this->assertTrue(self::$ref::containsAll('👨‍👨‍👧‍👧‍', ['👨', '👧']), 'grapheme partial');
+    }
+
+    public function test_containsAny(): void
+    {
+        $this->assertTrue(self::$ref::containsAny('', []), 'blank and empty substrings');
+        $this->assertTrue(self::$ref::containsAny('abcde', []), 'empty substrings');
+        $this->assertTrue(self::$ref::containsAny('', ['']), 'blank match blank');
+        $this->assertTrue(self::$ref::containsAny('abcde', ['']), 'blank matchs anything');
+        $this->assertTrue(self::$ref::containsAny('abcde', ['a', 'z']), 'one match of many (first one matched)');
+        $this->assertTrue(self::$ref::containsAny('abcde', ['z', 'a']), 'one match of many (last one matched)');
+        $this->assertTrue(self::$ref::containsAny('abcde', ['a']), 'match single');
+        $this->assertFalse(self::$ref::containsAny('abcde', ['z']), 'no match single');
+        $this->assertFalse(self::$ref::containsAny('abcde', ['y', 'z']), 'no match all');
+        $this->assertTrue(self::$ref::containsAny('👨‍👨‍👧‍👧‍', ['👨', '🐌']), 'grapheme partial');
+        $this->assertFalse(self::$ref::containsAny('👨‍👨‍👧‍👧‍', ['👀', '🐌']), 'grapheme no match');
+    }
+
+    public function test_containsNone(): void
+    {
+        $this->assertTrue(self::$ref::containsNone('', []), 'blank and empty substrings');
+        $this->assertTrue(self::$ref::containsNone('abcde', []), 'empty substrings');
+        $this->assertFalse(self::$ref::containsNone('', ['']), 'blank match blank');
+        $this->assertFalse(self::$ref::containsNone('abcde', ['']), 'blank matchs anything');
+        $this->assertFalse(self::$ref::containsNone('abcde', ['a', 'z']), 'one match of many (first one matched)');
+        $this->assertFalse(self::$ref::containsNone('abcde', ['z', 'a']), 'one match of many (last one matched)');
+        $this->assertFalse(self::$ref::containsNone('abcde', ['a']), 'match single');
+        $this->assertTrue(self::$ref::containsNone('abcde', ['z']), 'no match single');
+        $this->assertTrue(self::$ref::containsNone('abcde', ['y', 'z']), 'no match all');
+        $this->assertFalse(self::$ref::containsNone('👨‍👨‍👧‍👧‍', ['👀', '👨']), 'grapheme partial');
+        $this->assertTrue(self::$ref::containsNone('👨‍👨‍👧‍👧‍', ['👀', '🐌']), 'grapheme no match');
+    }
+
+    public function test_containsPattern(): void
+    {
+        $this->assertTrue(self::$ref::containsPattern('abc', '/b/'));
+        $this->assertTrue(self::$ref::containsPattern('abc', '/ab/'));
+        $this->assertTrue(self::$ref::containsPattern('abc', '/abc/'));
+        $this->assertTrue(self::$ref::containsPattern('ABC', '/abc/i'));
+        $this->assertTrue(self::$ref::containsPattern('aaaz', '/a{3}/'));
+        $this->assertTrue(self::$ref::containsPattern('ABC1', '/[A-z\d]+/'));
+        $this->assertTrue(self::$ref::containsPattern('ABC1]', '/\d]$/'));
+        $this->assertFalse(self::$ref::containsPattern('AB1C', '/\d]$/'));
+        $this->assertTrue(self::$ref::containsPattern('👨‍👨‍👧‍👧‍', '/👨/'));
+    }
+
+    public function test_containsPattern_warning_as_error(): void
+    {
+        $this->expectWarningMessage('preg_match(): Unknown modifier \'a\'');
+        $this->assertFalse(self::$ref::containsPattern('', '/a/a'));
+    }
+
+    public function test_count(): void
+    {
+        $this->assertSame(0, self::$ref::count('', 'aaa'), 'empty string');
+        $this->assertSame(1, self::$ref::count('abc', 'abc'), 'exact match');
+        $this->assertSame(0, self::$ref::count('ab', 'abc'), 'no match');
+        $this->assertSame(1, self::$ref::count('This is a cat', ' is '), 'single match');
+        $this->assertSame(2, self::$ref::count('This is a cat', 'is'), 'multi match');
+        $this->assertSame(2, self::$ref::count('abababa', 'aba'), 'no overlapping');
+        $this->assertSame(2, self::$ref::count('あいあ', 'あ'), 'utf8');
+        $this->assertSame(1, self::$ref::count('あああ', 'ああ'), 'utf8 no overlapping');
+        $this->assertSame(0, self::$ref::count('ア', 'ｱ'), 'check half-width is not counted.');
+        $this->assertSame(1, self::$ref::count('👨‍👨‍👧‍👦', '👨‍👨‍👧‍👦'), 'grapheme');
+        $this->assertSame(2, self::$ref::count('👨‍👨‍👧‍👦', '👨'), 'grapheme subset will match');
+        $this->assertSame(3, self::$ref::count('abababa', 'aba', true), 'overlapping');
+        $this->assertSame(2, self::$ref::count('あああ', 'ああ', true), 'utf8 overlapping');
+        $this->assertSame(2, self::$ref::count('👨‍👨‍👧‍👦👨‍👨‍👧‍👦👨‍👨‍👧‍👦', '👨‍👨‍👧‍👦👨‍👨‍👧‍👦', true), 'grapheme overlapping');
     }
 }
