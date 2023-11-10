@@ -218,21 +218,11 @@ class StringBuilder implements Stringable
     }
 
     /**
-     * @param int $position
-     * @param string $ellipsis
-     * @return static
-     */
-    public function cut(int $position, string $ellipsis = ''): static
-    {
-        return new static(Unicode::cut($this->value, $position, $ellipsis));
-    }
-
-    /**
      * @return static
      */
     public function decapitalize(): static
     {
-        return new static(Unicode::decapitalize($this->value));
+        return new static(static::$ref::decapitalize($this->value));
     }
 
     /**

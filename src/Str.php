@@ -580,7 +580,6 @@ class Str
      * Example:
      * ```php
      * Str::decapitalize('Foo Bar'); // 'foo Bar'
-     * Str::decapitalize('Éclore'); // 'éclore'
      * ```
      *
      * @param string $string

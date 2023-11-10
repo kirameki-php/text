@@ -444,55 +444,55 @@ class UnicodeTest extends TestCase
         $this->assertSame('test', self::$ref::decapitalize('Test'));
         $this->assertSame('t T', self::$ref::decapitalize('T T'));
         $this->assertSame(' T ', self::$ref::decapitalize(' T '));
-        $this->assertSame('é', self::$ref::decapitalize('É'));
+        $this->assertSame('éé', self::$ref::decapitalize('Éé'));
         $this->assertSame('🔡', self::$ref::decapitalize('🔡'));
     }
 
     public function test_doesNotContain(): void
     {
-        self::assertTrue(self::$ref::doesNotContain('abcde', 'ac'));
-        self::assertFalse(self::$ref::doesNotContain('abcde', 'ab'));
-        self::assertFalse(self::$ref::doesNotContain('a', ''));
-        self::assertTrue(self::$ref::doesNotContain('', 'a'));
-        self::assertTrue(self::$ref::doesNotContain('👨‍👨‍👧‍👧‍', '👨'));
+        $this->assertTrue(self::$ref::doesNotContain('abcde', 'ac'));
+        $this->assertFalse(self::$ref::doesNotContain('abcde', 'ab'));
+        $this->assertFalse(self::$ref::doesNotContain('a', ''));
+        $this->assertTrue(self::$ref::doesNotContain('', 'a'));
+        $this->assertTrue(self::$ref::doesNotContain('👨‍👨‍👧‍👧‍', '👨'));
     }
 
     public function test_doesNotEndWith(): void
     {
-        self::assertFalse(self::$ref::doesNotEndWith('abc', 'c'));
-        self::assertTrue(self::$ref::doesNotEndWith('abc', 'b'));
-        self::assertFalse(self::$ref::doesNotEndWith('abc', ['c']));
-        self::assertFalse(self::$ref::doesNotEndWith('abc', ['a', 'b', 'c']));
-        self::assertTrue(self::$ref::doesNotEndWith('abc', ['a', 'b']));
-        self::assertFalse(self::$ref::doesNotEndWith('aabbcc', 'cc'));
-        self::assertFalse(self::$ref::doesNotEndWith('aabbcc' . PHP_EOL, PHP_EOL));
-        self::assertFalse(self::$ref::doesNotEndWith('abc0', '0'));
-        self::assertFalse(self::$ref::doesNotEndWith('abcfalse', 'false'));
-        self::assertFalse(self::$ref::doesNotEndWith('a', ''));
-        self::assertFalse(self::$ref::doesNotEndWith('', ''));
-        self::assertFalse(self::$ref::doesNotEndWith('あいう', 'う'));
-        self::assertTrue(self::$ref::doesNotEndWith("あ\n", 'あ'));
-        self::assertTrue(self::$ref::doesNotEndWith('👋🏻', '🏻'));
+        $this->assertFalse(self::$ref::doesNotEndWith('abc', 'c'));
+        $this->assertTrue(self::$ref::doesNotEndWith('abc', 'b'));
+        $this->assertFalse(self::$ref::doesNotEndWith('abc', ['c']));
+        $this->assertFalse(self::$ref::doesNotEndWith('abc', ['a', 'b', 'c']));
+        $this->assertTrue(self::$ref::doesNotEndWith('abc', ['a', 'b']));
+        $this->assertFalse(self::$ref::doesNotEndWith('aabbcc', 'cc'));
+        $this->assertFalse(self::$ref::doesNotEndWith('aabbcc' . PHP_EOL, PHP_EOL));
+        $this->assertFalse(self::$ref::doesNotEndWith('abc0', '0'));
+        $this->assertFalse(self::$ref::doesNotEndWith('abcfalse', 'false'));
+        $this->assertFalse(self::$ref::doesNotEndWith('a', ''));
+        $this->assertFalse(self::$ref::doesNotEndWith('', ''));
+        $this->assertFalse(self::$ref::doesNotEndWith('あいう', 'う'));
+        $this->assertTrue(self::$ref::doesNotEndWith("あ\n", 'あ'));
+        $this->assertTrue(self::$ref::doesNotEndWith('👋🏻', '🏻'));
     }
 
 
     public function test_doesNotStartWith(): void
     {
-        self::assertFalse(self::$ref::doesNotStartWith('', ''));
-        self::assertFalse(self::$ref::doesNotStartWith('bb', ''));
-        self::assertFalse(self::$ref::doesNotStartWith('bb', 'b'));
-        self::assertTrue(self::$ref::doesNotStartWith('bb', 'ab'));
-        self::assertFalse(self::$ref::doesNotStartWith('あ-い-う', 'あ'));
-        self::assertTrue(self::$ref::doesNotStartWith('あ-い-う', 'え'));
-        self::assertTrue(self::$ref::doesNotStartWith('👨‍👨‍👧‍👦', '👨‍'));
-        self::assertFalse(self::$ref::doesNotStartWith('🏴󠁧󠁢󠁳󠁣󠁴󠁿 👨‍👨‍👧‍👦', '🏴󠁧󠁢󠁳󠁣󠁴󠁿'));
-        self::assertTrue(self::$ref::doesNotStartWith('🏴󠁧󠁢󠁳󠁣󠁴󠁿 👨‍👨‍👧‍👦', '👨‍👨‍👧‍👦'));
-        self::assertFalse(self::$ref::doesNotStartWith('🏴󠁧󠁢󠁳󠁣󠁴󠁿a🏴󠁧󠁢󠁳󠁣󠁴󠁿a🏴󠁧󠁢󠁳󠁣󠁴󠁿', '🏴󠁧󠁢󠁳󠁣󠁴󠁿a'));
-        self::assertTrue(self::$ref::doesNotStartWith('ba', 'a'));
-        self::assertTrue(self::$ref::doesNotStartWith('', 'a'));
-        self::assertTrue(self::$ref::doesNotStartWith('abc', ['d', 'e']));
-        self::assertFalse(self::$ref::doesNotStartWith('abc', ['d', 'a']));
-        self::assertTrue(self::$ref::doesNotStartWith("\nあ", 'あ'));
+        $this->assertFalse(self::$ref::doesNotStartWith('', ''));
+        $this->assertFalse(self::$ref::doesNotStartWith('bb', ''));
+        $this->assertFalse(self::$ref::doesNotStartWith('bb', 'b'));
+        $this->assertTrue(self::$ref::doesNotStartWith('bb', 'ab'));
+        $this->assertFalse(self::$ref::doesNotStartWith('あ-い-う', 'あ'));
+        $this->assertTrue(self::$ref::doesNotStartWith('あ-い-う', 'え'));
+        $this->assertTrue(self::$ref::doesNotStartWith('👨‍👨‍👧‍👦', '👨‍'));
+        $this->assertFalse(self::$ref::doesNotStartWith('🏴󠁧󠁢󠁳󠁣󠁴󠁿 👨‍👨‍👧‍👦', '🏴󠁧󠁢󠁳󠁣󠁴󠁿'));
+        $this->assertTrue(self::$ref::doesNotStartWith('🏴󠁧󠁢󠁳󠁣󠁴󠁿 👨‍👨‍👧‍👦', '👨‍👨‍👧‍👦'));
+        $this->assertFalse(self::$ref::doesNotStartWith('🏴󠁧󠁢󠁳󠁣󠁴󠁿a🏴󠁧󠁢󠁳󠁣󠁴󠁿a🏴󠁧󠁢󠁳󠁣󠁴󠁿', '🏴󠁧󠁢󠁳󠁣󠁴󠁿a'));
+        $this->assertTrue(self::$ref::doesNotStartWith('ba', 'a'));
+        $this->assertTrue(self::$ref::doesNotStartWith('', 'a'));
+        $this->assertTrue(self::$ref::doesNotStartWith('abc', ['d', 'e']));
+        $this->assertFalse(self::$ref::doesNotStartWith('abc', ['d', 'a']));
+        $this->assertTrue(self::$ref::doesNotStartWith("\nあ", 'あ'));
     }
 
     public function test_drop(): void

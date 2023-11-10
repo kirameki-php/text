@@ -166,13 +166,6 @@ class StringBuilderTest extends TestCase
         self::assertSame(2, $sb->count('ああ', true));
     }
 
-    public function test_cut(): void
-    {
-        $after = StringBuilder::from('あいう')->cut(7, '...');
-        self::assertInstanceOf(StringBuilder::class, $after);
-        self::assertSame('あい...', $after->toString());
-    }
-
     public function test_decapitalize(): void
     {
         $after = StringBuilder::from('FOO Bar')->decapitalize();
