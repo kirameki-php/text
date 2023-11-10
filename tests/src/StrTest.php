@@ -434,4 +434,22 @@ class StrTest extends TestCase
         $this->assertSame(28, self::$ref::indexOfFirst('🏴󠁧󠁢󠁳󠁣󠁴󠁿👨‍👨‍👧‍👦', '👨‍👨‍👧‍👦', 1), 'grapheme hit with offset');
     }
 
+    public function test_indexOfLast(): void
+    {
+        $this->assertNull(self::$ref::indexOfLast('', 'a'), 'empty string');
+        $this->assertSame(2, self::$ref::indexOfLast('ab', ''), 'empty search');
+        $this->assertSame(0, self::$ref::indexOfLast('a', 'a'), 'find at 0');
+        $this->assertSame(2, self::$ref::indexOfLast('abb', 'b'), 'multiple matches');
+        $this->assertSame(2, self::$ref::indexOfLast('abb', 'b', 1), 'offset (within bound)');
+        $this->assertSame(5, self::$ref::indexOfLast('aaaaaa', 'a', 5), 'offset (within bound)');
+        $this->assertNull(self::$ref::indexOfLast('abb', 'b', 4), 'offset (out of bound)');
+        $this->assertSame(3, self::$ref::indexOfLast('abbb', 'b', -1), 'offset (negative)');
+        $this->assertNull(self::$ref::indexOfLast('abb', 'b', -100), 'offset (negative)');
+        $this->assertSame(0, self::$ref::indexOfLast('👨‍👨‍👧‍👦', '👨‍👨‍👧‍👦'), 'utf-8');
+        $this->assertSame(7, self::$ref::indexOfLast('👨‍👨‍👧‍👦', '👨'), 'utf-8');
+        $this->assertSame(3, self::$ref::indexOfLast('あいう', 'い', 1), 'offset utf-8');
+        $this->assertSame(28, self::$ref::indexOfLast('🏴󠁧󠁢󠁳󠁣󠁴󠁿👨‍👨‍👧‍👦', '👨‍👨‍👧‍👦', 1), 'offset utf-8');
+        $this->assertSame(null, self::$ref::indexOfLast('🏴󠁧󠁢󠁳󠁣󠁴󠁿👨‍👨‍👧‍👦', '👨‍👨‍👧‍👦', 29), 'offset utf-8');
+    }
+
 }

@@ -17,7 +17,6 @@ use function bcmul;
 use function bcpow;
 use function ceil;
 use function compact;
-use function dump;
 use function filter_var;
 use function floor;
 use function implode;
@@ -799,8 +798,15 @@ class Str
      */
     public static function indexOfLast(string $string, string $substring, int $offset = 0): ?int
     {
-        $result = strrpos($string, $substring, $offset);
-        return $result !== false ? $result : null;
+        try {
+            $result = strrpos($string, $substring, $offset);
+            return $result !== false ? $result : null;
+        } catch (ValueError $e) {
+            if ($e->getMessage() === 'strrpos(): Argument #3 ($offset) must be contained in argument #1 ($haystack)') {
+                return null;
+            }
+            throw $e;
+        }
     }
 
     /**

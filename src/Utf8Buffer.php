@@ -21,6 +21,14 @@ class Utf8Buffer extends StrBuffer
     }
 
     /**
+     * @return int
+     */
+    public function byteLength(): int
+    {
+        return Utf8::byteLength($this->value);
+    }
+
+    /**
      * @param int $position
      * @param string $ellipsis
      * @return static
