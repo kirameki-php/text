@@ -417,4 +417,21 @@ class StrTest extends TestCase
         self::assertTrue(self::$ref::endsWith('👋🏻', '🏻'), 'grapheme');
     }
 
+    public function test_indexOfFirst(): void
+    {
+        $this->assertNull(self::$ref::indexOfFirst('', 'a'), 'empty string');
+        $this->assertSame(0, self::$ref::indexOfFirst('ab', ''), 'empty search');
+        $this->assertSame(0, self::$ref::indexOfFirst('a', 'a'), 'find at 0');
+        $this->assertSame(1, self::$ref::indexOfFirst('abb', 'b'), 'multiple matches');
+        $this->assertSame(1, self::$ref::indexOfFirst('abb', 'b', 1), 'offset (within bound)');
+        $this->assertSame(5, self::$ref::indexOfFirst('aaaaaa', 'a', 5), 'offset (within bound)');
+        $this->assertNull(self::$ref::indexOfFirst('abb', 'b', 4), 'offset (out of bound)');
+        $this->assertSame(2, self::$ref::indexOfFirst('abb', 'b', -1), 'offset (negative)');
+        $this->assertNull(self::$ref::indexOfFirst('abb', 'b', -100), 'offset (negative)');
+        $this->assertSame(0, self::$ref::indexOfFirst('👨‍👨‍👧‍👦', '👨‍👨‍👧‍👦'), 'grapheme hit');
+        $this->assertSame(0, self::$ref::indexOfFirst('👨‍👨‍👧‍👦', '👨'), 'grapheme hit subset');
+        $this->assertSame(3, self::$ref::indexOfFirst('あいう', 'い', 1), 'utf8');
+        $this->assertSame(28, self::$ref::indexOfFirst('🏴󠁧󠁢󠁳󠁣󠁴󠁿👨‍👨‍👧‍👦', '👨‍👨‍👧‍👦', 1), 'grapheme hit with offset');
+    }
+
 }

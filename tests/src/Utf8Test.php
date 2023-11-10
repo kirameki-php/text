@@ -549,37 +549,20 @@ class Utf8Test extends TestCase
 
     public function test_indexOfFirst(): void
     {
-        // empty string
-        $this->assertNull(self::$ref::indexOfFirst('', 'a'));
-
-        // empty search
-        $this->assertSame(0, self::$ref::indexOfFirst('ab', ''));
-
-        // find at 0
-        $this->assertSame(0, self::$ref::indexOfFirst('a', 'a'));
-
-        // multiple matches
-        $this->assertSame(1, self::$ref::indexOfFirst('abb', 'b'));
-
-        // offset (within bound)
-        $this->assertSame(1, self::$ref::indexOfFirst('abb', 'b', 1));
-        $this->assertSame(5, self::$ref::indexOfFirst('aaaaaa', 'a', 5));
-
-        // offset (out of bound)
-        $this->assertNull(self::$ref::indexOfFirst('abb', 'b', 4));
-
-        // offset (negative)
-        $this->assertSame(2, self::$ref::indexOfFirst('abb', 'b', -1));
-
-        // offset (negative)
-        $this->assertNull(self::$ref::indexOfFirst('abb', 'b', -100));
-
-        // offset utf-8
-        $this->assertSame(0, self::$ref::indexOfFirst('👨‍👨‍👧‍👦', '👨‍👨‍👧‍👦'));
-        $this->assertNull(self::$ref::indexOfFirst('👨‍👨‍👧‍👦', '👨'));
-        $this->assertSame(1, self::$ref::indexOfFirst('あいう', 'い', 1));
-        $this->assertSame(1, self::$ref::indexOfFirst('🏴󠁧󠁢󠁳󠁣󠁴󠁿👨‍👨‍👧‍👦', '👨‍👨‍👧‍👦', 1));
-        $this->assertNull(self::$ref::indexOfFirst('🏴󠁧󠁢󠁳󠁣󠁴󠁿👨‍👨‍👧‍👦', '👨‍👨‍👧‍👦', 2));
+        $this->assertNull(self::$ref::indexOfFirst('', 'a'), 'empty string');
+        $this->assertSame(0, self::$ref::indexOfFirst('ab', ''), 'empty search');
+        $this->assertSame(0, self::$ref::indexOfFirst('a', 'a'), 'find at 0');
+        $this->assertSame(1, self::$ref::indexOfFirst('abb', 'b'), 'multiple matches');
+        $this->assertSame(1, self::$ref::indexOfFirst('abb', 'b', 1), 'offset (within bound)');
+        $this->assertSame(5, self::$ref::indexOfFirst('aaaaaa', 'a', 5), 'offset (within bound)');
+        $this->assertNull(self::$ref::indexOfFirst('abb', 'b', 4), 'offset (out of bound)');
+        $this->assertSame(2, self::$ref::indexOfFirst('abb', 'b', -1), 'offset (negative)');
+        $this->assertNull(self::$ref::indexOfFirst('abb', 'b', -100), 'offset (negative)');
+        $this->assertSame(0, self::$ref::indexOfFirst('👨‍👨‍👧‍👦', '👨‍👨‍👧‍👦'), 'grapheme hit');
+        $this->assertNull(self::$ref::indexOfFirst('👨‍👨‍👧‍👦', '👨'), 'grapheme miss');
+        $this->assertSame(1, self::$ref::indexOfFirst('あいう', 'い', 1), 'utf8');
+        $this->assertSame(1, self::$ref::indexOfFirst('🏴󠁧󠁢󠁳󠁣󠁴󠁿👨‍👨‍👧‍👦', '👨‍👨‍👧‍👦', 1), 'grapheme hit with offset');
+        $this->assertNull(self::$ref::indexOfFirst('🏴󠁧󠁢󠁳󠁣󠁴󠁿👨‍👨‍👧‍👦', '👨‍👨‍👧‍👦', 2), 'grapheme miss with offset');
     }
 
     public function test_indexOfLast(): void

@@ -225,10 +225,11 @@ class StrBufferTest extends TestCase
         self::assertTrue($sb->endsWith('.php'));
     }
 
-    public function test_firstIndexOf(): void
+    public function test_indexOfFirst(): void
     {
         $sb = $this->buffer('aabbcc');
         self::assertSame(2, $sb->indexOfFirst('b'));
+        self::assertSame(3, $sb->indexOfFirst('b', 3));
     }
 
     public function test_insert(): void

@@ -7,6 +7,7 @@ use Kirameki\Core\Exceptions\InvalidArgumentException;
 use LogicException;
 use RuntimeException;
 use Traversable;
+use ValueError;
 use function abs;
 use function array_is_list;
 use function array_key_exists;
@@ -16,6 +17,7 @@ use function bcmul;
 use function bcpow;
 use function ceil;
 use function compact;
+use function dump;
 use function filter_var;
 use function floor;
 use function implode;
@@ -764,8 +766,15 @@ class Str
      */
     public static function indexOfFirst(string $string, string $substring, int $offset = 0): ?int
     {
-        $result = strpos($string, $substring, $offset);
-        return $result !== false ? $result : null;
+        try {
+            $result = strpos($string, $substring, $offset);
+            return $result !== false ? $result : null;
+        } catch (ValueError $e) {
+            if ($e->getMessage() === 'strpos(): Argument #3 ($offset) must be contained in argument #1 ($haystack)') {
+                return null;
+            }
+            throw $e;
+        }
     }
 
     /**
