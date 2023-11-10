@@ -2,8 +2,15 @@
 
 namespace Kirameki\Text;
 
+use function dump;
+
 class Utf8Buffer extends StrBuffer
 {
+    /**
+     * Overridden to cache in this class
+     */
+    protected static Str $ref;
+
     /**
      * @param string $value
      */

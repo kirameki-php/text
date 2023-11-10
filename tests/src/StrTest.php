@@ -365,4 +365,56 @@ class StrTest extends TestCase
         $this->assertTrue(self::$ref::doesNotStartWith("\nあ", 'あ'));
     }
 
+    public function test_dropFirst(): void
+    {
+        $this->assertSame('', self::$ref::dropFirst('', 1), 'empty');
+        $this->assertSame('a', self::$ref::dropFirst('a', 0), 'zero amount');
+        $this->assertSame('e', self::$ref::dropFirst('abcde', 4), 'mid amount');
+        $this->assertSame('', self::$ref::dropFirst('abc', 3), 'exact amount');
+        $this->assertSame('', self::$ref::dropFirst('abc', 4), 'over overflow');
+        $this->assertSame('👦', self::$ref::dropFirst('👨‍👨‍👧‍👦', 21), 'grapheme');
+        $this->assertSame('🏿', self::$ref::dropFirst('👋🏿', 4), 'grapheme cluster (positive)');
+    }
+
+    public function test_dropFirst_negative_amount(): void
+    {
+        $this->expectExceptionMessage('Expected: $amount >= 0. Got: -4.');
+        self::$ref::dropFirst('abc', -4);
+    }
+
+    public function test_dropLast(): void
+    {
+        $this->assertSame('', self::$ref::dropLast('', 1), 'empty');
+        $this->assertSame('a', self::$ref::dropLast('a', 0), 'zero length');
+        $this->assertSame('ab', self::$ref::dropLast('abc', 1), 'mid amount');
+        $this->assertSame('', self::$ref::dropLast('abc', 3), 'exact amount');
+        $this->assertSame('', self::$ref::dropLast('abc', 4), 'overflow');
+        $this->assertSame('👨‍👨‍👧‍', self::$ref::dropLast('👨‍👨‍👧‍👦', 4), 'grapheme');
+        $this->assertSame('👋', self::$ref::dropLast('👋🏿', 4), 'grapheme cluster (positive)');
+    }
+
+    public function test_dropLast_negative_amount(): void
+    {
+        $this->expectExceptionMessage('Expected: $amount >= 0. Got: -4.');
+        self::$ref::dropLast('abc', -4);
+    }
+
+    public function test_endsWith(): void
+    {
+        self::assertTrue(self::$ref::endsWith('abc', 'c'), 'single hit');
+        self::assertFalse(self::$ref::endsWith('abc', 'b'), 'single miss');
+        self::assertTrue(self::$ref::endsWith('abc', ['c']), 'array hit');
+        self::assertTrue(self::$ref::endsWith('abc', ['a', 'b', 'c']), 'array hit with misses');
+        self::assertFalse(self::$ref::endsWith('abc', ['a', 'b']), 'array miss');
+        self::assertTrue(self::$ref::endsWith('aabbcc', 'cc'), 'multiple occurrence string');
+        self::assertTrue(self::$ref::endsWith('aabbcc' . PHP_EOL, PHP_EOL), 'newline');
+        self::assertTrue(self::$ref::endsWith('abc0', '0'), 'zero');
+        self::assertTrue(self::$ref::endsWith('abcfalse', 'false'), 'false');
+        self::assertTrue(self::$ref::endsWith('a', ''), 'empty needle');
+        self::assertTrue(self::$ref::endsWith('', ''), 'empty haystack and needle');
+        self::assertTrue(self::$ref::endsWith('あいう', 'う'), 'utf8');
+        self::assertFalse(self::$ref::endsWith("あ\n", 'あ'), 'utf8 newline');
+        self::assertTrue(self::$ref::endsWith('👋🏻', '🏻'), 'grapheme');
+    }
+
 }

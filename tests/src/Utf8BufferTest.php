@@ -8,7 +8,7 @@ use Kirameki\Text\Utf8Buffer;
 
 class Utf8BufferTest extends TestCase
 {
-    protected function buffer(string $string): StrBuffer
+    protected function buffer(string $string): Utf8Buffer
     {
         return new Utf8Buffer($string);
     }
@@ -16,7 +16,12 @@ class Utf8BufferTest extends TestCase
     public function test_cut(): void
     {
         $after = $this->buffer('あいう')->cut(7, '...');
-        self::assertInstanceOf(StrBuffer::class, $after);
+        self::assertInstanceOf(Utf8Buffer::class, $after);
         self::assertSame('あい...', $after->toString());
+    }
+
+    public function test_length(): void
+    {
+        self::assertSame(3, $this->buffer('あいう')->length());
     }
 }

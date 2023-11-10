@@ -495,31 +495,18 @@ class Utf8Test extends TestCase
         $this->assertTrue(self::$ref::doesNotStartWith("\nあ", 'あ'));
     }
 
-    public function test_drop(): void
+    public function test_dropFirst(): void
     {
-        // empty
-        $this->assertSame('', self::$ref::dropFirst('', 1));
-
-        // zero amount
-        $this->assertSame('a', self::$ref::dropFirst('a', 0));
-
-        // mid amount
-        $this->assertSame('e', self::$ref::dropFirst('abcde', 4));
-
-        // exact amount
-        $this->assertSame('', self::$ref::dropFirst('abc', 3));
-
-        // over overflow
-        $this->assertSame('', self::$ref::dropFirst('abc', 4));
-
-        // grapheme
-        $this->assertSame('def', self::$ref::dropFirst('abc🏴󠁧󠁢󠁳󠁣󠁴󠁿def', 4));
-
-        // grapheme cluster (positive)
-        $this->assertSame('', self::$ref::dropFirst('👋🏿', 1));
+        $this->assertSame('', self::$ref::dropFirst('', 1), 'empty');
+        $this->assertSame('a', self::$ref::dropFirst('a', 0), 'zero amount');
+        $this->assertSame('e', self::$ref::dropFirst('abcde', 4), 'mid amount');
+        $this->assertSame('', self::$ref::dropFirst('abc', 3), 'exact amount');
+        $this->assertSame('', self::$ref::dropFirst('abc', 4), 'over overflow');
+        $this->assertSame('def', self::$ref::dropFirst('abc🏴󠁧󠁢󠁳󠁣󠁴󠁿def', 4), 'grapheme');
+        $this->assertSame('', self::$ref::dropFirst('👋🏿', 1), 'grapheme cluster (positive)');
     }
 
-    public function test_drop_negative_amount(): void
+    public function test_dropFirst_negative_amount(): void
     {
         $this->expectExceptionMessage('Expected: $amount >= 0. Got: -4.');
         self::$ref::dropFirst('abc', -4);
@@ -527,26 +514,13 @@ class Utf8Test extends TestCase
 
     public function test_dropLast(): void
     {
-        // empty
-        $this->assertSame('', self::$ref::dropLast('', 1));
-
-        // zero length
-        $this->assertSame('a', self::$ref::dropLast('a', 0));
-
-        // mid amount
-        $this->assertSame('ab', self::$ref::dropLast('abc', 1));
-
-        // exact amount
-        $this->assertSame('', self::$ref::dropLast('abc', 3));
-
-        // overflow
-        $this->assertSame('', self::$ref::dropLast('abc', 4));
-
-        // grapheme
-        $this->assertSame('abc', self::$ref::dropLast('abc🏴󠁧󠁢󠁳󠁣󠁴󠁿def', 4));
-
-        // grapheme cluster (positive)
-        $this->assertSame('', self::$ref::dropLast('👋🏿', 1));
+        $this->assertSame('', self::$ref::dropLast('', 1), 'empty');
+        $this->assertSame('a', self::$ref::dropLast('a', 0), 'zero length');
+        $this->assertSame('ab', self::$ref::dropLast('abc', 1), 'mid amount');
+        $this->assertSame('', self::$ref::dropLast('abc', 3), 'exact amount');
+        $this->assertSame('', self::$ref::dropLast('abc', 4), 'overflow');
+        $this->assertSame('abc', self::$ref::dropLast('abc🏴󠁧󠁢󠁳󠁣󠁴󠁿def', 4), 'grapheme');
+        $this->assertSame('', self::$ref::dropLast('👋🏿', 1), 'grapheme cluster (positive)');
     }
 
     public function test_dropLast_negative_amount(): void
@@ -557,26 +531,26 @@ class Utf8Test extends TestCase
 
     public function test_endsWith(): void
     {
-        self::assertTrue(self::$ref::endsWith('abc', 'c'));
-        self::assertFalse(self::$ref::endsWith('abc', 'b'));
-        self::assertTrue(self::$ref::endsWith('abc', ['c']));
-        self::assertTrue(self::$ref::endsWith('abc', ['a', 'b', 'c']));
-        self::assertFalse(self::$ref::endsWith('abc', ['a', 'b']));
-        self::assertTrue(self::$ref::endsWith('aabbcc', 'cc'));
-        self::assertTrue(self::$ref::endsWith('aabbcc' . PHP_EOL, PHP_EOL));
-        self::assertTrue(self::$ref::endsWith('abc0', '0'));
-        self::assertTrue(self::$ref::endsWith('abcfalse', 'false'));
-        self::assertTrue(self::$ref::endsWith('a', ''));
-        self::assertTrue(self::$ref::endsWith('', ''));
-        self::assertTrue(self::$ref::endsWith('あいう', 'う'));
-        self::assertFalse(self::$ref::endsWith("あ\n", 'あ'));
-        self::assertFalse(self::$ref::endsWith('👋🏻', '🏻'));
+        $this->assertTrue(self::$ref::endsWith('abc', 'c'), 'single hit');
+        $this->assertFalse(self::$ref::endsWith('abc', 'b'), 'single miss');
+        $this->assertTrue(self::$ref::endsWith('abc', ['c']), 'array hit');
+        $this->assertTrue(self::$ref::endsWith('abc', ['a', 'b', 'c']), 'array hit with misses');
+        $this->assertFalse(self::$ref::endsWith('abc', ['a', 'b']), 'array miss');
+        $this->assertTrue(self::$ref::endsWith('aabbcc', 'cc'), 'multiple occurrence string');
+        $this->assertTrue(self::$ref::endsWith('aabbcc' . PHP_EOL, PHP_EOL), 'newline');
+        $this->assertTrue(self::$ref::endsWith('abc0', '0'), 'zero');
+        $this->assertTrue(self::$ref::endsWith('abcfalse', 'false'), 'false');
+        $this->assertTrue(self::$ref::endsWith('a', ''), 'empty needle');
+        $this->assertTrue(self::$ref::endsWith('', ''), 'empty haystack and needle');
+        $this->assertTrue(self::$ref::endsWith('あいう', 'う'), 'utf8');
+        $this->assertFalse(self::$ref::endsWith("あ\n", 'あ'), 'utf8 newline');
+        $this->assertFalse(self::$ref::endsWith('👋🏻', '🏻'), 'grapheme');
     }
 
     public function test_indexOfFirst(): void
     {
         // empty string
-        self::assertNull(self::$ref::indexOfFirst('', 'a'));
+        $this->assertNull(self::$ref::indexOfFirst('', 'a'));
 
         // empty search
         $this->assertSame(0, self::$ref::indexOfFirst('ab', ''));
@@ -592,26 +566,26 @@ class Utf8Test extends TestCase
         $this->assertSame(5, self::$ref::indexOfFirst('aaaaaa', 'a', 5));
 
         // offset (out of bound)
-        self::assertNull(self::$ref::indexOfFirst('abb', 'b', 4));
+        $this->assertNull(self::$ref::indexOfFirst('abb', 'b', 4));
 
         // offset (negative)
         $this->assertSame(2, self::$ref::indexOfFirst('abb', 'b', -1));
 
         // offset (negative)
-        self::assertNull(self::$ref::indexOfFirst('abb', 'b', -100));
+        $this->assertNull(self::$ref::indexOfFirst('abb', 'b', -100));
 
         // offset utf-8
         $this->assertSame(0, self::$ref::indexOfFirst('👨‍👨‍👧‍👦', '👨‍👨‍👧‍👦'));
-        self::assertNull(self::$ref::indexOfFirst('👨‍👨‍👧‍👦', '👨'));
+        $this->assertNull(self::$ref::indexOfFirst('👨‍👨‍👧‍👦', '👨'));
         $this->assertSame(1, self::$ref::indexOfFirst('あいう', 'い', 1));
         $this->assertSame(1, self::$ref::indexOfFirst('🏴󠁧󠁢󠁳󠁣󠁴󠁿👨‍👨‍👧‍👦', '👨‍👨‍👧‍👦', 1));
-        self::assertNull(self::$ref::indexOfFirst('🏴󠁧󠁢󠁳󠁣󠁴󠁿👨‍👨‍👧‍👦', '👨‍👨‍👧‍👦', 2));
+        $this->assertNull(self::$ref::indexOfFirst('🏴󠁧󠁢󠁳󠁣󠁴󠁿👨‍👨‍👧‍👦', '👨‍👨‍👧‍👦', 2));
     }
 
     public function test_indexOfLast(): void
     {
         // empty string
-        self::assertNull(self::$ref::indexOfLast('', 'a'));
+        $this->assertNull(self::$ref::indexOfLast('', 'a'));
 
         // empty search
         $this->assertSame(2, self::$ref::indexOfLast('ab', ''));
@@ -627,20 +601,20 @@ class Utf8Test extends TestCase
         $this->assertSame(5, self::$ref::indexOfLast('aaaaaa', 'a', 5));
 
         // offset (out of bound)
-        self::assertNull(self::$ref::indexOfLast('abb', 'b', 4));
+        $this->assertNull(self::$ref::indexOfLast('abb', 'b', 4));
 
         // offset (negative)
         $this->assertSame(3, self::$ref::indexOfLast('abbb', 'b', -1));
 
         // offset (negative)
-        self::assertNull(self::$ref::indexOfLast('abb', 'b', -100));
+        $this->assertNull(self::$ref::indexOfLast('abb', 'b', -100));
 
         // offset utf-8
         $this->assertSame(0, self::$ref::indexOfLast('👨‍👨‍👧‍👦', '👨‍👨‍👧‍👦'));
-        self::assertNull(self::$ref::indexOfLast('👨‍👨‍👧‍👦', '👨'));
+        $this->assertNull(self::$ref::indexOfLast('👨‍👨‍👧‍👦', '👨'));
         $this->assertSame(1, self::$ref::indexOfLast('あいう', 'い', 1));
         $this->assertSame(1, self::$ref::indexOfLast('🏴󠁧󠁢󠁳󠁣󠁴󠁿👨‍👨‍👧‍👦', '👨‍👨‍👧‍👦', 1));
-        self::assertNull(self::$ref::indexOfLast('🏴󠁧󠁢󠁳󠁣󠁴󠁿👨‍👨‍👧‍👦', '👨‍👨‍👧‍👦', 2));
+        $this->assertNull(self::$ref::indexOfLast('🏴󠁧󠁢󠁳󠁣󠁴󠁿👨‍👨‍👧‍👦', '👨‍👨‍👧‍👦', 2));
     }
 
     public function test_insert(): void
@@ -655,16 +629,16 @@ class Utf8Test extends TestCase
 
     public function test_isBlank(): void
     {
-        self::assertTrue(self::$ref::isBlank(''));
-        self::assertFalse(self::$ref::isBlank('0'));
-        self::assertFalse(self::$ref::isBlank(' '));
+        $this->assertTrue(self::$ref::isBlank(''));
+        $this->assertFalse(self::$ref::isBlank('0'));
+        $this->assertFalse(self::$ref::isBlank(' '));
     }
 
     public function test_isNotBlank(): void
     {
-        self::assertFalse(self::$ref::isNotBlank(''));
-        self::assertTrue(self::$ref::isNotBlank('0'));
-        self::assertTrue(self::$ref::isNotBlank(' '));
+        $this->assertFalse(self::$ref::isNotBlank(''));
+        $this->assertTrue(self::$ref::isNotBlank('0'));
+        $this->assertTrue(self::$ref::isNotBlank(' '));
     }
 
     public function test_kebabCase(): void
@@ -929,11 +903,11 @@ class Utf8Test extends TestCase
 
         $replaced = false;
         self::$ref::replaceFirst('bbb', 'b', 'a', $replaced);
-        self::assertTrue($replaced, 'validate flag');
+        $this->assertTrue($replaced, 'validate flag');
 
         $replaced = true;
         self::$ref::replaceFirst('b', 'z', '', $replaced);
-        self::assertFalse($replaced, 'flag is overridden with false');
+        $this->assertFalse($replaced, 'flag is overridden with false');
     }
 
     public function test_replaceLast(): void
@@ -949,11 +923,11 @@ class Utf8Test extends TestCase
 
         $replaced = false;
         self::$ref::replaceLast('bbb', 'b', 'a', $replaced);
-        self::assertTrue($replaced, 'validate flag');
+        $this->assertTrue($replaced, 'validate flag');
 
         $replaced = true;
         self::$ref::replaceLast('b', 'z', '', $replaced);
-        self::assertFalse($replaced, 'flag is overridden with false');
+        $this->assertFalse($replaced, 'flag is overridden with false');
     }
 
     public function test_replaceMatch(): void
@@ -1001,16 +975,16 @@ class Utf8Test extends TestCase
 
     public function test_startsWith(): void
     {
-        self::assertTrue(self::$ref::startsWith('', ''));
-        self::assertTrue(self::$ref::startsWith('bb', ''));
-        self::assertTrue(self::$ref::startsWith('bb', 'b'));
-        self::assertTrue(self::$ref::startsWith('あ-い-う', 'あ'));
-        self::assertFalse(self::$ref::startsWith('👨‍👨‍👧‍👦', '👨‍'));
-        self::assertTrue(self::$ref::startsWith('🏴󠁧󠁢󠁳󠁣󠁴󠁿 👨‍👨‍👧‍👦', '🏴󠁧󠁢󠁳󠁣󠁴󠁿'));
-        self::assertFalse(self::$ref::startsWith('🏴󠁧󠁢󠁳󠁣󠁴󠁿 👨‍👨‍👧‍👦', '👨‍👨‍👧‍👦'));
-        self::assertTrue(self::$ref::startsWith('🏴󠁧󠁢󠁳󠁣󠁴󠁿a🏴󠁧󠁢󠁳󠁣󠁴󠁿a🏴󠁧󠁢󠁳󠁣󠁴󠁿', '🏴󠁧󠁢󠁳󠁣󠁴󠁿a'));
-        self::assertFalse(self::$ref::startsWith('ba', 'a'));
-        self::assertFalse(self::$ref::startsWith('', 'a'));
+        $this->assertTrue(self::$ref::startsWith('', ''));
+        $this->assertTrue(self::$ref::startsWith('bb', ''));
+        $this->assertTrue(self::$ref::startsWith('bb', 'b'));
+        $this->assertTrue(self::$ref::startsWith('あ-い-う', 'あ'));
+        $this->assertFalse(self::$ref::startsWith('👨‍👨‍👧‍👦', '👨‍'));
+        $this->assertTrue(self::$ref::startsWith('🏴󠁧󠁢󠁳󠁣󠁴󠁿 👨‍👨‍👧‍👦', '🏴󠁧󠁢󠁳󠁣󠁴󠁿'));
+        $this->assertFalse(self::$ref::startsWith('🏴󠁧󠁢󠁳󠁣󠁴󠁿 👨‍👨‍👧‍👦', '👨‍👨‍👧‍👦'));
+        $this->assertTrue(self::$ref::startsWith('🏴󠁧󠁢󠁳󠁣󠁴󠁿a🏴󠁧󠁢󠁳󠁣󠁴󠁿a🏴󠁧󠁢󠁳󠁣󠁴󠁿', '🏴󠁧󠁢󠁳󠁣󠁴󠁿a'));
+        $this->assertFalse(self::$ref::startsWith('ba', 'a'));
+        $this->assertFalse(self::$ref::startsWith('', 'a'));
     }
 
     public function test_split(): void
@@ -1152,11 +1126,11 @@ class Utf8Test extends TestCase
 
     public function test_toBool(): void
     {
-        self::assertTrue(self::$ref::toBool('true'), 'true as string');
-        self::assertTrue(self::$ref::toBool('TRUE'), 'TRUE as string');
-        self::assertFalse(self::$ref::toBool('false'), 'false as string');
-        self::assertFalse(self::$ref::toBool('FALSE'), 'FALSE as string');
-        self::assertTrue(self::$ref::toBool('1'), 'empty as string');
+        $this->assertTrue(self::$ref::toBool('true'), 'true as string');
+        $this->assertTrue(self::$ref::toBool('TRUE'), 'TRUE as string');
+        $this->assertFalse(self::$ref::toBool('false'), 'false as string');
+        $this->assertFalse(self::$ref::toBool('FALSE'), 'FALSE as string');
+        $this->assertTrue(self::$ref::toBool('1'), 'empty as string');
     }
 
     public function test_toBool_empty(): void
@@ -1185,14 +1159,14 @@ class Utf8Test extends TestCase
 
     public function test_toBoolOrNull(): void
     {
-        self::assertTrue(self::$ref::toBoolOrNull('true'), 'true as string');
-        self::assertTrue(self::$ref::toBoolOrNull('TRUE'), 'TRUE as string');
-        self::assertFalse(self::$ref::toBoolOrNull('false'), 'false as string');
-        self::assertFalse(self::$ref::toBoolOrNull('FALSE'), 'FALSE as string');
-        self::assertTrue(self::$ref::toBoolOrNull('1'), 'empty as string');
-        self::assertNull(self::$ref::toBoolOrNull(''), 'empty as string');
-        self::assertNull(self::$ref::toBoolOrNull('-2'), 'invalid boolean (number)');
-        self::assertNull(self::$ref::toBoolOrNull('yes'), 'truthy will fail');
+        $this->assertTrue(self::$ref::toBoolOrNull('true'), 'true as string');
+        $this->assertTrue(self::$ref::toBoolOrNull('TRUE'), 'TRUE as string');
+        $this->assertFalse(self::$ref::toBoolOrNull('false'), 'false as string');
+        $this->assertFalse(self::$ref::toBoolOrNull('FALSE'), 'FALSE as string');
+        $this->assertTrue(self::$ref::toBoolOrNull('1'), 'empty as string');
+        $this->assertNull(self::$ref::toBoolOrNull(''), 'empty as string');
+        $this->assertNull(self::$ref::toBoolOrNull('-2'), 'invalid boolean (number)');
+        $this->assertNull(self::$ref::toBoolOrNull('yes'), 'truthy will fail');
     }
 
     public function test_toCamelCase(): void
@@ -1227,12 +1201,12 @@ class Utf8Test extends TestCase
         $this->assertSame(1230.0, self::$ref::toFloat('1.23E+3'), 'with +E');
         $this->assertSame(0.012, self::$ref::toFloat('1.2e-2'), 'with -e');
         $this->assertSame(0.012, self::$ref::toFloat('1.2E-2'), 'with -E');
-        self::assertNan(self::$ref::toFloat('NAN'), 'NAN');
-        self::assertNan(self::$ref::toFloat('-NAN'), 'Negative NAN');
-        self::assertNan(self::$ref::toFloat('NaN'), 'NaN from Javascript');
-        self::assertNan(self::$ref::toFloat('-NaN'), 'Negative NaN');
-        self::assertInfinite(self::$ref::toFloat('INF'), 'upper case INF');
-        self::assertInfinite(self::$ref::toFloat('Infinity'), 'INF from Javascript');
+        $this->assertNan(self::$ref::toFloat('NAN'), 'NAN');
+        $this->assertNan(self::$ref::toFloat('-NAN'), 'Negative NAN');
+        $this->assertNan(self::$ref::toFloat('NaN'), 'NaN from Javascript');
+        $this->assertNan(self::$ref::toFloat('-NaN'), 'Negative NaN');
+        $this->assertInfinite(self::$ref::toFloat('INF'), 'upper case INF');
+        $this->assertInfinite(self::$ref::toFloat('Infinity'), 'INF from Javascript');
     }
 
     public function test_toFloat_overflow_e_notation(): void
@@ -1297,21 +1271,21 @@ class Utf8Test extends TestCase
         $this->assertSame(0.012, self::$ref::toFloatOrNull('1.2e-2'), 'with -e');
         $this->assertSame(0.012, self::$ref::toFloatOrNull('1.2E-2'), 'with -E');
         $this->assertSame(1.234, self::$ref::toFloatOrNull('123.4E-2'), 'scientific notation irregular');
-        self::assertNull(self::$ref::toFloatOrNull('1e+20'), 'overflowing +e notation');
-        self::assertNull(self::$ref::toFloatOrNull('1e-20'), 'overflowing -e notation');
-        self::assertNull(self::$ref::toFloatOrNull('nan'), 'Lowercase nan is not NAN');
-        self::assertNan(self::$ref::toFloatOrNull('NAN'), 'NAN');
-        self::assertNan(self::$ref::toFloatOrNull('-NAN'), 'Negative NAN');
-        self::assertNan(self::$ref::toFloatOrNull('NaN'), 'NaN from Javascript');
-        self::assertNan(self::$ref::toFloatOrNull('-NaN'), 'Negative NaN');
-        self::assertNull(self::$ref::toFloatOrNull('inf'), 'Lowercase inf is not INF');
-        self::assertInfinite(self::$ref::toFloatOrNull('INF'), 'upper case INF');
-        self::assertInfinite(self::$ref::toFloatOrNull('Infinity'), 'INF from Javascript');
-        self::assertNull(self::$ref::toFloatOrNull(''), 'empty');
-        self::assertNull(self::$ref::toFloatOrNull('a1'), 'invalid string');
-        self::assertNull(self::$ref::toFloatOrNull('01.1'), 'zero start');
-        self::assertNull(self::$ref::toFloatOrNull('.1'), 'dot start');
-        self::assertNull(self::$ref::toFloatOrNull('1.' . str_repeat('1', 100)), 'overflow');
+        $this->assertNull(self::$ref::toFloatOrNull('1e+20'), 'overflowing +e notation');
+        $this->assertNull(self::$ref::toFloatOrNull('1e-20'), 'overflowing -e notation');
+        $this->assertNull(self::$ref::toFloatOrNull('nan'), 'Lowercase nan is not NAN');
+        $this->assertNan(self::$ref::toFloatOrNull('NAN'), 'NAN');
+        $this->assertNan(self::$ref::toFloatOrNull('-NAN'), 'Negative NAN');
+        $this->assertNan(self::$ref::toFloatOrNull('NaN'), 'NaN from Javascript');
+        $this->assertNan(self::$ref::toFloatOrNull('-NaN'), 'Negative NaN');
+        $this->assertNull(self::$ref::toFloatOrNull('inf'), 'Lowercase inf is not INF');
+        $this->assertInfinite(self::$ref::toFloatOrNull('INF'), 'upper case INF');
+        $this->assertInfinite(self::$ref::toFloatOrNull('Infinity'), 'INF from Javascript');
+        $this->assertNull(self::$ref::toFloatOrNull(''), 'empty');
+        $this->assertNull(self::$ref::toFloatOrNull('a1'), 'invalid string');
+        $this->assertNull(self::$ref::toFloatOrNull('01.1'), 'zero start');
+        $this->assertNull(self::$ref::toFloatOrNull('.1'), 'dot start');
+        $this->assertNull(self::$ref::toFloatOrNull('1.' . str_repeat('1', 100)), 'overflow');
     }
 
     public function test_toInt(): void
@@ -1378,13 +1352,13 @@ class Utf8Test extends TestCase
     public function test_toIntOrNull(): void
     {
         $this->assertSame(123, self::$ref::toIntOrNull('123'));
-        self::assertNull(self::$ref::toIntOrNull(str_repeat('1', 20)), 'overflow positive');
-        self::assertNull(self::$ref::toIntOrNull('-' . str_repeat('1', 20)), 'overflow positive');
-        self::assertNull(self::$ref::toIntOrNull(''), 'blank');
-        self::assertNull(self::$ref::toIntOrNull('1.0'), 'float value');
-        self::assertNull(self::$ref::toIntOrNull('1.0e-2'), 'float value with e notation');
-        self::assertNull(self::$ref::toIntOrNull('a1'), 'invalid string');
-        self::assertNull(self::$ref::toIntOrNull('01'), 'zero start');
+        $this->assertNull(self::$ref::toIntOrNull(str_repeat('1', 20)), 'overflow positive');
+        $this->assertNull(self::$ref::toIntOrNull('-' . str_repeat('1', 20)), 'overflow positive');
+        $this->assertNull(self::$ref::toIntOrNull(''), 'blank');
+        $this->assertNull(self::$ref::toIntOrNull('1.0'), 'float value');
+        $this->assertNull(self::$ref::toIntOrNull('1.0e-2'), 'float value with e notation');
+        $this->assertNull(self::$ref::toIntOrNull('a1'), 'invalid string');
+        $this->assertNull(self::$ref::toIntOrNull('01'), 'zero start');
     }
 
     public function test_toLowerCase(): void

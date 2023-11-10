@@ -178,13 +178,6 @@ class StrBufferTest extends TestCase
         self::assertSame('fOO Bar', $after->toString());
     }
 
-    public function test_delete(): void
-    {
-        $after = $this->buffer('foooooo bar')->remove('oo', 2);
-        self::assertInstanceOf(StrBuffer::class, $after);
-        self::assertSame('foo bar', $after->toString());
-    }
-
     public function test_dirname(): void
     {
         $sb = $this->buffer('/test/path/of.php');
@@ -216,6 +209,13 @@ class StrBufferTest extends TestCase
         $after = $this->buffer('abc')->dropFirst(1);
         self::assertInstanceOf(StrBuffer::class, $after);
         self::assertSame('bc', $after->toString());
+    }
+
+    public function test_dropLast(): void
+    {
+        $after = $this->buffer('abc')->dropLast(1);
+        self::assertInstanceOf(StrBuffer::class, $after);
+        self::assertSame('ab', $after->toString());
     }
 
     public function test_endsWith(): void
@@ -265,7 +265,14 @@ class StrBufferTest extends TestCase
 
     public function test_length(): void
     {
-        self::assertSame(3, $this->buffer('あいう')->length());
+        self::assertSame(9, $this->buffer('あいう')->length());
+    }
+
+    public function test_remove(): void
+    {
+        $after = $this->buffer('foooooo bar')->remove('oo', 2);
+        self::assertInstanceOf(StrBuffer::class, $after);
+        self::assertSame('foo bar', $after->toString());
     }
 
     public function test_takeFirst(): void
