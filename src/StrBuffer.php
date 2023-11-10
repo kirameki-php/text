@@ -7,7 +7,7 @@ use function basename;
 use function dirname;
 use function sprintf;
 
-class StringBuilder implements Stringable
+class StrBuffer implements Stringable
 {
     protected static Str $ref;
 
@@ -240,7 +240,7 @@ class StringBuilder implements Stringable
      */
     public function doesNotContain(string $needle): bool
     {
-        return Unicode::doesNotContain($this->value, $needle);
+        return Utf8::doesNotContain($this->value, $needle);
     }
 
     /**
@@ -249,7 +249,7 @@ class StringBuilder implements Stringable
      */
     public function doesNotEndWith(string|iterable $needle): bool
     {
-        return Unicode::doesNotEndWith($this->value, $needle);
+        return Utf8::doesNotEndWith($this->value, $needle);
     }
 
     /**
@@ -258,7 +258,7 @@ class StringBuilder implements Stringable
      */
     public function doesNotStartWith(string|iterable $needle): bool
     {
-        return Unicode::doesNotStartWith($this->value, $needle);
+        return Utf8::doesNotStartWith($this->value, $needle);
     }
 
     /**
@@ -267,7 +267,7 @@ class StringBuilder implements Stringable
      */
     public function dropFirst(int $position): static
     {
-        return new static(Unicode::dropFirst($this->value, $position));
+        return new static(Utf8::dropFirst($this->value, $position));
     }
 
     /**
@@ -276,7 +276,7 @@ class StringBuilder implements Stringable
      */
     public function endsWith(string|iterable $needle): bool
     {
-        return Unicode::endsWith($this->value, $needle);
+        return Utf8::endsWith($this->value, $needle);
     }
 
     /**
@@ -286,7 +286,7 @@ class StringBuilder implements Stringable
      */
     public function indexOfFirst(string $needle, int $offset = 0): ?int
     {
-        return Unicode::indexOfFirst($this->value, $needle, $offset);
+        return Utf8::indexOfFirst($this->value, $needle, $offset);
     }
 
     /**
@@ -296,7 +296,7 @@ class StringBuilder implements Stringable
      */
     public function indexOfLast(string $needle, int $offset = 0): ?int
     {
-        return Unicode::indexOfLast($this->value, $needle, $offset);
+        return Utf8::indexOfLast($this->value, $needle, $offset);
     }
 
     /**
@@ -306,7 +306,7 @@ class StringBuilder implements Stringable
      */
     public function insert(string $insert, int $position): static
     {
-        return new static(Unicode::insert($this->value, $insert, $position));
+        return new static(Utf8::insert($this->value, $insert, $position));
     }
 
     /**
@@ -314,7 +314,7 @@ class StringBuilder implements Stringable
      */
     public function isBlank(): bool
     {
-        return Unicode::isBlank($this->value);
+        return Utf8::isBlank($this->value);
     }
 
     /**
@@ -322,7 +322,7 @@ class StringBuilder implements Stringable
      */
     public function isNotBlank(): bool
     {
-        return Unicode::isNotBlank($this->value);
+        return Utf8::isNotBlank($this->value);
     }
 
     /**
@@ -330,7 +330,7 @@ class StringBuilder implements Stringable
      */
     public function length(): int
     {
-        return Unicode::length($this->value);
+        return Utf8::length($this->value);
     }
 
     /**
@@ -339,7 +339,7 @@ class StringBuilder implements Stringable
      */
     public function matchAll(string $pattern): array
     {
-        return Unicode::matchAll($this->value, $pattern);
+        return Utf8::matchAll($this->value, $pattern);
     }
 
     /**
@@ -348,7 +348,7 @@ class StringBuilder implements Stringable
      */
     public function matchFirst(string $pattern): string
     {
-        return Unicode::matchFirst($this->value, $pattern);
+        return Utf8::matchFirst($this->value, $pattern);
     }
 
     /**
@@ -358,7 +358,7 @@ class StringBuilder implements Stringable
      */
     public function padBoth(int $length, string $pad = ' '): static
     {
-        return new static(Unicode::padBoth($this->value, $length, $pad));
+        return new static(Utf8::padBoth($this->value, $length, $pad));
     }
 
     /**
@@ -368,7 +368,7 @@ class StringBuilder implements Stringable
      */
     public function padStart(int $length, string $pad = ' '): static
     {
-        return new static(Unicode::padStart($this->value, $length, $pad));
+        return new static(Utf8::padStart($this->value, $length, $pad));
     }
 
     /**
@@ -378,7 +378,7 @@ class StringBuilder implements Stringable
      */
     public function padEnd(int $length, string $pad = ' '): static
     {
-        return new static(Unicode::padEnd($this->value, $length, $pad));
+        return new static(Utf8::padEnd($this->value, $length, $pad));
     }
 
     /**
@@ -388,7 +388,7 @@ class StringBuilder implements Stringable
     public function prepend(string ...$string): static
     {
         $string[] = $this->value;
-        return new static(Unicode::concat(...$string));
+        return new static(Utf8::concat(...$string));
     }
 
     /**
@@ -399,7 +399,7 @@ class StringBuilder implements Stringable
      */
     public function remove(string $search, ?int $limit = null, int &$count = 0): static
     {
-        return new static(Unicode::remove($this->value, $search, $limit ?? -1, $count));
+        return new static(Utf8::remove($this->value, $search, $limit ?? -1, $count));
     }
 
     /**
@@ -408,7 +408,7 @@ class StringBuilder implements Stringable
      */
     public function repeat(int $times): static
     {
-        return new static(Unicode::repeat($this->value, $times));
+        return new static(Utf8::repeat($this->value, $times));
     }
 
     /**
@@ -418,7 +418,7 @@ class StringBuilder implements Stringable
      */
     public function replace(string $search, string $replace): static
     {
-        return new static(Unicode::replace($this->value, $search, $replace));
+        return new static(Utf8::replace($this->value, $search, $replace));
     }
 
     /**
@@ -428,7 +428,7 @@ class StringBuilder implements Stringable
      */
     public function replaceFirst(string $search, string $replace): static
     {
-        return new static(Unicode::replaceFirst($this->value, $search, $replace));
+        return new static(Utf8::replaceFirst($this->value, $search, $replace));
     }
 
     /**
@@ -438,7 +438,7 @@ class StringBuilder implements Stringable
      */
     public function replaceLast(string $search, string $replace): static
     {
-        return new static(Unicode::replaceLast($this->value, $search, $replace));
+        return new static(Utf8::replaceLast($this->value, $search, $replace));
     }
 
     /**
@@ -449,7 +449,7 @@ class StringBuilder implements Stringable
      */
     public function replaceMatch(string $pattern, string $replace, ?int $limit = null): static
     {
-        return new static(Unicode::replaceMatch($this->value, $pattern, $replace, $limit ?? -1));
+        return new static(Utf8::replaceMatch($this->value, $pattern, $replace, $limit ?? -1));
     }
 
     /**
@@ -457,7 +457,7 @@ class StringBuilder implements Stringable
      */
     public function reverse(): static
     {
-        return new static(Unicode::reverse($this->value));
+        return new static(Utf8::reverse($this->value));
     }
 
     /**
@@ -467,7 +467,7 @@ class StringBuilder implements Stringable
      */
     public function split(string $separator, ?int $limit = null): array
     {
-        return Unicode::split($this->value, $separator, $limit);
+        return Utf8::split($this->value, $separator, $limit);
     }
 
     /**
@@ -476,7 +476,7 @@ class StringBuilder implements Stringable
      */
     public function startsWith(string|iterable $needle): bool
     {
-        return Unicode::startsWith($this->value, $needle);
+        return Utf8::startsWith($this->value, $needle);
     }
 
     /**
@@ -486,7 +486,7 @@ class StringBuilder implements Stringable
      */
     public function substring(int $offset, ?int $length = null): static
     {
-        return new static(Unicode::substring($this->value, $offset, $length));
+        return new static(Utf8::substring($this->value, $offset, $length));
     }
 
     /**
@@ -495,7 +495,7 @@ class StringBuilder implements Stringable
      */
     public function takeFirst(int $position): static
     {
-        return new static(Unicode::takeFirst($this->value, $position));
+        return new static(Utf8::takeFirst($this->value, $position));
     }
 
     /**
@@ -503,7 +503,7 @@ class StringBuilder implements Stringable
      */
     public function toCamelCase(): static
     {
-        return new static(Unicode::toCamelCase($this->value));
+        return new static(Utf8::toCamelCase($this->value));
     }
 
     /**
@@ -511,7 +511,7 @@ class StringBuilder implements Stringable
      */
     public function toKebabCase(): static
     {
-        return new static(Unicode::toKebabCase($this->value));
+        return new static(Utf8::toKebabCase($this->value));
     }
 
     /**
@@ -519,7 +519,7 @@ class StringBuilder implements Stringable
      */
     public function toLowerCase(): static
     {
-        return new static(Unicode::toLowerCase($this->value));
+        return new static(Utf8::toLowerCase($this->value));
     }
 
     /**
@@ -527,7 +527,7 @@ class StringBuilder implements Stringable
      */
     public function toPascalCase(): static
     {
-        $this->value = Unicode::toPascalCase($this->value);
+        $this->value = Utf8::toPascalCase($this->value);
         return $this;
     }
 
@@ -536,7 +536,7 @@ class StringBuilder implements Stringable
      */
     public function toUpperCase(): static
     {
-        return new static(Unicode::toUpperCase($this->value));
+        return new static(Utf8::toUpperCase($this->value));
     }
 
     /**
@@ -544,7 +544,7 @@ class StringBuilder implements Stringable
      */
     public function toSnakeCase(): static
     {
-        return new static(Unicode::toSnakeCase($this->value));
+        return new static(Utf8::toSnakeCase($this->value));
     }
 
     /**
@@ -561,7 +561,7 @@ class StringBuilder implements Stringable
      */
     public function trim(string $characters = '\s'): static
     {
-        return new static(Unicode::trim($this->value, $characters));
+        return new static(Utf8::trim($this->value, $characters));
     }
 
     /**
@@ -570,7 +570,7 @@ class StringBuilder implements Stringable
      */
     public function trimStart(string $characters = '\s'): static
     {
-        return new static(Unicode::trimStart($this->value, $characters));
+        return new static(Utf8::trimStart($this->value, $characters));
     }
 
     /**
@@ -579,7 +579,7 @@ class StringBuilder implements Stringable
      */
     public function trimEnd(string $characters = '\s'): static
     {
-        return new static(Unicode::trimEnd($this->value, $characters));
+        return new static(Utf8::trimEnd($this->value, $characters));
     }
 
     /**

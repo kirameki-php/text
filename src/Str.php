@@ -50,11 +50,11 @@ class Str
 
     /**
      * @param string $string
-     * @return StringBuilder
+     * @return StrBuffer
      */
-    public static function of(string $string): StringBuilder
+    public static function of(string $string): StrBuffer
     {
-        return StringBuilder::from($string);
+        return StrBuffer::from($string);
     }
 
     /**

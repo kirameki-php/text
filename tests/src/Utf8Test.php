@@ -5,19 +5,19 @@ namespace Tests\Kirameki\Text;
 use IntlException;
 use Kirameki\Core\Exceptions\InvalidArgumentException;
 use Kirameki\Core\Testing\TestCase;
-use Kirameki\Text\Unicode;
+use Kirameki\Text\Utf8;
 use RuntimeException;
 use function str_repeat;
 use function substr;
 
-class UnicodeTest extends TestCase
+class Utf8Test extends TestCase
 {
-    protected static Unicode $ref;
+    protected static Utf8 $ref;
 
     protected function setUp(): void
     {
         parent::setUp();
-        self::$ref = new Unicode();
+        self::$ref = new Utf8();
     }
 
     public function test_after(): void

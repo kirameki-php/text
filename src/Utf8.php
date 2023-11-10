@@ -7,7 +7,6 @@ use RuntimeException;
 use ValueError;
 use function array_reverse;
 use function assert;
-use function dump;
 use function grapheme_extract;
 use function grapheme_strlen;
 use function grapheme_strpos;
@@ -23,16 +22,16 @@ use function strrev;
 use const GRAPHEME_EXTR_COUNT;
 use const PHP_EOL;
 
-class Unicode extends Str
+class Utf8 extends Str
 {
     /**
      * Counts the size of bytes for the given string.
      *
      * Example:
      * ```php
-     * Str::byteLength('a'); // 1
-     * Str::byteLength('あ'); // 3
-     * Str::byteLength('👨‍👨‍👧‍👦'); // 25
+     * Utf8::byteLength('a'); // 1
+     * Utf8::byteLength('あ'); // 3
+     * Utf8::byteLength('👨‍👨‍👧‍👦'); // 25
      * ```
      *
      * @param string $string
@@ -50,10 +49,10 @@ class Unicode extends Str
      *
      * Example:
      * ```php
-     * Unicode::contains('Foo bar', 'bar'); // true
-     * Unicode::contains('👨‍👨‍👧‍👧‍', '👨'); // false
-     * Unicode::contains('a', ''); // true
-     * Unicode::contains('', ''); // true
+     * Utf8::contains('Foo bar', 'bar'); // true
+     * Utf8::contains('👨‍👨‍👧‍👧‍', '👨'); // false
+     * Utf8::contains('a', ''); // true
+     * Utf8::contains('', ''); // true
      * ```
      *
      * @inheritDoc
@@ -71,8 +70,8 @@ class Unicode extends Str
      *
      * Example:
      * ```php
-     * Unicode::cut('abc', 1); // 'a'
-     * Unicode::cut('あいう', 1); // '' since あ is 3 bytes long.
+     * Utf8::cut('abc', 1); // 'a'
+     * Utf8::cut('あいう', 1); // '' since あ is 3 bytes long.
      * ```
      *
      * @param string $string
@@ -123,9 +122,9 @@ class Unicode extends Str
      *
      * Example:
      * ```php
-     * Unicode::firstIndexOf('abb', 'b'); // 1
-     * Unicode::firstIndexOf('abb', 'b', 2); // 2
-     * Unicode::firstIndexOf('abb', 'b', 3); // null
+     * Utf8::firstIndexOf('abb', 'b'); // 1
+     * Utf8::firstIndexOf('abb', 'b', 2); // 2
+     * Utf8::firstIndexOf('abb', 'b', 3); // null
      * ```
      *
      * @inheritDoc
@@ -148,9 +147,9 @@ class Unicode extends Str
      *
      * Example:
      * ```php
-     * Unicode::indexOfLast('abb', 'b'); // 2
-     * Unicode::indexOfLast('abb', 'b', 2); // 2
-     * Unicode::indexOfLast('abb', 'b', 3); // null
+     * Utf8::indexOfLast('abb', 'b'); // 2
+     * Utf8::indexOfLast('abb', 'b', 2); // 2
+     * Utf8::indexOfLast('abb', 'b', 3); // null
      * ```
      *
      * @inheritDoc
@@ -174,9 +173,9 @@ class Unicode extends Str
      *
      * Example:
      * ```php
-     * Unicode::length(''); // 0
-     * Unicode::length('開発'); // 2
-     * Unicode::length('👨‍👨‍👧‍👦'); // 1
+     * Utf8::length(''); // 0
+     * Utf8::length('開発'); // 2
+     * Utf8::length('👨‍👨‍👧‍👦'); // 1
      * ```
      *
      * @inheritDoc
@@ -232,11 +231,11 @@ class Unicode extends Str
      *
      * Example:
      * ```php
-     * Unicode::substring('abc', 1); // 'a'
-     * Unicode::substring('abc', 0, 1); // 'a'
-     * Unicode::substring('abc', 1, 2); // 'bc'
-     * Unicode::substring('a', 1); // RuntimeException: Offset: 1 is out of range for string "a"
-     * Unicode::substring('👨‍👨‍👧‍👦', 1, 'not found'); // 'not found'
+     * Utf8::substring('abc', 1); // 'a'
+     * Utf8::substring('abc', 0, 1); // 'a'
+     * Utf8::substring('abc', 1, 2); // 'bc'
+     * Utf8::substring('a', 1); // RuntimeException: Offset: 1 is out of range for string "a"
+     * Utf8::substring('👨‍👨‍👧‍👦', 1, 'not found'); // 'not found'
      * ```
      *
      * @inheritDoc
@@ -258,8 +257,8 @@ class Unicode extends Str
      *
      * Example:
      * ```php
-     * Unicode::toLowerCase('AbCd'); // 'abcd'
-     * Unicode::toLowerCase('ÇĞİÖŞÜ'); // 'çği̇öşü'
+     * Utf8::toLowerCase('AbCd'); // 'abcd'
+     * Utf8::toLowerCase('ÇĞİÖŞÜ'); // 'çği̇öşü'
      * ```
      *
      * @param string $string
@@ -278,8 +277,8 @@ class Unicode extends Str
      *
      * Example:
      * ```php
-     * Unicode::toUpperCase('AbCd'); // 'ABCD'
-     * Unicode::toUpperCase('çği̇öşü'); // ÇĞİÖŞÜ
+     * Utf8::toUpperCase('AbCd'); // 'ABCD'
+     * Utf8::toUpperCase('çği̇öşü'); // ÇĞİÖŞÜ
      * ```
      *
      * @inheritDoc

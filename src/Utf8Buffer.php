@@ -2,19 +2,14 @@
 
 namespace Kirameki\Text;
 
-use Stringable;
-use function basename;
-use function dirname;
-use function sprintf;
-
-class UnicodeBuilder extends StringBuilder
+class Utf8Buffer extends StrBuffer
 {
     /**
      * @param string $value
      */
     public function __construct(string $value = '')
     {
-        static::$ref ??= new Unicode();
+        static::$ref ??= new Utf8();
         parent::__construct($value);
     }
 
@@ -25,6 +20,6 @@ class UnicodeBuilder extends StringBuilder
      */
     public function cut(int $position, string $ellipsis = ''): static
     {
-        return new static(Unicode::cut($this->value, $position, $ellipsis));
+        return new static(Utf8::cut($this->value, $position, $ellipsis));
     }
 }
