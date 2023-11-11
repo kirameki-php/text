@@ -452,4 +452,28 @@ class StrTest extends TestCase
         $this->assertSame(null, self::$ref::indexOfLast('🏴󠁧󠁢󠁳󠁣󠁴󠁿👨‍👨‍👧‍👦', '👨‍👨‍👧‍👦', 29), 'offset utf-8');
     }
 
+    public function test_insertAt(): void
+    {
+        $this->assertSame('xyzabc', self::$ref::insertAt('abc', 'xyz', 0), 'at zero');
+        $this->assertSame('axyzbc', self::$ref::insertAt('abc', 'xyz', 1), 'basic');
+        $this->assertSame('xyzabc', self::$ref::insertAt('abc', 'xyz', -1), 'negative');
+        $this->assertSame('abcxyz', self::$ref::insertAt('abc', 'xyz', 3), 'edge');
+        $this->assertSame('abcxyz', self::$ref::insertAt('abc', 'xyz', 4), 'overflow');
+        $this->assertSame('あxyzい', self::$ref::insertAt('あい', 'xyz', 3), 'utf8');
+        $this->assertSame('xyzあい', self::$ref::insertAt('あい', 'xyz', -1), 'utf8 negative');
+        $this->assertSame('👨x👨', self::$ref::insertAt('👨👨', 'x', 4), 'grapheme');
+    }
+
+    public function test_interpolate(): void
+    {
+        $this->assertSame('abc', self::$ref::interpolate('abc', []), 'empty');
+        $this->assertSame('1 hi', self::$ref::interpolate('{a} hi', ['a' => 1]), 'replace edge');
+        $this->assertSame('1 1', self::$ref::interpolate('{a} {a}', ['a' => 1]), 'replace twice');
+        $this->assertSame('{b} 1', self::$ref::interpolate('{a} {b}', ['a' => '{b}', 'b' => 1]), 'replace twice');
+        $this->assertSame('{a1}', self::$ref::interpolate('{a{a}}', ['a' => 1]), 'nested v1');
+        $this->assertSame('{1}', self::$ref::interpolate('{{a}}', ['a' => 1]), 'nested v2');
+        $this->assertSame('\\{a}', self::$ref::interpolate('\\{a}', ['a' => 1]), 'escape start');
+        $this->assertSame('{a\\}', self::$ref::interpolate('{a\\}', ['a' => 1]), 'escape end');
+        $this->assertSame('\\1', self::$ref::interpolate('\\\\{a}', ['a' => 1]), 'dont escape double escape char');
+    }
 }

@@ -476,14 +476,16 @@ class Utf8Test extends TestCase
         $this->assertNull(self::$ref::indexOfLast('🏴󠁧󠁢󠁳󠁣󠁴󠁿👨‍👨‍👧‍👦', '👨‍👨‍👧‍👦', 2), 'offset utf-8');
     }
 
-    public function test_insert(): void
+    public function test_insertAt(): void
     {
-        $this->assertSame('xyzabc', self::$ref::insert('abc', 'xyz', 0));
-        $this->assertSame('axyzbc', self::$ref::insert('abc', 'xyz', 1));
-        $this->assertSame('xyzabc', self::$ref::insert('abc', 'xyz', -1));
-        $this->assertSame('abcxyz', self::$ref::insert('abc', 'xyz', 3));
-        $this->assertSame('あxyzい', self::$ref::insert('あい', 'xyz', 1));
-        $this->assertSame('xyzあい', self::$ref::insert('あい', 'xyz', -1));
+        $this->assertSame('xyzabc', self::$ref::insertAt('abc', 'xyz', 0), 'at zero');
+        $this->assertSame('axyzbc', self::$ref::insertAt('abc', 'xyz', 1), 'basic');
+        $this->assertSame('xyzabc', self::$ref::insertAt('abc', 'xyz', -1), 'negative');
+        $this->assertSame('abcxyz', self::$ref::insertAt('abc', 'xyz', 3), 'edge');
+        $this->assertSame('abcxyz', self::$ref::insertAt('abc', 'xyz', 4), 'overflow');
+        $this->assertSame('あxyzい', self::$ref::insertAt('あい', 'xyz', 1), 'utf8');
+        $this->assertSame('xyzあい', self::$ref::insertAt('あい', 'xyz', -1), 'utf8 negative');
+        $this->assertSame('👨x👨', self::$ref::insertAt('👨👨', 'x', 1), 'grapheme');
     }
 
     public function test_isBlank(): void

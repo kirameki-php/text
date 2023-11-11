@@ -313,9 +313,9 @@ class StrBuffer implements Stringable
      * @param string $insert
      * @return static
      */
-    public function insert(string $insert, int $position): static
+    public function insertAt(string $insert, int $position): static
     {
-        return new static(static::$ref::insert($this->value, $insert, $position));
+        return new static(static::$ref::insertAt($this->value, $insert, $position));
     }
 
     /**

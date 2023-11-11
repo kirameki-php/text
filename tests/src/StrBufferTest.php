@@ -15,8 +15,8 @@ class StrBufferTest extends TestCase
     public function test_from(): void
     {
         $sb = $this->buffer('a');
-        self::assertInstanceOf(StrBuffer::class, $sb);
-        self::assertSame('a', $sb->toString());
+        $this->assertInstanceOf(StrBuffer::class, $sb);
+        $this->assertSame('a', $sb->toString());
     }
 
     public function test_after(): void
@@ -133,49 +133,49 @@ class StrBufferTest extends TestCase
     public function test_contains(): void
     {
         $sb = $this->buffer('foo bar');
-        self::assertFalse($sb->contains('baz'));
-        self::assertTrue($sb->contains('foo'));
-        self::assertTrue($sb->contains(''));
-        self::assertFalse($sb->contains('  '));
+        $this->assertFalse($sb->contains('baz'));
+        $this->assertTrue($sb->contains('foo'));
+        $this->assertTrue($sb->contains(''));
+        $this->assertFalse($sb->contains('  '));
     }
 
     public function test_containsAll(): void
     {
         $sb = $this->buffer('foo bar');
-        self::assertFalse($sb->containsAll(['foo', 'bar', 'baz']));
-        self::assertTrue($sb->containsAll(['foo', 'bar']));
-        self::assertTrue($sb->containsAll(['', '']));
+        $this->assertFalse($sb->containsAll(['foo', 'bar', 'baz']));
+        $this->assertTrue($sb->containsAll(['foo', 'bar']));
+        $this->assertTrue($sb->containsAll(['', '']));
     }
 
     public function test_containsAny(): void
     {
         $sb = $this->buffer('foo bar');
-        self::assertTrue($sb->containsAny(['foo', 'bar', 'baz']));
-        self::assertFalse($sb->containsAny(['baz', '_']));
+        $this->assertTrue($sb->containsAny(['foo', 'bar', 'baz']));
+        $this->assertFalse($sb->containsAny(['baz', '_']));
     }
 
     public function test_containsPattern(): void
     {
         $sb = $this->buffer('foo bar');
-        self::assertTrue($sb->containsPattern('/[a-z]+/'));
-        self::assertFalse($sb->containsPattern('/[0-9]+/'));
+        $this->assertTrue($sb->containsPattern('/[a-z]+/'));
+        $this->assertFalse($sb->containsPattern('/[0-9]+/'));
     }
 
     public function test_count(): void
     {
         $sb = $this->buffer('foo bar');
-        self::assertSame(1, $sb->count('foo'));
+        $this->assertSame(1, $sb->count('foo'));
 
         $sb = $this->buffer('あああ');
-        self::assertSame(1, $sb->count('ああ'));
-        self::assertSame(2, $sb->count('ああ', true));
+        $this->assertSame(1, $sb->count('ああ'));
+        $this->assertSame(2, $sb->count('ああ', true));
     }
 
     public function test_decapitalize(): void
     {
         $after = $this->buffer('FOO Bar')->decapitalize();
-        self::assertInstanceOf(StrBuffer::class, $after);
-        self::assertSame('fOO Bar', $after->toString());
+        $this->assertInstanceOf(StrBuffer::class, $after);
+        $this->assertSame('fOO Bar', $after->toString());
     }
 
     public function test_dirname(): void
@@ -184,109 +184,109 @@ class StrBufferTest extends TestCase
         $after1 = $sb->dirname();
         $after2 = $sb->dirname(2);
 
-        self::assertInstanceOf(StrBuffer::class, $after1);
-        self::assertInstanceOf(StrBuffer::class, $after2);
-        self::assertSame('/test/path', $after1->toString());
-        self::assertSame('/test', $after2->toString());
+        $this->assertInstanceOf(StrBuffer::class, $after1);
+        $this->assertInstanceOf(StrBuffer::class, $after2);
+        $this->assertSame('/test/path', $after1->toString());
+        $this->assertSame('/test', $after2->toString());
     }
 
     public function test_doesNotEndWith(): void
     {
         $sb = $this->buffer('/test/path/of.php');
-        self::assertTrue($sb->doesNotEndWith('/test'));
-        self::assertFalse($sb->doesNotEndWith('.php'));
+        $this->assertTrue($sb->doesNotEndWith('/test'));
+        $this->assertFalse($sb->doesNotEndWith('.php'));
     }
 
     public function test_doesNotStartWith(): void
     {
         $sb = $this->buffer('/test/path/of.php');
-        self::assertFalse($sb->doesNotStartWith('/test'));
-        self::assertTrue($sb->doesNotStartWith('.php'));
+        $this->assertFalse($sb->doesNotStartWith('/test'));
+        $this->assertTrue($sb->doesNotStartWith('.php'));
     }
 
     public function test_dropFirst(): void
     {
         $after = $this->buffer('abc')->dropFirst(1);
-        self::assertInstanceOf(StrBuffer::class, $after);
-        self::assertSame('bc', $after->toString());
+        $this->assertInstanceOf(StrBuffer::class, $after);
+        $this->assertSame('bc', $after->toString());
     }
 
     public function test_dropLast(): void
     {
         $after = $this->buffer('abc')->dropLast(1);
-        self::assertInstanceOf(StrBuffer::class, $after);
-        self::assertSame('ab', $after->toString());
+        $this->assertInstanceOf(StrBuffer::class, $after);
+        $this->assertSame('ab', $after->toString());
     }
 
     public function test_endsWith(): void
     {
         $sb = $this->buffer('/test/path/of.php');
-        self::assertFalse($sb->endsWith('/test'));
-        self::assertTrue($sb->endsWith('.php'));
+        $this->assertFalse($sb->endsWith('/test'));
+        $this->assertTrue($sb->endsWith('.php'));
     }
 
     public function test_indexOfFirst(): void
     {
         $sb = $this->buffer('aabbcc');
-        self::assertSame(2, $sb->indexOfFirst('b'));
-        self::assertSame(3, $sb->indexOfFirst('b', 3));
+        $this->assertSame(2, $sb->indexOfFirst('b'));
+        $this->assertSame(3, $sb->indexOfFirst('b', 3));
     }
 
     public function test_insert(): void
     {
-        $after = $this->buffer('aaa')->insert('b', 1);
-        self::assertSame('abaa', $after->toString());
+        $after = $this->buffer('aaa')->insertAt('b', 1);
+        $this->assertSame('abaa', $after->toString());
     }
 
     public function test_isBlank(): void
     {
-        self::assertTrue($this->buffer('')->isBlank());
-        self::assertFalse($this->buffer('a')->isBlank());
-        self::assertFalse($this->buffer("\n")->isBlank());
+        $this->assertTrue($this->buffer('')->isBlank());
+        $this->assertFalse($this->buffer('a')->isBlank());
+        $this->assertFalse($this->buffer("\n")->isBlank());
     }
 
     public function test_isNotBlank(): void
     {
-        self::assertFalse($this->buffer('')->isNotBlank());
-        self::assertTrue($this->buffer('a')->isNotBlank());
-        self::assertTrue($this->buffer("\n")->isNotBlank());
+        $this->assertFalse($this->buffer('')->isNotBlank());
+        $this->assertTrue($this->buffer('a')->isNotBlank());
+        $this->assertTrue($this->buffer("\n")->isNotBlank());
     }
 
     public function test_kebabCase(): void
     {
         $after = $this->buffer('foo barBaz')->toKebabCase();
-        self::assertInstanceOf(StrBuffer::class, $after);
-        self::assertSame('foo-bar-baz', $after->toString());
+        $this->assertInstanceOf(StrBuffer::class, $after);
+        $this->assertSame('foo-bar-baz', $after->toString());
     }
 
     public function test_indexOfLast(): void
     {
-        self::assertSame(3, $this->buffer('aabbcc')->indexOfLast('b'));
+        $this->assertSame(3, $this->buffer('aabbcc')->indexOfLast('b'));
     }
 
     public function test_length(): void
     {
-        self::assertSame(9, $this->buffer('あいう')->length());
+        $this->assertSame(9, $this->buffer('あいう')->length());
     }
 
     public function test_remove(): void
     {
         $after = $this->buffer('foooooo bar')->remove('oo', 2);
-        self::assertInstanceOf(StrBuffer::class, $after);
-        self::assertSame('foo bar', $after->toString());
+        $this->assertInstanceOf(StrBuffer::class, $after);
+        $this->assertSame('foo bar', $after->toString());
     }
 
     public function test_takeFirst(): void
     {
         $after = $this->buffer('abc')->takeFirst(1);
-        self::assertInstanceOf(StrBuffer::class, $after);
-        self::assertSame('a', $after->toString());
+        $this->assertInstanceOf(StrBuffer::class, $after);
+        $this->assertSame('a', $after->toString());
     }
 
     public function test_toCamelCase(): void
     {
         $after = $this->buffer('foo bar')->toCamelCase();
-        self::assertInstanceOf(StrBuffer::class, $after);
-        self::assertSame('fooBar', $after->toString());
+        $this->assertInstanceOf(StrBuffer::class, $after);
+        $this->assertSame('fooBar', $after->toString());
     }
 }

@@ -17,6 +17,7 @@ use function bcmul;
 use function bcpow;
 use function ceil;
 use function compact;
+use function dump;
 use function filter_var;
 use function floor;
 use function implode;
@@ -24,6 +25,7 @@ use function is_iterable;
 use function iterator_to_array;
 use function preg_match;
 use function preg_match_all;
+use function preg_quote;
 use function preg_replace;
 use function preg_replace_callback;
 use function str_contains;
@@ -814,9 +816,9 @@ class Str
      *
      * Example:
      * ```php
-     * Str::insertInto('abc', 'xyz', 0); // 'xyzabc'
-     * Str::insertInto('abc', 'xyz', 3); // 'abcxyz'
-     * Str::insertInto('abc', 'xyz', -1); // 'abcxyz'
+     * Str::insertAt('abc', 'xyz', 0); // 'xyzabc'
+     * Str::insertAt('abc', 'xyz', 3); // 'abcxyz'
+     * Str::insertAt('abc', 'xyz', -1); // 'abcxyz'
      * ```
      *
      * @param string $string
@@ -828,7 +830,7 @@ class Str
      * @return string
      * String which contains `$insert` string at `$position`.
      */
-    public static function insert(string $string, string $inserting, int $position): string
+    public static function insertAt(string $string, string $inserting, int $position): string
     {
         if ($position < 0) {
             ++$position;
@@ -842,17 +844,41 @@ class Str
 
     /**
      * @param string $text
-     * @param int|float|string ...$replace
+     * @param iterable<int|float|string> $replace
+     * @param string $delimiterStart
+     * @param string $delimiterEnd
      * @return string
      */
-    public static function interpolate(string $text, int|float|string ...$replace): string
+    public static function interpolate(
+        string $text,
+        iterable $replace,
+        string $delimiterStart = '{',
+        string $delimiterEnd = '}',
+    ): string
     {
-        return preg_replace_callback('/(?<slashes>\\\\*)\{(?<var>\w+)}/', function ($m) use ($replace) {
-            // even number of backslashes means it's escaped
-            return strlen($m['slashes']) % 2 === 0
-                ? $replace[$m['var']] ?? $m[0]
-                : $m[0];
-        }, $text) ?? '';
+        // TODO assert replace is map
+        $replace = $replace instanceof Traversable
+            ? iterator_to_array($replace)
+            : $replace;
+
+        $start = preg_quote($delimiterStart);
+        $end = preg_quote($delimiterEnd);
+
+        $pattern = '/(?<slashes>\\\\*)' . $start . '(?<placeholder>\w+)' . $end . '/';
+
+        $callback = static function ($m) use ($replace) {
+            $slashes = $m['slashes'];
+            $placeholder = $m['placeholder'];
+
+            $notEscaped = strlen($slashes) % 2 === 0;
+            $replaceable = array_key_exists($placeholder, $replace);
+
+            return $notEscaped && $replaceable
+                ? str_replace('\\\\', '\\', $slashes) . $replace[$placeholder]
+                : str_replace('\\\\', '\\', $m[0]);
+        };
+
+        return preg_replace_callback($pattern, $callback, $text) ?? '';
     }
 
     /**
