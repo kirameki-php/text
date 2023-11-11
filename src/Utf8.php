@@ -183,14 +183,12 @@ class Utf8 extends Str
      */
     public static function length(string $string): int
     {
+        assert(ini_get('intl.use_exceptions'), 'intl.use_exceptions must be enabled to use this method.');
+
         $result = grapheme_strlen($string);
 
-        if ($result === null) {
-            throw new RuntimeException(intl_get_error_message());
-        }
-
         // @codeCoverageIgnoreStart
-        if ($result === false) {
+        if ($result === null || $result === false) {
             throw new RuntimeException(
                 'Unknown internal error has occurred.' . PHP_EOL .
                 'Please see the link below for more info.' . PHP_EOL .

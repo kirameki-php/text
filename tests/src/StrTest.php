@@ -491,4 +491,81 @@ class StrTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         self::$ref::interpolate('', [1, 2]);
     }
+
+    public function test_isBlank(): void
+    {
+        $this->assertTrue(self::$ref::isBlank(''));
+        $this->assertFalse(self::$ref::isBlank('0'));
+        $this->assertFalse(self::$ref::isBlank(' '));
+    }
+
+    public function test_isNotBlank(): void
+    {
+        $this->assertFalse(self::$ref::isNotBlank(''));
+        $this->assertTrue(self::$ref::isNotBlank('0'));
+        $this->assertTrue(self::$ref::isNotBlank(' '));
+    }
+
+    public function test_length(): void
+    {
+        $this->assertSame(0, self::$ref::length(''), 'empty');
+        $this->assertSame(4, self::$ref::length('Test'), 'ascii');
+        $this->assertSame(9, self::$ref::length(' T e s t '), 'ascii');
+        $this->assertSame(6, self::$ref::length('あい'), 'utf8');
+        $this->assertSame(10, self::$ref::length('あいzう'), 'utf8');
+        $this->assertSame(25, self::$ref::length('👨‍👨‍👧‍👦'), 'emoji');
+    }
+
+    public function test_matchAll(): void
+    {
+        $this->assertSame([['a', 'a']], self::$ref::matchAll('abcabc', '/a/'));
+        $this->assertSame([['abc', 'abc'], 'p1' => ['a', 'a'], ['a', 'a']], self::$ref::matchAll('abcabc', '/(?<p1>a)bc/'));
+        $this->assertSame([[]], self::$ref::matchAll('abcabc', '/bcd/'));
+        $this->assertSame([['cd', 'c']], self::$ref::matchAll('abcdxabc', '/c[^x]*/'));
+        $this->assertSame([[]], self::$ref::matchAll('abcabcx', '/^abcx/'));
+        $this->assertSame([['cx']], self::$ref::matchAll('abcabcx', '/cx$/'));
+    }
+
+    public function test_matchAll_without_slashes(): void
+    {
+        $this->expectWarningMessage('preg_match_all(): Delimiter must not be alphanumeric, backslash, or NUL');
+        self::$ref::matchAll('abcabc', 'a');
+    }
+
+    public function test_matchFirst(): void
+    {
+        $this->assertSame('a', self::$ref::matchFirst('abcabc', '/a/'));
+        $this->assertSame('abc', self::$ref::matchFirst('abcabc', '/(?<p1>a)bc/'));
+        $this->assertSame('cd', self::$ref::matchFirst('abcdxabc', '/c[^x]*/'));
+        $this->assertSame('cx', self::$ref::matchFirst('abcabcx', '/cx$/'));
+    }
+
+    public function test_matchFirst_no_match(): void
+    {
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('"aaa" does not match /z/');
+        self::$ref::matchFirst('aaa', '/z/');
+    }
+
+    public function test_matchFirst_without_slashes(): void
+    {
+        $this->expectWarningMessage('preg_match(): Delimiter must not be alphanumeric, backslash, or NUL');
+        self::$ref::matchFirst('abcabc', 'a');
+    }
+
+    public function test_matchFirstOrNull(): void
+    {
+        $this->assertSame('a', self::$ref::matchFirstOrNull('abcabc', '/a/'));
+        $this->assertSame('abc', self::$ref::matchFirstOrNull('abcabc', '/(?<p1>a)bc/'));
+        $this->assertSame(null, self::$ref::matchFirstOrNull('abcabc', '/bcd/'));
+        $this->assertSame('cd', self::$ref::matchFirstOrNull('abcdxabc', '/c[^x]*/'));
+        $this->assertSame(null, self::$ref::matchFirstOrNull('abcabcx', '/^abcx/'));
+        $this->assertSame('cx', self::$ref::matchFirstOrNull('abcabcx', '/cx$/'));
+    }
+
+    public function test_matchFirstOrNull_without_slashes(): void
+    {
+        $this->expectWarningMessage('preg_match(): Delimiter must not be alphanumeric, backslash, or NUL');
+        self::$ref::matchFirstOrNull('abcabc', 'a');
+    }
 }

@@ -4,6 +4,7 @@ namespace Kirameki\Text;
 
 use Kirameki\Core\Exceptions\ErrorException;
 use Kirameki\Core\Exceptions\InvalidArgumentException;
+use Kirameki\Text\Exceptions\NoMatchException;
 use LogicException;
 use RuntimeException;
 use Traversable;
@@ -960,9 +961,7 @@ class Str
     public static function matchAll(string $string, string $pattern): array
     {
         $match = [];
-
         preg_match_all($pattern, $string, $match);
-
         return $match;
     }
 
@@ -986,7 +985,7 @@ class Str
     {
         $match = static::matchFirstOrNull($string, $pattern);
         if ($match === null) {
-            throw new RuntimeException("\"{$string}\" does not match {$pattern}");
+            throw new NoMatchException("\"{$string}\" does not match {$pattern}");
         }
         return $match;
     }

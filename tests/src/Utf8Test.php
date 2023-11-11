@@ -5,6 +5,7 @@ namespace Tests\Kirameki\Text;
 use IntlException;
 use Kirameki\Core\Exceptions\InvalidArgumentException;
 use Kirameki\Core\Testing\TestCase;
+use Kirameki\Text\Exceptions\NoMatchException;
 use Kirameki\Text\Utf8;
 use RuntimeException;
 use function str_repeat;
@@ -490,6 +491,7 @@ class Utf8Test extends TestCase
 
     public function test_interpolate(): void
     {
+        $this->assertSame('', self::$ref::interpolate('', ['a' => 1]), 'empty string');
         $this->assertSame('abc', self::$ref::interpolate('abc', []), 'no placeholder');
         $this->assertSame('{a}', self::$ref::interpolate('{a}', []), 'no match');
         $this->assertSame('1{b}', self::$ref::interpolate('{a}{b}', ['a' => 1]), 'one match');
@@ -507,6 +509,13 @@ class Utf8Test extends TestCase
         $this->assertSame('1', self::$ref::interpolate('<a>', ['a' => 1], '<', '>'), 'different delimiters');
     }
 
+    public function test_interpolate_non_list(): void
+    {
+        $this->expectExceptionMessage('Expected $replace to be a map. List given.');
+        $this->expectException(InvalidArgumentException::class);
+        self::$ref::interpolate('', [1, 2]);
+    }
+
     public function test_isBlank(): void
     {
         $this->assertTrue(self::$ref::isBlank(''));
@@ -521,37 +530,14 @@ class Utf8Test extends TestCase
         $this->assertTrue(self::$ref::isNotBlank(' '));
     }
 
-    public function test_kebabCase(): void
-    {
-        $this->assertSame('test', self::$ref::toKebabCase('test'));
-        $this->assertSame('test', self::$ref::toKebabCase('Test'));
-        $this->assertSame('ttt', self::$ref::toKebabCase('TTT'));
-        $this->assertSame('tt-test', self::$ref::toKebabCase('TTTest'));
-        $this->assertSame('test-test', self::$ref::toKebabCase('testTest'));
-        $this->assertSame('test-t-test', self::$ref::toKebabCase('testTTest'));
-        $this->assertSame('test-test', self::$ref::toKebabCase('test-test'));
-        $this->assertSame('test-test', self::$ref::toKebabCase('test_test'));
-        $this->assertSame('test-test', self::$ref::toKebabCase('test test'));
-        $this->assertSame('test-test-test', self::$ref::toKebabCase('test test test'));
-        $this->assertSame('-test--test--', self::$ref::toKebabCase(' test  test  '));
-        $this->assertSame('--test-test-test--', self::$ref::toKebabCase("--test_test-test__"));
-    }
-
     public function test_length(): void
     {
-        // empty
-        $this->assertSame(0, self::$ref::length(''));
-
-        // ascii
-        $this->assertSame(4, self::$ref::length('Test'));
-        $this->assertSame(9, self::$ref::length(' T e s t '));
-
-        // utf8
-        $this->assertSame(2, self::$ref::length('あい'));
-        $this->assertSame(4, self::$ref::length('あいzう'));
-
-        // emoji
-        $this->assertSame(1, self::$ref::length('👨‍👨‍👧‍👦'));
+        $this->assertSame(0, self::$ref::length(''), 'empty');
+        $this->assertSame(4, self::$ref::length('Test'), 'ascii');
+        $this->assertSame(9, self::$ref::length(' T e s t '), 'ascii');
+        $this->assertSame(2, self::$ref::length('あい'), 'utf8');
+        $this->assertSame(4, self::$ref::length('あいzう'), 'utf8');
+        $this->assertSame(1, self::$ref::length('👨‍👨‍👧‍👦'), 'emoji');
     }
 
     public function test_length_invalid_string(): void
@@ -587,7 +573,7 @@ class Utf8Test extends TestCase
 
     public function test_matchFirst_no_match(): void
     {
-        $this->expectException(RuntimeException::class);
+        $this->expectException(NoMatchException::class);
         $this->expectExceptionMessage('"aaa" does not match /z/');
         self::$ref::matchFirst('aaa', '/z/');
     }
@@ -1239,6 +1225,22 @@ class Utf8Test extends TestCase
         $this->assertNull(self::$ref::toIntOrNull('1.0e-2'), 'float value with e notation');
         $this->assertNull(self::$ref::toIntOrNull('a1'), 'invalid string');
         $this->assertNull(self::$ref::toIntOrNull('01'), 'zero start');
+    }
+
+    public function test_toKebabCase(): void
+    {
+        $this->assertSame('test', self::$ref::toKebabCase('test'));
+        $this->assertSame('test', self::$ref::toKebabCase('Test'));
+        $this->assertSame('ttt', self::$ref::toKebabCase('TTT'));
+        $this->assertSame('tt-test', self::$ref::toKebabCase('TTTest'));
+        $this->assertSame('test-test', self::$ref::toKebabCase('testTest'));
+        $this->assertSame('test-t-test', self::$ref::toKebabCase('testTTest'));
+        $this->assertSame('test-test', self::$ref::toKebabCase('test-test'));
+        $this->assertSame('test-test', self::$ref::toKebabCase('test_test'));
+        $this->assertSame('test-test', self::$ref::toKebabCase('test test'));
+        $this->assertSame('test-test-test', self::$ref::toKebabCase('test test test'));
+        $this->assertSame('-test--test--', self::$ref::toKebabCase(' test  test  '));
+        $this->assertSame('--test-test-test--', self::$ref::toKebabCase("--test_test-test__"));
     }
 
     public function test_toLowerCase(): void

@@ -3,6 +3,7 @@
 namespace Tests\Kirameki\Text;
 
 use Kirameki\Core\Testing\TestCase;
+use Kirameki\Text\StrBuffer;
 use Kirameki\Text\Utf8Buffer;
 
 class Utf8BufferTest extends TestCase
@@ -27,8 +28,30 @@ class Utf8BufferTest extends TestCase
         self::assertSame('あい...', $after->toString());
     }
 
+    public function test_interpolate(): void
+    {
+        $buffer = $this->buffer(' <a> ')->interpolate(['a' => 1], '<', '>');
+        $this->assertSame(' 1 ', $buffer->toString());
+        $this->assertInstanceOf(Utf8Buffer::class, $buffer);
+    }
+
+    public function test_isBlank(): void
+    {
+        $this->assertTrue($this->buffer('')->isBlank());
+        $this->assertFalse($this->buffer('a')->isBlank());
+        $this->assertFalse($this->buffer("\n")->isBlank());
+    }
+
+    public function test_isNotBlank(): void
+    {
+        $this->assertFalse($this->buffer('')->isNotBlank());
+        $this->assertTrue($this->buffer('a')->isNotBlank());
+        $this->assertTrue($this->buffer("\n")->isNotBlank());
+    }
+
     public function test_length(): void
     {
         self::assertSame(3, $this->buffer('あいう')->length());
     }
+
 }

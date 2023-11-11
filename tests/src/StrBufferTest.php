@@ -232,7 +232,12 @@ class StrBufferTest extends TestCase
         $this->assertSame(3, $sb->indexOfFirst('b', 3));
     }
 
-    public function test_insert(): void
+    public function test_indexOfLast(): void
+    {
+        $this->assertSame(3, $this->buffer('aabbcc')->indexOfLast('b'));
+    }
+
+    public function test_insertAt(): void
     {
         $after = $this->buffer('aaa')->insertAt('b', 1);
         $this->assertSame('abaa', $after->toString());
@@ -250,18 +255,6 @@ class StrBufferTest extends TestCase
         $this->assertFalse($this->buffer('')->isNotBlank());
         $this->assertTrue($this->buffer('a')->isNotBlank());
         $this->assertTrue($this->buffer("\n")->isNotBlank());
-    }
-
-    public function test_kebabCase(): void
-    {
-        $after = $this->buffer('foo barBaz')->toKebabCase();
-        $this->assertInstanceOf(StrBuffer::class, $after);
-        $this->assertSame('foo-bar-baz', $after->toString());
-    }
-
-    public function test_indexOfLast(): void
-    {
-        $this->assertSame(3, $this->buffer('aabbcc')->indexOfLast('b'));
     }
 
     public function test_interpolate(): void
@@ -296,4 +289,12 @@ class StrBufferTest extends TestCase
         $this->assertInstanceOf(StrBuffer::class, $after);
         $this->assertSame('fooBar', $after->toString());
     }
+
+    public function test_toKebabCase(): void
+    {
+        $after = $this->buffer('foo barBaz')->toKebabCase();
+        $this->assertInstanceOf(StrBuffer::class, $after);
+        $this->assertSame('foo-bar-baz', $after->toString());
+    }
+
 }
