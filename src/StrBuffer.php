@@ -319,6 +319,17 @@ class StrBuffer implements Stringable
     }
 
     /**
+     * @param iterable<int|float|string> $replace
+     * @param string $delimiterStart
+     * @param string $delimiterEnd
+     * @return static
+     */
+    public function interpolate(iterable $replace, string $delimiterStart = '{', string $delimiterEnd = '}'): static
+    {
+        return new static(static::$ref::interpolate($this->value, $replace, $delimiterStart, $delimiterEnd));
+    }
+
+    /**
      * @return bool
      */
     public function isBlank(): bool

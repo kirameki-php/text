@@ -874,7 +874,7 @@ class Str
             $replaceable = array_key_exists($placeholder, $replace);
 
             return $notEscaped && $replaceable
-                ? str_replace('\\\\', '\\', $slashes) . $replace[$placeholder]
+                ? str_replace('\\\\', '\\', $slashes . $replace[$placeholder])
                 : str_replace('\\\\', '\\', $m[0]);
         };
 

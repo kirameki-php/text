@@ -488,6 +488,25 @@ class Utf8Test extends TestCase
         $this->assertSame('👨x👨', self::$ref::insertAt('👨👨', 'x', 1), 'grapheme');
     }
 
+    public function test_interpolate(): void
+    {
+        $this->assertSame('abc', self::$ref::interpolate('abc', []), 'no placeholder');
+        $this->assertSame('{a}', self::$ref::interpolate('{a}', []), 'no match');
+        $this->assertSame('1{b}', self::$ref::interpolate('{a}{b}', ['a' => 1]), 'one match');
+        $this->assertSame('1 hi', self::$ref::interpolate('{a} hi', ['a' => 1]), 'replace edge');
+        $this->assertSame('1 1', self::$ref::interpolate('{a} {a}', ['a' => 1]), 'replace twice');
+        $this->assertSame('{b} 1', self::$ref::interpolate('{a} {b}', ['a' => '{b}', 'b' => 1]), 'replace multiple');
+        $this->assertSame('{a1}', self::$ref::interpolate('{a{a}}', ['a' => 1]), 'nested v1');
+        $this->assertSame('{1}', self::$ref::interpolate('{{a}}', ['a' => 1]), 'nested v2');
+        $this->assertSame('\\{a}', self::$ref::interpolate('\\{a}', ['a' => 1]), 'escape start');
+        $this->assertSame('{a\\}', self::$ref::interpolate('{a\\}', ['a' => 1]), 'escape end');
+        $this->assertSame('\\1', self::$ref::interpolate('\\\\{a}', ['a' => 1]), 'don\'t escape double escape char');
+        $this->assertSame('\\\\{a}', self::$ref::interpolate('\\\\\\{a}', ['a' => 1]), 'escape mixed with no escape');
+        $this->assertSame('{a!}', self::$ref::interpolate('{a!}', ['a!' => 1]), 'only match ascii placeholder');
+        $this->assertSame(' 1 ', self::$ref::interpolate(' {_a_b} ', ['_a_b' => 1]), 'allow under score');
+        $this->assertSame('1', self::$ref::interpolate('<a>', ['a' => 1], '<', '>'), 'different delimiters');
+    }
+
     public function test_isBlank(): void
     {
         $this->assertTrue(self::$ref::isBlank(''));

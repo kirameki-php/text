@@ -264,6 +264,13 @@ class StrBufferTest extends TestCase
         $this->assertSame(3, $this->buffer('aabbcc')->indexOfLast('b'));
     }
 
+    public function test_interpolate(): void
+    {
+        $buffer = $this->buffer(' <a> ')->interpolate(['a' => 1], '<', '>');
+        $this->assertSame(' 1 ', $buffer->toString());
+        $this->assertInstanceOf(StrBuffer::class, $buffer);
+    }
+
     public function test_length(): void
     {
         $this->assertSame(9, $this->buffer('あいう')->length());
