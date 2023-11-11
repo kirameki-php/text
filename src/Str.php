@@ -844,7 +844,7 @@ class Str
 
     /**
      * @param string $text
-     * @param iterable<int|float|string> $replace
+     * @param iterable<string, int|float|string> $replace
      * @param string $delimiterStart
      * @param string $delimiterEnd
      * @return string
@@ -856,10 +856,11 @@ class Str
         string $delimiterEnd = '}',
     ): string
     {
-        // TODO assert replace is map
         $replace = $replace instanceof Traversable
             ? iterator_to_array($replace)
             : $replace;
+
+        static::assertArrayIsMap('replace', $replace);
 
         $start = preg_quote($delimiterStart);
         $end = preg_quote($delimiterEnd);
@@ -2191,6 +2192,22 @@ class Str
     {
         if ($value < $limit) {
             throw new InvalidArgumentException("Expected: \${$name} >= {$limit}. Got: {$value}.", $context);
+        }
+    }
+
+    /**
+     * @param string $name
+     * @param array<array-key, mixed> $array
+     * @return void
+     */
+    protected static function assertArrayIsMap(string $name, array $array): void
+    {
+        if ($array === []) {
+            return;
+        }
+
+        if (array_is_list($array)) {
+            throw new InvalidArgumentException("Expected \${$name} to be a map. List given.", compact('array'));
         }
     }
 }

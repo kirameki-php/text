@@ -2,6 +2,7 @@
 
 namespace Tests\Kirameki\Text;
 
+use Kirameki\Core\Exceptions\InvalidArgumentException;
 use Kirameki\Core\Testing\TestCase;
 use Kirameki\Text\Str;
 use function strlen;
@@ -466,6 +467,7 @@ class StrTest extends TestCase
 
     public function test_interpolate(): void
     {
+        $this->assertSame('', self::$ref::interpolate('', ['a' => 1]), 'empty string');
         $this->assertSame('abc', self::$ref::interpolate('abc', []), 'no placeholder');
         $this->assertSame('{a}', self::$ref::interpolate('{a}', []), 'no match');
         $this->assertSame('1{b}', self::$ref::interpolate('{a}{b}', ['a' => 1]), 'one match');
@@ -481,5 +483,12 @@ class StrTest extends TestCase
         $this->assertSame('{a!}', self::$ref::interpolate('{a!}', ['a!' => 1]), 'only match ascii placeholder');
         $this->assertSame(' 1 ', self::$ref::interpolate(' {_a_b} ', ['_a_b' => 1]), 'allow under score');
         $this->assertSame('1', self::$ref::interpolate('<a>', ['a' => 1], '<', '>'), 'different delimiters');
+    }
+
+    public function test_interpolate_non_list(): void
+    {
+        $this->expectExceptionMessage('Expected $replace to be a map. List given.');
+        $this->expectException(InvalidArgumentException::class);
+        self::$ref::interpolate('', [1, 2]);
     }
 }
