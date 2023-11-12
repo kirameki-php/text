@@ -3,11 +3,17 @@
 namespace Kirameki\Text;
 
 use IntlException;
+use Kirameki\Core\Exceptions\ExtensionRequiredException;
+use Kirameki\Core\Exceptions\InvalidArgumentException;
+use Kirameki\Core\Exceptions\LogicException;
 use RuntimeException;
 use ValueError;
 use function array_reverse;
 use function assert;
+use function ceil;
 use function dump;
+use function extension_loaded;
+use function floor;
 use function grapheme_extract;
 use function grapheme_strlen;
 use function grapheme_strpos;
@@ -18,13 +24,19 @@ use function ini_get;
 use function intl_get_error_message;
 use function mb_strtolower;
 use function mb_strtoupper;
+use function str_repeat;
 use function strlen;
 use function strrev;
 use const GRAPHEME_EXTR_COUNT;
 use const PHP_EOL;
+use const STR_PAD_BOTH;
+use const STR_PAD_LEFT;
+use const STR_PAD_RIGHT;
 
 class Utf8 extends Str
 {
+    protected static bool $setupChecked = false;
+
     /**
      * Counts the size of bytes for the given string.
      *
@@ -85,7 +97,7 @@ class Utf8 extends Str
      */
     public static function cut(string $string, int $position, string $ellipsis = self::EMPTY): string
     {
-        assert(ini_get('intl.use_exceptions'), 'intl.use_exceptions must be enabled to use this method.');
+        static::assertIntlSetup(__METHOD__);
 
         if ($string === '') {
             return $string;
@@ -183,7 +195,7 @@ class Utf8 extends Str
      */
     public static function length(string $string): int
     {
-        assert(ini_get('intl.use_exceptions'), 'intl.use_exceptions must be enabled to use this method.');
+        static::assertIntlSetup(__METHOD__);
 
         $result = grapheme_strlen($string);
 
@@ -198,6 +210,70 @@ class Utf8 extends Str
         // @codeCoverageIgnoreEnd
 
         return $result;
+    }
+
+    /**
+     * Pad a string to a certain length with another string.
+     *
+     * Example:
+     * ```php
+     * Str::pad('a', 3, '_'); // 'a__'
+     * Str::pad('a', 3, '_', STR_PAD_LEFT); // '__a'
+     * Str::pad('a', 3, '_', STR_PAD_BOTH); // '_a_'
+     * ```
+     *
+     * @param string $string
+     * The string to be padded.
+     * @param int $length
+     * The length of the string once it has been padded.
+     * If the value is lower than the length of `$string`, the current string will be returned as-is.
+     * @param string $padding
+     * [Optional] The string used for padding.
+     * @param int $type
+     * [Optional] The padding type. Type can be STR_PAD_RIGHT, STR_PAD_LEFT, STR_PAD_BOTH. Defaults to **STR_PAD_RIGHT**
+     * @return string
+     * The padded string.
+     */
+    public static function pad(string $string, int $length, string $padding = ' ', int $type = STR_PAD_RIGHT): string
+    {
+        if ($length <= 0) {
+            return $string;
+        }
+
+        $padLength = static::length($padding);
+
+        if ($padLength === 0) {
+            return $string;
+        }
+
+        $strLength = static::length($string);
+
+        if ($type === STR_PAD_RIGHT) {
+            $repeat = (int) ceil($length / $padLength);
+            return $string . static::substring(str_repeat($padding, $repeat), 0, $length - $strLength);
+        }
+
+        if ($type === STR_PAD_LEFT) {
+            $repeat = (int) ceil($length / $padLength);
+            return static::substring(str_repeat($padding, $repeat), 0, $length - $strLength) . $string;
+        }
+
+        if ($type === STR_PAD_BOTH) {
+            $halfLengthFraction = ($length - $strLength) / 2;
+            $halfRepeat = (int) ceil($halfLengthFraction / $padLength);
+            $prefixLength = (int) floor($halfLengthFraction);
+            $suffixLength = (int) ceil($halfLengthFraction);
+            $prefix = static::substring(str_repeat($padding, $halfRepeat), 0, $prefixLength);
+            $suffix = static::substring(str_repeat($padding, $halfRepeat), 0, $suffixLength);
+            return $prefix . $string . $suffix;
+        }
+
+        throw new InvalidArgumentException("Unknown padding type: {$type}.", [
+            'string' => $string,
+            'length' => $length,
+            'padding' => $padding,
+            'type' => $type,
+        ]);
     }
 
     /**
@@ -287,4 +363,24 @@ class Utf8 extends Str
         return mb_strtoupper($string);
     }
 
+    /**
+     * @param string $method
+     * @return void
+     */
+    protected static function assertIntlSetup(string $method): void
+    {
+        if (static::$setupChecked) {
+            return;
+        }
+
+        if (!extension_loaded('intl')) {
+            throw new ExtensionRequiredException('extension: "intl" is required to use ' . $method . '().');
+        }
+
+        if (!ini_get('intl.use_exceptions')) {
+            throw new LogicException('"intl.use_exceptions" must be enabled to use ' . $method . '().');
+        }
+
+        static::$setupChecked = true;
+    }
 }

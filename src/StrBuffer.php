@@ -423,6 +423,16 @@ class StrBuffer implements Stringable
     }
 
     /**
+     * @param int $start
+     * @param int $end
+     * @return static
+     */
+    public function range(int $start, int $end): static
+    {
+        return new static(static::$ref::range($this->value, $start, $end));
+    }
+
+    /**
      * @param int<0, max> $times
      * @return static
      */

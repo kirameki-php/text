@@ -5,7 +5,6 @@ namespace Kirameki\Text;
 use Kirameki\Core\Exceptions\ErrorException;
 use Kirameki\Core\Exceptions\InvalidArgumentException;
 use Kirameki\Text\Exceptions\NoMatchException;
-use LogicException;
 use RuntimeException;
 use Traversable;
 use ValueError;
@@ -16,11 +15,8 @@ use function array_values;
 use function bcdiv;
 use function bcmul;
 use function bcpow;
-use function ceil;
 use function compact;
-use function dump;
 use function filter_var;
-use function floor;
 use function implode;
 use function is_iterable;
 use function iterator_to_array;
@@ -30,6 +26,7 @@ use function preg_quote;
 use function preg_replace;
 use function preg_replace_callback;
 use function str_contains;
+use function str_pad;
 use function str_repeat;
 use function str_replace;
 use function strlen;
@@ -967,12 +964,12 @@ class Str
 
     /**
      * Perform a regular expression match on given string and return the first match.
-     * Throws a RuntimeException if no match is found.
+     * Throws a NoMatchException if no match is found.
      *
      * Example:
      * ```php
      * Str::matchFirst('abcabc', '/a/'); // 'a'
-     * Str::matchFirst('abcabc', '/z/'); // RuntimeException
+     * Str::matchFirst('abcabc', '/z/'); // NoMatchException
      * ```
      *
      * @param string $string
@@ -1037,39 +1034,17 @@ class Str
      */
     public static function pad(string $string, int $length, string $padding = ' ', int $type = STR_PAD_RIGHT): string
     {
-        if ($length <= 0) {
-            return $string;
-        }
-
-        $padLength = static::length($padding);
-
-        if ($padLength === 0) {
-            return $string;
-        }
-
-        $strLength = static::length($string);
-
-        if ($type === STR_PAD_RIGHT) {
-            $repeat = (int) ceil($length / $padLength);
-            return $string . static::substring(str_repeat($padding, $repeat), 0, $length - $strLength);
-        }
-
-        if ($type === STR_PAD_LEFT) {
-            $repeat = (int) ceil($length / $padLength);
-            return static::substring(str_repeat($padding, $repeat), 0, $length - $strLength) . $string;
-        }
-
-        if ($type === STR_PAD_BOTH) {
-            $halfLengthFraction = ($length - $strLength) / 2;
-            $halfRepeat = (int) ceil($halfLengthFraction / $padLength);
-            $prefixLength = (int) floor($halfLengthFraction);
-            $suffixLength = (int) ceil($halfLengthFraction);
-            $prefix = static::substring(str_repeat($padding, $halfRepeat), 0, $prefixLength);
-            $suffix = static::substring(str_repeat($padding, $halfRepeat), 0, $suffixLength);
-            return $prefix . $string . $suffix;
-        }
-
-        throw new LogicException('Invalid padding type: ' . $type);
+        return match ($type) {
+            STR_PAD_LEFT,
+            STR_PAD_RIGHT,
+            STR_PAD_BOTH => str_pad($string, $length, $padding, $type),
+            default => throw new InvalidArgumentException("Unknown padding type: {$type}.", [
+                'string' => $string,
+                'length' => $length,
+                'padding' => $padding,
+                'type' => $type,
+            ]),
+        };
     }
 
     /**

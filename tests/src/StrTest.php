@@ -4,6 +4,7 @@ namespace Tests\Kirameki\Text;
 
 use Kirameki\Core\Exceptions\InvalidArgumentException;
 use Kirameki\Core\Testing\TestCase;
+use Kirameki\Text\Exceptions\NoMatchException;
 use Kirameki\Text\Str;
 use function strlen;
 use const PHP_EOL;
@@ -542,7 +543,7 @@ class StrTest extends TestCase
 
     public function test_matchFirst_no_match(): void
     {
-        $this->expectException(RuntimeException::class);
+        $this->expectException(NoMatchException::class);
         $this->expectExceptionMessage('"aaa" does not match /z/');
         self::$ref::matchFirst('aaa', '/z/');
     }
@@ -567,5 +568,116 @@ class StrTest extends TestCase
     {
         $this->expectWarningMessage('preg_match(): Delimiter must not be alphanumeric, backslash, or NUL');
         self::$ref::matchFirstOrNull('abcabc', 'a');
+    }
+
+    public function test_pad(): void
+    {
+        $this->assertSame('', self::$ref::pad('', -1, '_'), 'empty string');
+        $this->assertSame('abc', self::$ref::pad('abc', 3, ''), 'pad string');
+        $this->assertSame('a', self::$ref::pad('a', -1, '_'), 'defaults to pad right');
+        $this->assertSame('a', self::$ref::pad('a', 0, '_'), 'zero length');
+        $this->assertSame('a_', self::$ref::pad('a', 2, '_'), 'pad right');
+        $this->assertSame('__', self::$ref::pad('_', 2, '_'), 'pad same char as given');
+        $this->assertSame('ab', self::$ref::pad('ab', 1, '_'), 'length < string size');
+        $this->assertSame('abcd', self::$ref::pad('a', 4, 'bcde'), 'overflow padding');
+        $this->assertSame('あ_', self::$ref::pad('あ', 4, '_'), 'multi byte');
+        $this->assertSame('👋🏿_', self::$ref::pad('👋🏿', 9, '_'), 'grapheme');
+    }
+
+    public function test_pad_invalid_pad(): void
+    {
+        $this->expectExceptionMessage('Unknown padding type: 3.');
+        $this->expectException(InvalidArgumentException::class);
+        $this->assertSame('ab', self::$ref::pad('ab', 1, '_', 3));
+    }
+
+    public function test_padBoth(): void
+    {
+        $this->assertSame('a', self::$ref::padBoth('a', -1, '_'));
+        $this->assertSame('a', self::$ref::padBoth('a', 0, '_'));
+        $this->assertSame('a_', self::$ref::padBoth('a', 2, '_'));
+        $this->assertSame('__', self::$ref::padBoth('_', 2, '_'));
+        $this->assertSame('_a_', self::$ref::padBoth('a', 3, '_'));
+        $this->assertSame('__a__', self::$ref::padBoth('a', 5, '_'));
+        $this->assertSame('__a___', self::$ref::padBoth('a', 6, '_'));
+        $this->assertSame('12hello123', self::$ref::padBoth('hello', 10, '123'));
+        $this->assertSame('あ', self::$ref::padEnd('あ', 3, '_'), 'multi byte no pad');
+        $this->assertSame('あ_', self::$ref::padBoth('あ', 4, '_'), 'multi byte');
+        $this->assertSame('👋🏿_', self::$ref::padBoth('👋🏿', 9, '_'), 'grapheme');
+    }
+
+    public function test_padEnd(): void
+    {
+        $this->assertSame('a', self::$ref::padEnd('a', -1, '_'));
+        $this->assertSame('a', self::$ref::padEnd('a', 0, '_'));
+        $this->assertSame('a_', self::$ref::padEnd('a', 2, '_'));
+        $this->assertSame('__', self::$ref::padEnd('_', 2, '_'));
+        $this->assertSame('ab', self::$ref::padEnd('ab', 1, '_'));
+        $this->assertSame('あ', self::$ref::padEnd('あ', 3, '_'), 'multi byte no pad');
+        $this->assertSame('あ_', self::$ref::padEnd('あ', 4, '_'), 'multi byte');
+        $this->assertSame('👋🏿_', self::$ref::padEnd('👋🏿', 9, '_'), 'grapheme');
+    }
+
+    public function test_padStart(): void
+    {
+        $this->assertSame('a', self::$ref::padStart('a', -1, '_'));
+        $this->assertSame('a', self::$ref::padStart('a', 0, '_'));
+        $this->assertSame('_a', self::$ref::padStart('a', 2, '_'));
+        $this->assertSame('__', self::$ref::padStart('_', 2, '_'));
+        $this->assertSame('ab', self::$ref::padStart('ab', 1, '_'));
+        $this->assertSame('あ', self::$ref::padStart('あ', 3, '_'), 'multi byte no pad');
+        $this->assertSame('_あ', self::$ref::padStart('あ', 4, '_'), 'multi byte');
+        $this->assertSame('_👋🏿', self::$ref::padStart('👋🏿', 9, '_'), 'grapheme');
+    }
+
+    public function test_range(): void
+    {
+        // TODO fix
+//        $this->assertSame('', self::$ref::range('', 0, 1), 'empty string');
+//        $this->assertSame('', self::$ref::range('abc', 0, 0), 'zero length');
+//        $this->assertSame('', self::$ref::range('abc', 0, -1), 'negative length');
+    }
+
+    public function test_remove(): void
+    {
+        $this->assertSame('', self::$ref::remove('', ''), 'empty');
+        $this->assertSame('', self::$ref::remove('aaa', 'a'), 'delete everything');
+        $this->assertSame('a  a', self::$ref::remove('aaa aa a', 'aa'), 'no traceback check');
+        $this->assertSame('no match', self::$ref::remove('no match', 'hctam on'), 'out of order chars');
+        $this->assertSame('👋👋', self::$ref::remove('👋🏿👋🏿', '🏿'), 'dont delete grapheme code point');
+        $this->assertSame('aa', self::$ref::remove('aa', 'a', 0), 'limit to 0');
+        $this->assertSame('a', self::$ref::remove('aaa', 'a', 2), 'limit to 2');
+
+        $count = 0;
+        $this->assertSame('aaa', self::$ref::remove('aaa', 'a', 0, $count), 'count none');
+        $this->assertSame(0, $count);
+
+        $this->assertSame('a', self::$ref::remove('aaa', 'a', 2, $count), 'count several');
+        $this->assertSame(2, $count);
+
+        $this->assertSame('', self::$ref::remove('aaa', 'a', null, $count), 'count unlimited');
+        $this->assertSame(3, $count);
+    }
+
+    public function test_remove_with_negative_limit(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Expected: $limit >= 0. Got: -1.');
+        self::$ref::remove('', '', -1);
+    }
+
+    public function test_repeat(): void
+    {
+        $this->assertSame('aaa', self::$ref::repeat('a', 3), 'ascii');
+        $this->assertSame('あああ', self::$ref::repeat('あ', 3), 'multi byte');
+        $this->assertSame('👋🏿👋🏿👋🏿', self::$ref::repeat('👋🏿', 3), 'grapheme');
+        $this->assertSame('', self::$ref::repeat('a', 0), 'zero');
+    }
+
+    public function test_repeat_negative_times(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Expected: $times >= 0. Got: -1.');
+        self::$ref::repeat('a', -1);
     }
 }

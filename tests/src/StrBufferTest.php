@@ -276,6 +276,20 @@ class StrBufferTest extends TestCase
         $this->assertSame('foo bar', $after->toString());
     }
 
+    public function test_range(): void
+    {
+        $after = $this->buffer('abc')->range(1, 2);
+        $this->assertInstanceOf(StrBuffer::class, $after);
+        $this->assertSame('bc', $after->toString());
+    }
+
+    public function test_repeat(): void
+    {
+        $after = $this->buffer('a')->repeat(3);
+        $this->assertInstanceOf(StrBuffer::class, $after);
+        $this->assertSame('aaa', $after->toString());
+    }
+
     public function test_takeFirst(): void
     {
         $after = $this->buffer('abc')->takeFirst(1);

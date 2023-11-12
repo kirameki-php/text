@@ -602,26 +602,22 @@ class Utf8Test extends TestCase
 
     public function test_pad(): void
     {
-        // empty string
-        $this->assertSame('', self::$ref::pad('', -1, '_'));
-
-        // pad string
-        $this->assertSame('abc', self::$ref::pad('abc', 3, ''));
-
-        // defaults to pad right
-        $this->assertSame('a', self::$ref::pad('a', -1, '_'));
-        $this->assertSame('a', self::$ref::pad('a', 0, '_'));
-        $this->assertSame('a_', self::$ref::pad('a', 2, '_'));
-        $this->assertSame('__', self::$ref::pad('_', 2, '_'));
-        $this->assertSame('ab', self::$ref::pad('ab', 1, '_'));
-
-        // overflow padding
-        $this->assertSame('abcd', self::$ref::pad('a', 4, 'bcde'));
+        $this->assertSame('', self::$ref::pad('', -1, '_'), 'empty string');
+        $this->assertSame('abc', self::$ref::pad('abc', 3, ''), 'pad string');
+        $this->assertSame('a', self::$ref::pad('a', -1, '_'), 'defaults to pad right');
+        $this->assertSame('a', self::$ref::pad('a', 0, '_'), 'zero length');
+        $this->assertSame('a_', self::$ref::pad('a', 2, '_'), 'pad right');
+        $this->assertSame('__', self::$ref::pad('_', 2, '_'), 'pad same char as given');
+        $this->assertSame('ab', self::$ref::pad('ab', 1, '_'), 'length < string size');
+        $this->assertSame('abcd', self::$ref::pad('a', 4, 'bcde'), 'overflow padding');
+        $this->assertSame('あ_', self::$ref::pad('あ', 2, '_'), 'multi byte');
+        $this->assertSame('👋🏿_', self::$ref::pad('👋🏿', 2, '_'), 'grapheme');
     }
 
     public function test_pad_invalid_pad(): void
     {
-        $this->expectExceptionMessage('Invalid padding type: 3');
+        $this->expectExceptionMessage('Unknown padding type: 3.');
+        $this->expectException(InvalidArgumentException::class);
         $this->assertSame('ab', self::$ref::pad('ab', 1, '_', 3));
     }
 
@@ -665,6 +661,7 @@ class Utf8Test extends TestCase
         $this->assertSame('', self::$ref::remove('aaa', 'a'), 'delete everything');
         $this->assertSame('a  a', self::$ref::remove('aaa aa a', 'aa'), 'no traceback check');
         $this->assertSame('no match', self::$ref::remove('no match', 'hctam on'), 'out of order chars');
+        $this->assertSame('👋🏿👋🏿', self::$ref::remove('👋🏿👋🏿', '🏿'), 'dont delete grapheme code point');
         $this->assertSame('aa', self::$ref::remove('aa', 'a', 0), 'limit to 0');
         $this->assertSame('a', self::$ref::remove('aaa', 'a', 2), 'limit to 2');
 
@@ -688,8 +685,10 @@ class Utf8Test extends TestCase
 
     public function test_repeat(): void
     {
-        $this->assertSame('aaa', self::$ref::repeat('a', 3));
-        $this->assertSame('', self::$ref::repeat('a', 0));
+        $this->assertSame('aaa', self::$ref::repeat('a', 3), 'ascii');
+        $this->assertSame('あああ', self::$ref::repeat('あ', 3), 'multi byte');
+        $this->assertSame('👋🏿👋🏿👋🏿', self::$ref::repeat('👋🏿', 3), 'grapheme');
+        $this->assertSame('', self::$ref::repeat('a', 0), 'zero');
     }
 
     public function test_repeat_negative_times(): void
