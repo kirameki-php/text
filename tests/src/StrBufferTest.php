@@ -190,6 +190,15 @@ class StrBufferTest extends TestCase
         $this->assertSame('/test', $after2->toString());
     }
 
+    public function test_doesNotContain(): void
+    {
+        $sb = $this->buffer('foo bar');
+        $this->assertTrue($sb->doesNotContain('baz'));
+        $this->assertFalse($sb->doesNotContain('foo'));
+        $this->assertFalse($sb->doesNotContain(''));
+        $this->assertTrue($sb->doesNotContain('  '));
+    }
+
     public function test_doesNotEndWith(): void
     {
         $sb = $this->buffer('/test/path/of.php');
@@ -223,6 +232,24 @@ class StrBufferTest extends TestCase
         $sb = $this->buffer('/test/path/of.php');
         $this->assertFalse($sb->endsWith('/test'));
         $this->assertTrue($sb->endsWith('.php'));
+    }
+
+    public function test_endsWithAny(): void
+    {
+        $sb = $this->buffer('/test/path/of.php');
+        $this->assertTrue($sb->endsWithAny(['.php']));
+        $this->assertTrue($sb->endsWithAny(['path', '.php']));
+        $this->assertFalse($sb->endsWithAny(['/test']));
+        $this->assertFalse($sb->endsWithAny(['/test', 'path']));
+    }
+
+    public function test_endsWithNone(): void
+    {
+        $sb = $this->buffer('/test/path/of.php');
+        $this->assertTrue($sb->endsWithNone(['/test']));
+        $this->assertTrue($sb->endsWithNone(['/test', 'path']));
+        $this->assertFalse($sb->endsWithNone(['.php']));
+        $this->assertFalse($sb->endsWithNone(['path', '.php']));
     }
 
     public function test_indexOfFirst(): void
@@ -280,7 +307,7 @@ class StrBufferTest extends TestCase
     {
         $after = $this->buffer('abc')->range(1, 2);
         $this->assertInstanceOf(StrBuffer::class, $after);
-        $this->assertSame('bc', $after->toString());
+        $this->assertSame('b', $after->toString());
     }
 
     public function test_repeat(): void
@@ -309,6 +336,30 @@ class StrBufferTest extends TestCase
         $after = $this->buffer('foo barBaz')->toKebabCase();
         $this->assertInstanceOf(StrBuffer::class, $after);
         $this->assertSame('foo-bar-baz', $after->toString());
+    }
+
+    public function test_startsWith(): void
+    {
+        $sb = $this->buffer('/test/path/of.php');
+        $this->assertTrue($sb->startsWith('/test'));
+        $this->assertFalse($sb->startsWith('path'));
+    }
+
+    public function test_startsWithAny(): void
+    {
+        $sb = $this->buffer('/test/path/of.php');
+        $this->assertTrue($sb->startsWithAny(['/test']));
+        $this->assertTrue($sb->startsWithAny(['/test', '.php']));
+        $this->assertFalse($sb->startsWithAny(['path', '.php']));
+        $this->assertFalse($sb->startsWithAny(['.php']));
+    }
+
+    public function test_startsWithNone(): void
+    {
+        $sb = $this->buffer('/test/path/of.php');
+        $this->assertFalse($sb->startsWithNone(['/test']));
+        $this->assertTrue($sb->startsWithNone(['.php']));
+        $this->assertTrue($sb->startsWithNone(['path', '.php']));
     }
 
 }

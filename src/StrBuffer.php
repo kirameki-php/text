@@ -235,30 +235,30 @@ class StrBuffer implements Stringable
     }
 
     /**
-     * @param string $needle
+     * @param string $substring
      * @return bool
      */
-    public function doesNotContain(string $needle): bool
+    public function doesNotContain(string $substring): bool
     {
-        return static::$ref::doesNotContain($this->value, $needle);
+        return static::$ref::doesNotContain($this->value, $substring);
     }
 
     /**
-     * @param string|iterable<array-key, string> $needle
+     * @param string $suffix
      * @return bool
      */
-    public function doesNotEndWith(string|iterable $needle): bool
+    public function doesNotEndWith(string $suffix): bool
     {
-        return static::$ref::doesNotEndWith($this->value, $needle);
+        return static::$ref::doesNotEndWith($this->value, $suffix);
     }
 
     /**
-     * @param string|iterable<array-key, string> $needle
+     * @param string $prefix
      * @return bool
      */
-    public function doesNotStartWith(string|iterable $needle): bool
+    public function doesNotStartWith(string $prefix): bool
     {
-        return static::$ref::doesNotStartWith($this->value, $needle);
+        return static::$ref::doesNotStartWith($this->value, $prefix);
     }
 
     /**
@@ -280,12 +280,30 @@ class StrBuffer implements Stringable
     }
 
     /**
-     * @param string|iterable<array-key, string> $needle
+     * @param string $suffix
      * @return bool
      */
-    public function endsWith(string|iterable $needle): bool
+    public function endsWith(string $suffix): bool
     {
-        return static::$ref::endsWith($this->value, $needle);
+        return static::$ref::endsWith($this->value, $suffix);
+    }
+
+    /**
+     * @param iterable<array-key, string> $suffixes
+     * @return bool
+     */
+    public function endsWithAny(iterable $suffixes): bool
+    {
+        return static::$ref::endsWithAny($this->value, $suffixes);
+    }
+
+    /**
+     * @param iterable<array-key, string> $suffixes
+     * @return bool
+     */
+    public function endsWithNone(iterable $suffixes): bool
+    {
+        return static::$ref::endsWithNone($this->value, $suffixes);
     }
 
     /**
@@ -501,12 +519,30 @@ class StrBuffer implements Stringable
     }
 
     /**
-     * @param string|iterable<array-key, string> $needle
+     * @param string $prefix
      * @return bool
      */
-    public function startsWith(string|iterable $needle): bool
+    public function startsWith(string $prefix): bool
     {
-        return static::$ref::startsWith($this->value, $needle);
+        return static::$ref::startsWith($this->value, $prefix);
+    }
+
+    /**
+     * @param iterable<array-key, string> $prefixes
+     * @return bool
+     */
+    public function startsWithAny(iterable $prefixes): bool
+    {
+        return static::$ref::startsWithAny($this->value, $prefixes);
+    }
+
+    /**
+     * @param iterable<array-key, string> $prefixes
+     * @return bool
+     */
+    public function startsWithNone(iterable $prefixes): bool
+    {
+        return static::$ref::startsWithNone($this->value, $prefixes);
     }
 
     /**

@@ -2,8 +2,6 @@
 
 namespace Kirameki\Text;
 
-use function dump;
-
 class Utf8Buffer extends StrBuffer
 {
     /**

@@ -9,9 +9,7 @@ use Kirameki\Core\Exceptions\LogicException;
 use RuntimeException;
 use ValueError;
 use function array_reverse;
-use function assert;
 use function ceil;
-use function dump;
 use function extension_loaded;
 use function floor;
 use function grapheme_extract;
@@ -128,6 +126,34 @@ class Utf8 extends Str
         }
 
         return implode(self::EMPTY, $parts);
+    }
+
+    /**
+     * Checks if a string ends with a given suffix(s).
+     * `$suffix` can be a string or an iterable list of strings.
+     *
+     * Example:
+     * ```php
+     * Utf8::endsWith('abc', 'c'); // true
+     * Utf8::endsWith('abc', ['a', 'b']); // false
+     * ```
+     *
+     * @param string $string
+     * The string to look in.
+     * @param string $suffix
+     * The suffix to search for in `$string`.
+     * @return bool
+     * Returns **true** if `$string` ends with `$suffix`, **false** otherwise.
+     */
+    public static function endsWith(string $string, string $suffix): bool
+    {
+        if ($suffix === self::EMPTY) {
+            return true;
+        }
+        if (static::substring($string, -static::length($suffix)) === $suffix) {
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -298,6 +324,34 @@ class Utf8 extends Str
             }
         }
         return implode(self::EMPTY, array_reverse($parts));
+    }
+
+    /**
+     * Checks if a string starts with a given substring(s).
+     * `$prefix` can be a string or an iterable list of strings.
+     *
+     * Example:
+     * ```php
+     * Utf8::startsWith('abc', 'a'); // true
+     * Utf8::startsWith('abc', 'b'); // false
+     * ```
+     *
+     * @param string $string
+     * The string to look in.
+     * @param string $prefix
+     * The substring(s) to search for in `$string`.
+     * @return bool
+     * Returns **true** if `$string` starts with `$prefix`, **false** otherwise.
+     */
+    public static function startsWith(string $string, string $prefix): bool
+    {
+        if ($prefix === self::EMPTY) {
+            return true;
+        }
+        if (static::substring($string, 0, static::length($prefix)) === $prefix) {
+            return true;
+        }
+        return false;
     }
 
     /**

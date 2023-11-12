@@ -18,7 +18,6 @@ use function bcpow;
 use function compact;
 use function filter_var;
 use function implode;
-use function is_iterable;
 use function iterator_to_array;
 use function preg_match;
 use function preg_match_all;
@@ -26,9 +25,11 @@ use function preg_quote;
 use function preg_replace;
 use function preg_replace_callback;
 use function str_contains;
+use function str_ends_with;
 use function str_pad;
 use function str_repeat;
 use function str_replace;
+use function str_starts_with;
 use function strlen;
 use function strpos;
 use function strrev;
@@ -627,12 +628,12 @@ class Str
      *
      * @param string $string
      * The string to look in.
-     * @param string|iterable<array-key, string> $suffix
-     * The suffix(s) to search for in `$string`.
+     * @param string $suffix
+     * The suffix to search for in `$string`.
      * @return bool
      * Returns **true** if `$string` does not end with `$suffix`, **false** otherwise.
      */
-    public static function doesNotEndWith(string $string, string|iterable $suffix): bool
+    public static function doesNotEndWith(string $string, string $suffix): bool
     {
         return !static::endsWith($string, $suffix);
     }
@@ -644,17 +645,17 @@ class Str
      * Example:
      * ```php
      * Str::doesNotStartWith('abc', 'b'); // true
-     * Str::doesNotStartWith('abc', ['a', 'c', 'd']); // false because 'abc' starts with 'a'
+     * Str::doesNotStartWith('abc', 'a'); // false
      * ```
      *
      * @param string $string
      * The string to look in.
-     * @param string|iterable<array-key, string> $prefix
-     * The prefix(s) to search for in `$string`.
+     * @param string $prefix
+     * The prefix to search for in `$string`.
      * @return bool
      * Returns **true** if `$string` does not start with `$prefix`, **false** otherwise.
      */
-    public static function doesNotStartWith(string $string, string|iterable $prefix): bool
+    public static function doesNotStartWith(string $string, string $prefix): bool
     {
         return !static::startsWith($string, $prefix);
     }
@@ -724,23 +725,63 @@ class Str
      *
      * @param string $string
      * The string to look in.
-     * @param string|iterable<array-key, string> $suffix
-     * The suffix(s) to search for in `$string`.
+     * @param string $suffix
+     * The suffix to search for in `$string`.
      * @return bool
      * Returns **true** if `$string` ends with `$suffix`, **false** otherwise.
      */
-    public static function endsWith(string $string, string|iterable $suffix): bool
+    public static function endsWith(string $string, string $suffix): bool
     {
-        $suffixes = is_iterable($suffix) ? $suffix : [$suffix];
+        return str_ends_with($string, $suffix);
+    }
+
+    /**
+     * Checks if a string ends with a given suffixes.
+     * `$suffix` can be a string or an iterable list of strings.
+     *
+     * Example:
+     * ```php
+     * Str::endsWithAny('abc', ['a', 'c']); // true
+     * Str::endsWithAny('abc', ['a', 'b']); // false
+     * ```
+     *
+     * @param string $string
+     * The string to look in.
+     * @param iterable<array-key, string> $suffixes
+     * The suffixes to search for in `$string`.
+     * @return bool
+     * Returns **true** if `$string` ends with `$suffix`, **false** otherwise.
+     */
+    public static function endsWithAny(string $string, iterable $suffixes): bool
+    {
         foreach ($suffixes as $each) {
-            if ($each === self::EMPTY) {
-                return true;
-            }
-            if (static::substring($string, -static::length($each)) === $each) {
+            if (static::endsWith($string, $each)) {
                 return true;
             }
         }
         return false;
+    }
+
+    /**
+     * Checks if a string does not end with a given substring(s).
+     * `$suffix` can be a string or an iterable list of strings.
+     *
+     * Example:
+     * ```php
+     * Str::endsWithNone('abc', 'c'); // true
+     * Str::endsWithNone('abc', 'x'); // true because 'abc' ends with 'c'
+     * ```
+     *
+     * @param string $string
+     * The string to look in.
+     * @param iterable<array-key, string> $suffixes
+     * The suffixes to search for in `$string`.
+     * @return bool
+     * Returns **true** if `$string` does not end with `$suffix`, **false** otherwise.
+     */
+    public static function endsWithNone(string $string, iterable $suffixes): bool
+    {
+        return !static::endsWithAny($string, $suffixes);
     }
 
     /**
@@ -1529,28 +1570,68 @@ class Str
      * Example:
      * ```php
      * Str::startsWith('abc', 'a'); // true
-     * Str::startsWith('abc', ['b', 'c']); // false
+     * Str::startsWith('abc', 'b'); // false
      * ```
      *
      * @param string $string
      * The string to look in.
-     * @param string|iterable<array-key, string> $prefix
+     * @param string $prefix
      * The substring(s) to search for in `$string`.
      * @return bool
      * Returns **true** if `$string` starts with `$prefix`, **false** otherwise.
      */
-    public static function startsWith(string $string, string|iterable $prefix): bool
+    public static function startsWith(string $string, string $prefix): bool
     {
-        $prefixes = is_iterable($prefix) ? $prefix : [$prefix];
+        return str_starts_with($string, $prefix);
+    }
+
+    /**
+     * Checks if a string starts with a given substring(s).
+     * `$prefix` can be a string or an iterable list of strings.
+     *
+     * Example:
+     * ```php
+     * Str::startsWithAny('abc', ['a', 'c']); // true
+     * Str::startsWithAny('abc', ['b', 'c']); // false
+     * ```
+     *
+     * @param string $string
+     * The string to look in.
+     * @param iterable<array-key, string> $prefixes
+     * The substrings to search for in `$string`.
+     * @return bool
+     * Returns **true** if `$string` starts with `$prefix`, **false** otherwise.
+     */
+    public static function startsWithAny(string $string, iterable $prefixes): bool
+    {
         foreach ($prefixes as $each) {
-            if ($each === self::EMPTY) {
-                return true;
-            }
-            if (static::substring($string, 0, static::length($each)) === $each) {
+            if (static::startsWith($string, $each)) {
                 return true;
             }
         }
         return false;
+    }
+
+    /**
+     * Checks if a string does not start with a given prefix(s).
+     * `$prefix` can be a string or an iterable list of strings.
+     *
+     * Example:
+     * ```php
+     * Str::startsWithNone('abc', ['a', 'c', 'd']); // false because 'abc' starts with 'a'
+     * Str::startsWithNone('abc', ['x', 'y', 'z']); // true
+     * ```
+     *
+     * @param string $string
+     * The string to look in.
+     * @param iterable<array-key, string> $prefixes
+     * The prefixes to search for in `$string`.
+     * @return bool
+     * Returns **true** if `$string` does not start with `$prefix`, **false** otherwise.
+     */
+    public static function startsWithNone(string $string, iterable $prefixes): bool
+    {
+        return !static::startsWithAny($string, $prefixes);
     }
 
     /**
@@ -1797,7 +1878,7 @@ class Str
 
     /**
      * @param string $string
-     * @return string
+     * @return string|null
      */
     protected static function matchFloatFormat(string $string): ?string
     {

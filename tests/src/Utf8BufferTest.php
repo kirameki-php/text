@@ -3,7 +3,6 @@
 namespace Tests\Kirameki\Text;
 
 use Kirameki\Core\Testing\TestCase;
-use Kirameki\Text\StrBuffer;
 use Kirameki\Text\Utf8Buffer;
 
 class Utf8BufferTest extends TestCase
@@ -15,17 +14,17 @@ class Utf8BufferTest extends TestCase
 
     public function test_byteLength(): void
     {
-        self::assertSame(0, $this->buffer('')->byteLength(), 'empty');
-        self::assertSame(3, $this->buffer('123')->byteLength(), 'ascii');
-        self::assertSame(9, $this->buffer('あいう')->byteLength(), 'utf8');
-        self::assertSame(28, $this->buffer('🏴󠁧󠁢󠁳󠁣󠁴󠁿')->byteLength(), 'grapheme');
+        $this->assertSame(0, $this->buffer('')->byteLength(), 'empty');
+        $this->assertSame(3, $this->buffer('123')->byteLength(), 'ascii');
+        $this->assertSame(9, $this->buffer('あいう')->byteLength(), 'utf8');
+        $this->assertSame(28, $this->buffer('🏴󠁧󠁢󠁳󠁣󠁴󠁿')->byteLength(), 'grapheme');
     }
 
     public function test_cut(): void
     {
         $after = $this->buffer('あいう')->cut(7, '...');
-        self::assertInstanceOf(Utf8Buffer::class, $after);
-        self::assertSame('あい...', $after->toString());
+        $this->assertInstanceOf(Utf8Buffer::class, $after);
+        $this->assertSame('あい...', $after->toString());
     }
 
     public function test_interpolate(): void
@@ -51,7 +50,7 @@ class Utf8BufferTest extends TestCase
 
     public function test_length(): void
     {
-        self::assertSame(3, $this->buffer('あいう')->length());
+        $this->assertSame(3, $this->buffer('あいう')->length());
     }
 
 }

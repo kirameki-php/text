@@ -307,7 +307,7 @@ class StrTest extends TestCase
     public function test_count_with_empty_search(): void
     {
         $this->expectExceptionMessage('$substring must not be empty.');
-        self::assertFalse(self::$ref::count('a', ''));
+        $this->assertFalse(self::$ref::count('a', ''));
     }
 
     public function test_decapitalize(): void
@@ -333,9 +333,6 @@ class StrTest extends TestCase
     {
         $this->assertFalse(self::$ref::doesNotEndWith('abc', 'c'));
         $this->assertTrue(self::$ref::doesNotEndWith('abc', 'b'));
-        $this->assertFalse(self::$ref::doesNotEndWith('abc', ['c']));
-        $this->assertFalse(self::$ref::doesNotEndWith('abc', ['a', 'b', 'c']));
-        $this->assertTrue(self::$ref::doesNotEndWith('abc', ['a', 'b']));
         $this->assertFalse(self::$ref::doesNotEndWith('aabbcc', 'cc'));
         $this->assertFalse(self::$ref::doesNotEndWith('aabbcc' . PHP_EOL, PHP_EOL));
         $this->assertFalse(self::$ref::doesNotEndWith('abc0', '0'));
@@ -346,7 +343,6 @@ class StrTest extends TestCase
         $this->assertTrue(self::$ref::doesNotEndWith("あ\n", 'あ'));
         $this->assertFalse(self::$ref::doesNotEndWith('👋🏻', '🏻'));
     }
-
 
     public function test_doesNotStartWith(): void
     {
@@ -362,8 +358,6 @@ class StrTest extends TestCase
         $this->assertFalse(self::$ref::doesNotStartWith('🏴󠁧󠁢󠁳󠁣󠁴󠁿a🏴󠁧󠁢󠁳󠁣󠁴󠁿a🏴󠁧󠁢󠁳󠁣󠁴󠁿', '🏴󠁧󠁢󠁳󠁣󠁴󠁿a'));
         $this->assertTrue(self::$ref::doesNotStartWith('ba', 'a'));
         $this->assertTrue(self::$ref::doesNotStartWith('', 'a'));
-        $this->assertTrue(self::$ref::doesNotStartWith('abc', ['d', 'e']));
-        $this->assertFalse(self::$ref::doesNotStartWith('abc', ['d', 'a']));
         $this->assertTrue(self::$ref::doesNotStartWith("\nあ", 'あ'));
     }
 
@@ -403,20 +397,33 @@ class StrTest extends TestCase
 
     public function test_endsWith(): void
     {
-        self::assertTrue(self::$ref::endsWith('abc', 'c'), 'single hit');
-        self::assertFalse(self::$ref::endsWith('abc', 'b'), 'single miss');
-        self::assertTrue(self::$ref::endsWith('abc', ['c']), 'array hit');
-        self::assertTrue(self::$ref::endsWith('abc', ['a', 'b', 'c']), 'array hit with misses');
-        self::assertFalse(self::$ref::endsWith('abc', ['a', 'b']), 'array miss');
-        self::assertTrue(self::$ref::endsWith('aabbcc', 'cc'), 'multiple occurrence string');
-        self::assertTrue(self::$ref::endsWith('aabbcc' . PHP_EOL, PHP_EOL), 'newline');
-        self::assertTrue(self::$ref::endsWith('abc0', '0'), 'zero');
-        self::assertTrue(self::$ref::endsWith('abcfalse', 'false'), 'false');
-        self::assertTrue(self::$ref::endsWith('a', ''), 'empty needle');
-        self::assertTrue(self::$ref::endsWith('', ''), 'empty haystack and needle');
-        self::assertTrue(self::$ref::endsWith('あいう', 'う'), 'utf8');
-        self::assertFalse(self::$ref::endsWith("あ\n", 'あ'), 'utf8 newline');
-        self::assertTrue(self::$ref::endsWith('👋🏻', '🏻'), 'grapheme');
+        $this->assertTrue(self::$ref::endsWith('abc', 'c'), 'single hit');
+        $this->assertFalse(self::$ref::endsWith('abc', 'b'), 'single miss');
+        $this->assertTrue(self::$ref::endsWith('aabbcc', 'cc'), 'multiple occurrence string');
+        $this->assertTrue(self::$ref::endsWith('aabbcc' . PHP_EOL, PHP_EOL), 'newline');
+        $this->assertTrue(self::$ref::endsWith('abc0', '0'), 'zero');
+        $this->assertTrue(self::$ref::endsWith('abcfalse', 'false'), 'false');
+        $this->assertTrue(self::$ref::endsWith('a', ''), 'empty needle');
+        $this->assertTrue(self::$ref::endsWith('', ''), 'empty haystack and needle');
+        $this->assertTrue(self::$ref::endsWith('あいう', 'う'), 'utf8');
+        $this->assertFalse(self::$ref::endsWith("あ\n", 'あ'), 'utf8 newline');
+        $this->assertTrue(self::$ref::endsWith('👋🏻', '🏻'), 'grapheme');
+    }
+
+    public function test_endsWithAny(): void
+    {
+        $this->assertTrue(self::$ref::endsWithAny('abc', ['c']), 'array hit');
+        $this->assertTrue(self::$ref::endsWithAny('abc', ['a', 'b', 'c']), 'array hit with misses');
+        $this->assertFalse(self::$ref::endsWithAny('abc', ['a', 'b']), 'array miss');
+        $this->assertTrue(self::$ref::endsWithAny('👋🏿', ['🏿', 'a']), 'array miss');
+    }
+
+    public function test_endsWithNone(): void
+    {
+        $this->assertFalse(self::$ref::endsWithNone('abc', ['c']));
+        $this->assertFalse(self::$ref::endsWithNone('abc', ['a', 'b', 'c']));
+        $this->assertTrue(self::$ref::endsWithNone('abc', ['a', 'b']));
+        $this->assertfalse(self::$ref::endsWithNone('👋🏿', ['🏿', 'a']));
     }
 
     public function test_indexOfFirst(): void
@@ -679,5 +686,12 @@ class StrTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Expected: $times >= 0. Got: -1.');
         self::$ref::repeat('a', -1);
+    }
+
+    public function test_startsWithNone(): void
+    {
+        $this->assertTrue(self::$ref::startsWithNone('abc', ['d', 'e']));
+        $this->assertFalse(self::$ref::startsWithNone('abc', ['d', 'a']));
+        $this->assertFalse(self::$ref::startsWithNone('👋🏿', ['👋', 'a']));
     }
 }
