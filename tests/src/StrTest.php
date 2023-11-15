@@ -426,6 +426,27 @@ class StrTest extends TestCase
         $this->assertfalse(self::$ref::endsWithNone('👋🏿', ['🏿', 'a']));
     }
 
+    public function test_equals(): void
+    {
+        $this->assertTrue(self::$ref::equals('', ''), 'empty');
+        $this->assertTrue(self::$ref::equals('abc', 'abc'), 'basic');
+        $this->assertFalse(self::$ref::equals('abc', 'ABC'), 'case sensitive');
+        $this->assertFalse(self::$ref::equals('abc', 'ab'), 'shorter');
+        $this->assertFalse(self::$ref::equals('abc', 'abcd'), 'longer');
+        $this->assertFalse(self::$ref::equals('abc', 'abc '), 'space');
+    }
+
+    public function test_equalsAny(): void
+    {
+        $this->assertTrue(self::$ref::equalsAny('abc', ['abc']), 'basic');
+        $this->assertTrue(self::$ref::equalsAny('abc', ['abc', 'abc']), 'all hit');
+        $this->assertTrue(self::$ref::equalsAny('abc', ['abc', 'def']), 'basic with miss');
+        $this->assertFalse(self::$ref::equalsAny('abc', ['ABC']), 'case sensitive');
+        $this->assertFalse(self::$ref::equalsAny('abc', ['ab']), 'shorter');
+        $this->assertFalse(self::$ref::equalsAny('abc', ['abcd']), 'longer');
+        $this->assertFalse(self::$ref::equalsAny('abc', ['abc ']), 'space');
+    }
+
     public function test_indexOfFirst(): void
     {
         $this->assertNull(self::$ref::indexOfFirst('', 'a'), 'empty string');

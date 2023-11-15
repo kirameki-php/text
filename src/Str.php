@@ -46,6 +46,12 @@ use const STR_PAD_BOTH;
 use const STR_PAD_LEFT;
 use const STR_PAD_RIGHT;
 
+/**
+ * TODO indicesOfAll
+ * TODO equals/equalsAny
+ * TODO mask
+ * TODO lengthIs/
+ */
 class Str
 {
     final public const EMPTY = '';
@@ -785,6 +791,47 @@ class Str
     }
 
     /**
+     * Compares two strings to determine if they are equal.
+     *
+     * Example:
+     * ```php
+     * Str::firstIndexOf('abb', 'b'); // 1
+     * Str::firstIndexOf('abb', 'b', 2); // 2
+     * Str::firstIndexOf('abb', 'b', 3); // null
+     * ```
+     *
+     * @param string $string
+     * The string to be compared.
+     * @param string $other
+     * The other string to be compared.
+     * @return bool
+     */
+    public static function equals(string $string, string $other): bool
+    {
+        return $string === $other;
+    }
+
+    /**
+     * Compares a string to a list of strings to determine if they are equal.
+     * Will return **true** if at least one string in the list is equal to the given string.
+     *
+     * @param string $string
+     * The string to be compared.
+     * @param iterable<array-key, string> $others
+     * The other strings to be compared.
+     * @return bool
+     */
+    public static function equalsAny(string $string, iterable $others): bool
+    {
+        foreach ($others as $other) {
+            if ($string === $other) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * Find position (in grapheme units) of first occurrence of substring in string.
      *
      * Example:
@@ -1236,6 +1283,22 @@ class Str
     ): string
     {
         return static::replace($string, $substring, self::EMPTY, $limit, $count);
+    }
+
+    public static function removeFirst(
+        string $string,
+        string $substring,
+    ): string
+    {
+        return static::replaceFirst($string, $substring, self::EMPTY);
+    }
+
+    public static function removeLast(
+        string $string,
+        string $substring,
+    ): string
+    {
+        return static::replaceLast($string, $substring, self::EMPTY);
     }
 
     /**

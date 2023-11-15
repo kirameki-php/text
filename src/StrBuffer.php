@@ -7,6 +7,10 @@ use function basename;
 use function dirname;
 use function sprintf;
 
+/**
+ * TODO tap
+ * TODO pipe
+ */
 class StrBuffer implements Stringable
 {
     protected static Str $ref;
@@ -304,6 +308,26 @@ class StrBuffer implements Stringable
     public function endsWithNone(iterable $suffixes): bool
     {
         return static::$ref::endsWithNone($this->value, $suffixes);
+    }
+
+    /**
+     * @param string $string
+     * String to compare against.
+     * @return bool
+     */
+    public function equals(string $string): bool
+    {
+        return static::$ref::equals($this->value, $string);
+    }
+
+    /**
+     * @param iterable<array-key, string> $strings
+     * Strings to compare against.
+     * @return bool
+     */
+    public function equalsAny(iterable $strings): bool
+    {
+        return static::$ref::equalsAny($this->value, $strings);
     }
 
     /**
