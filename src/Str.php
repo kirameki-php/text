@@ -47,10 +47,7 @@ use const STR_PAD_LEFT;
 use const STR_PAD_RIGHT;
 
 /**
- * TODO indicesOfAll
- * TODO equals/equalsAny
  * TODO mask
- * TODO lengthIs/
  */
 class Str
 {

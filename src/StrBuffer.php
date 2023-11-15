@@ -2,15 +2,12 @@
 
 namespace Kirameki\Text;
 
+use Closure;
 use Stringable;
 use function basename;
 use function dirname;
 use function sprintf;
 
-/**
- * TODO tap
- * TODO pipe
- */
 class StrBuffer implements Stringable
 {
     protected static Str $ref;
@@ -444,6 +441,21 @@ class StrBuffer implements Stringable
     }
 
     /**
+     * Passes `$this` to the given callback and returns the result,
+     * so it can be used in a chain.
+     *
+     * @template TPipe
+     * @param Closure($this): TPipe $callback
+     * Callback which will receive $this as argument.
+     * The result of the callback will be returned.
+     * @return TPipe
+     */
+    public function pipe(Closure $callback): mixed
+    {
+        return $callback($this);
+    }
+
+    /**
      * @param string ...$string
      * @return static
      */
@@ -586,6 +598,19 @@ class StrBuffer implements Stringable
     public function takeFirst(int $position): static
     {
         return new static(static::$ref::takeFirst($this->value, $position));
+    }
+
+    /**
+     * Invokes `$callback` with `$this` as argument and returns `$this`.
+     *
+     * @param Closure($this): mixed $callback
+     * Callback to be invoked.
+     * @return $this
+     */
+    public function tap(Closure $callback): static
+    {
+        $callback($this);
+        return $this;
     }
 
     /**

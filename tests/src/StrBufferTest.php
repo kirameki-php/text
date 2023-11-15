@@ -317,6 +317,18 @@ class StrBufferTest extends TestCase
         $this->assertSame('aaa', $after->toString());
     }
 
+    public function test_pipe(): void
+    {
+        $count = 0;
+        $tapped = $this->buffer('a')->pipe(function(StrBuffer $b) use (&$count) {
+            $count++;
+            return $b->append('b');
+        });
+        self::assertSame(1, $count);
+        self::assertInstanceOf(StrBuffer::class, $tapped);
+        self::assertSame('ab', $tapped->toString());
+    }
+
     public function test_takeFirst(): void
     {
         $after = $this->buffer('abc')->takeFirst(1);
@@ -329,6 +341,18 @@ class StrBufferTest extends TestCase
         $after = $this->buffer('foo bar')->toCamelCase();
         $this->assertInstanceOf(StrBuffer::class, $after);
         $this->assertSame('fooBar', $after->toString());
+    }
+
+    public function test_tap(): void
+    {
+        $count = 0;
+        $tapped = $this->buffer('a')->tap(function(StrBuffer $b) use (&$count) {
+            $count++;
+            return 'x';
+        });
+        self::assertSame(1, $count);
+        self::assertInstanceOf(StrBuffer::class, $tapped);
+        self::assertSame('a', $tapped->toString());
     }
 
     public function test_toKebabCase(): void
