@@ -204,8 +204,8 @@ class Str
      */
     public static function between(string $string, string $from, string $to): string
     {
-        static::assertNotEmpty('$from', $from, compact('string', 'from', 'to'));
-        static::assertNotEmpty('$to', $to, compact('string', 'from', 'to'));
+        static::assertNotEmpty('from', $from, compact('string', 'from', 'to'));
+        static::assertNotEmpty('to', $to, compact('string', 'from', 'to'));
 
         $startPos = static::indexOfFirst($string, $from);
         if ($startPos === null) {
@@ -241,8 +241,8 @@ class Str
      */
     public static function betweenFurthest(string $string, string $from, string $to): string
     {
-        static::assertNotEmpty('$from', $from, compact('string', 'from', 'to'));
-        static::assertNotEmpty('$to', $to, compact('string', 'from', 'to'));
+        static::assertNotEmpty('from', $from, compact('string', 'from', 'to'));
+        static::assertNotEmpty('to', $to, compact('string', 'from', 'to'));
 
         $startPos = static::indexOfFirst($string, $from);
         if ($startPos === null) {
@@ -278,8 +278,8 @@ class Str
      */
     public static function betweenLast(string $string, string $from, string $to): string
     {
-        static::assertNotEmpty('$from', $from, compact('string', 'from', 'to'));
-        static::assertNotEmpty('$to', $to, compact('string', 'from', 'to'));
+        static::assertNotEmpty('from', $from, compact('string', 'from', 'to'));
+        static::assertNotEmpty('to', $to, compact('string', 'from', 'to'));
 
         $startPos = static::indexOfLast($string, $from);
         if ($startPos === null) {
@@ -557,7 +557,7 @@ class Str
      */
     public static function count(string $string, string $substring, bool $overlapping = false): int
     {
-        static::assertNotEmpty('$substring', $substring, compact('string', 'substring'));
+        static::assertNotEmpty('substring', $substring, compact('string', 'substring'));
 
         $counter = 0;
         $offset = 0;
@@ -2286,7 +2286,7 @@ class Str
     protected static function assertNotEmpty(string $name, string $string, iterable $context): void
     {
         if ($string === '') {
-            throw new InvalidArgumentException($name . ' must not be empty.', $context);
+            throw new InvalidArgumentException("\${$name} must not be empty.", $context);
         }
     }
 
