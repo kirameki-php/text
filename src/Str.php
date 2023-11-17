@@ -953,7 +953,12 @@ class Str
             ]);
         }
 
-        static::assertArrayIsMap('replace', $replace, ['text' => $text, 'replace' => $replace]);
+        if (count($replace) > 0 && array_is_list($replace)) {
+            throw new InvalidArgumentException("Expected \$replace to be a map. List given.", [
+                'text' => $text,
+                'replace' => $replace,
+            ]);
+        }
 
         $start = preg_quote($delimiterStart);
         $end = preg_quote($delimiterEnd);
@@ -2401,23 +2406,6 @@ class Str
     {
         if ($value < $limit) {
             throw new InvalidArgumentException("Expected: \${$name} >= {$limit}. Got: {$value}.", $context);
-        }
-    }
-
-    /**
-     * @param string $name
-     * @param array<array-key, mixed> $array
-     * @param iterable<string, mixed> $context
-     * @return void
-     */
-    protected static function assertArrayIsMap(string $name, array $array, iterable $context): void
-    {
-        if ($array === []) {
-            return;
-        }
-
-        if (array_is_list($array)) {
-            throw new InvalidArgumentException("Expected \${$name} to be a map. List given.", $context);
         }
     }
 }
