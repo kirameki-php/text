@@ -411,6 +411,33 @@ class StrBuffer implements Stringable
     }
 
     /**
+     * @param string $pattern
+     * @return string|null
+     */
+    public function matchFirstOrNull(string $pattern): ?string
+    {
+        return static::$ref::matchFirstOrNull($this->value, $pattern);
+    }
+
+    /**
+     * @param string $pattern
+     * @return string
+     */
+    public function matchLast(string $pattern): string
+    {
+        return static::$ref::matchlast($this->value, $pattern);
+    }
+
+    /**
+     * @param string $pattern
+     * @return string|null
+     */
+    public function matchLastOrNull(string $pattern): ?string
+    {
+        return static::$ref::matchLastOrNull($this->value, $pattern);
+    }
+
+    /**
      * @param int $length
      * @param string $pad
      * @return static
@@ -466,17 +493,6 @@ class StrBuffer implements Stringable
     }
 
     /**
-     * @param string $search
-     * @param int|null $limit
-     * @param int $count
-     * @return static
-     */
-    public function remove(string $search, ?int $limit = null, int &$count = 0): static
-    {
-        return new static(static::$ref::remove($this->value, $search, $limit ?? -1, $count));
-    }
-
-    /**
      * @param int $start
      * @param int $end
      * @return static
@@ -484,6 +500,35 @@ class StrBuffer implements Stringable
     public function range(int $start, int $end): static
     {
         return new static(static::$ref::range($this->value, $start, $end));
+    }
+
+    /**
+     * @param string $substring
+     * @param int|null $limit
+     * @param int &$count
+     * @return static
+     */
+    public function remove(string $substring, ?int $limit = null, int &$count = 0): static
+    {
+        return new static(static::$ref::remove($this->value, $substring, $limit ?? -1, $count));
+    }
+
+    /**
+     * @param string $substring
+     * @return static
+     */
+    public function removeFirst(string $substring): static
+    {
+        return new static(static::$ref::removeFirst($this->value, $substring));
+    }
+
+    /**
+     * @param string $substring
+     * @return static
+     */
+    public function removeLast(string $substring): static
+    {
+        return new static(static::$ref::removeLast($this->value, $substring));
     }
 
     /**

@@ -1066,10 +1066,15 @@ class Str
     public static function matchFirst(string $string, string $pattern): string
     {
         $match = static::matchFirstOrNull($string, $pattern);
-        if ($match === null) {
-            throw new NoMatchException("\"{$string}\" does not match {$pattern}");
+
+        if ($match !== null) {
+            return $match;
         }
-        return $match;
+
+        throw new NoMatchException("\"{$string}\" does not match {$pattern}", [
+            'string' => $string,
+            'pattern' => $pattern,
+        ]);
     }
 
     /**
@@ -1093,6 +1098,60 @@ class Str
         $match = [];
         preg_match($pattern, $string, $match);
         return $match[0] ?? null;
+    }
+
+    /**
+     * Perform a regular expression match on given string and return the last match.
+     * Throws a NoMatchException if no match is found.
+     *
+     * Example:
+     * ```php
+     * Str::matchLast('12a34a', '/\d+/'); // '34'
+     * Str::matchLast('abcabc', '/z/'); // NoMatchException
+     * ```
+     *
+     * @param string $string
+     * The string to be matched.
+     * @param string $pattern
+     * The pattern to search for. Must be a valid regex.
+     * @return string
+     */
+    public static function matchLast(string $string, string $pattern): string
+    {
+        $match = static::matchLastOrNull($string, $pattern);
+
+        if ($match !== null) {
+            return $match;
+        }
+
+        throw new NoMatchException("\"{$string}\" does not match {$pattern}", [
+            'string' => $string,
+            'pattern' => $pattern,
+        ]);
+    }
+
+    /**
+     * Perform a regular expression match on given string and return the last match.
+     * Returns **null** if no match is found.
+     *
+     * Example:
+     * ```php
+     * Str::matchLastOrNull('12a34a', '/\d/'); // '34'
+     * Str::matchLastOrNull('abcabc', '/z/'); // null
+     * ```
+     *
+     * @param string $string
+     * The string to be matched.
+     * @param string $pattern
+     * The pattern to search for. Must be a valid regex.
+     * @return string|null
+     */
+    public static function matchLastOrNull(string $string, string $pattern): ?string
+    {
+        $match = [];
+        preg_match_all($pattern, $string, $match);
+        $matched = $match[0] ?? [];
+        return $matched[count($matched) - 1] ?? null;
     }
 
     /**
@@ -1249,7 +1308,7 @@ class Str
     }
 
     /**
-     * Remove a substring from a given string.
+     * Remove all occurrence of `$substring` from `$string`.
      * If `$limit` is set, substring will only be removed from string that many times.
      *
      * Example:
@@ -1272,28 +1331,47 @@ class Str
      * @return string
      * Returns string with `$substring` removed.
      */
-    public static function remove(
-        string $string,
-        string $substring,
-        ?int $limit = null,
-        int &$count = 0,
-    ): string
+    public static function remove(string $string, string $substring, ?int $limit = null, int &$count = 0): string
     {
         return static::replace($string, $substring, self::EMPTY, $limit, $count);
     }
 
-    public static function removeFirst(
-        string $string,
-        string $substring,
-    ): string
+    /**
+     * Remove the first occurrence of `$substring` from `$string`.
+     *
+     * Example:
+     * ```php
+     * Str::removeFirst('abac', 'a'); // 'bac'
+     * ```
+     *
+     * @param string $string
+     * The string to look in.
+     * @param string $substring
+     * The substring to search for in the `$string`.
+     * @return string
+     * Returns string with `$substring` removed.
+     */
+    public static function removeFirst(string $string, string $substring): string
     {
         return static::replaceFirst($string, $substring, self::EMPTY);
     }
 
-    public static function removeLast(
-        string $string,
-        string $substring,
-    ): string
+    /**
+     * Remove the first occurrence of `$substring` from `$string`.
+     *
+     * Example:
+     * ```php
+     * Str::removeLast('abac', 'a'); // 'abc'
+     * ```
+     *
+     * @param string $string
+     * The string to look in.
+     * @param string $substring
+     * The substring to search for in the `$string`.
+     * @return string
+     * Returns string with `$substring` removed.
+     */
+    public static function removeLast(string $string, string $substring): string
     {
         return static::replaceLast($string, $substring, self::EMPTY);
     }

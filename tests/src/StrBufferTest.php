@@ -296,25 +296,39 @@ class StrBufferTest extends TestCase
         $this->assertSame(9, $this->buffer('あいう')->length());
     }
 
-    public function test_remove(): void
+    public function test_matchAll(): void
     {
-        $after = $this->buffer('foooooo bar')->remove('oo', 2);
-        $this->assertInstanceOf(StrBuffer::class, $after);
-        $this->assertSame('foo bar', $after->toString());
+        $buffer = $this->buffer('a1b2c3');
+        $matches = $buffer->matchAll('/[a-z]+/');
+        $this->assertSame([['a', 'b', 'c']], $matches);
     }
 
-    public function test_range(): void
+    public function test_matchFirst(): void
     {
-        $after = $this->buffer('abc')->range(1, 2);
-        $this->assertInstanceOf(StrBuffer::class, $after);
-        $this->assertSame('b', $after->toString());
+        $buffer = $this->buffer('a1b2c3');
+        $match = $buffer->matchFirst('/[a-z]+/');
+        $this->assertSame('a', $match);
     }
 
-    public function test_repeat(): void
+    public function test_matchFirstOrNull(): void
     {
-        $after = $this->buffer('a')->repeat(3);
-        $this->assertInstanceOf(StrBuffer::class, $after);
-        $this->assertSame('aaa', $after->toString());
+        $buffer = $this->buffer('abc');
+        $match = $buffer->matchFirstOrNull('/[0-9]+/');
+        $this->assertNull($match);
+    }
+
+    public function test_matchLast(): void
+    {
+        $buffer = $this->buffer('a1b2c3');
+        $match = $buffer->matchLast('/[a-z]+/');
+        $this->assertSame('c', $match);
+    }
+
+    public function test_matchLastOrNull(): void
+    {
+        $buffer = $this->buffer('abc');
+        $match = $buffer->matchLastOrNull('/[0-9]+/');
+        $this->assertNull($match);
     }
 
     public function test_pipe(): void
@@ -327,6 +341,48 @@ class StrBufferTest extends TestCase
         self::assertSame(1, $count);
         self::assertInstanceOf(StrBuffer::class, $tapped);
         self::assertSame('ab', $tapped->toString());
+    }
+
+    public function test_prepend(): void
+    {
+        $after = $this->buffer('a')->prepend('1', '2');
+        $this->assertInstanceOf(StrBuffer::class, $after);
+        $this->assertSame('12a', $after->toString());
+    }
+
+    public function test_range(): void
+    {
+        $after = $this->buffer('abc')->range(1, 2);
+        $this->assertInstanceOf(StrBuffer::class, $after);
+        $this->assertSame('b', $after->toString());
+    }
+
+    public function test_remove(): void
+    {
+        $after = $this->buffer('foooooo bar')->remove('oo', 2);
+        $this->assertInstanceOf(StrBuffer::class, $after);
+        $this->assertSame('foo bar', $after->toString());
+    }
+
+    public function test_removeFirst(): void
+    {
+        $after = $this->buffer('foo foo')->removeFirst('foo');
+        $this->assertInstanceOf(StrBuffer::class, $after);
+        $this->assertSame(' foo', $after->toString());
+    }
+
+    public function test_removeLast(): void
+    {
+        $after = $this->buffer('foo foo')->removeLast('foo');
+        $this->assertInstanceOf(StrBuffer::class, $after);
+        $this->assertSame('foo ', $after->toString());
+    }
+
+    public function test_repeat(): void
+    {
+        $after = $this->buffer('a')->repeat(3);
+        $this->assertInstanceOf(StrBuffer::class, $after);
+        $this->assertSame('aaa', $after->toString());
     }
 
     public function test_takeFirst(): void

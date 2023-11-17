@@ -598,6 +598,43 @@ class StrTest extends TestCase
         self::$ref::matchFirstOrNull('abcabc', 'a');
     }
 
+    public function test_matchLast(): void
+    {
+        $this->assertSame('34', self::$ref::matchLast('12a34a', '/\d+/'));
+        $this->assertSame('13', self::$ref::matchLast('1213', '/(?<p1>1)\d/'));
+        $this->assertSame('c', self::$ref::matchLast('abcdxabc', '/c[^x]*/'));
+        $this->assertSame('cx', self::$ref::matchLast('abcabcx', '/cx$/'));
+    }
+
+    public function test_matchLast_no_match(): void
+    {
+        $this->expectException(NoMatchException::class);
+        $this->expectExceptionMessage('"aaa" does not match /z/');
+        self::$ref::matchLast('aaa', '/z/');
+    }
+
+    public function test_matchLast_without_slashes(): void
+    {
+        $this->expectWarningMessage('preg_match_all(): Delimiter must not be alphanumeric, backslash, or NUL');
+        self::$ref::matchLast('abcabc', 'a');
+    }
+
+    public function test_matchLastOrNull(): void
+    {
+        $this->assertSame('34', self::$ref::matchLastOrNull('12a34a', '/\d+/'));
+        $this->assertSame('13', self::$ref::matchLastOrNull('1213', '/(?<p1>1)\d/'));
+        $this->assertSame(null, self::$ref::matchLastOrNull('abcabc', '/bcd/'));
+        $this->assertSame('c', self::$ref::matchLastOrNull('abcdxabc', '/c[^x]*/'));
+        $this->assertSame(null, self::$ref::matchLastOrNull('abcabcx', '/^abcx/'));
+        $this->assertSame('cx', self::$ref::matchLastOrNull('abcabcx', '/cx$/'));
+    }
+
+    public function test_matchLastOrNull_without_slashes(): void
+    {
+        $this->expectWarningMessage('preg_match_all(): Delimiter must not be alphanumeric, backslash, or NUL');
+        self::$ref::matchLastOrNull('abcabc', 'a');
+    }
+
     public function test_pad(): void
     {
         $this->assertSame('', self::$ref::pad('', -1, '_'), 'empty string');
@@ -692,6 +729,24 @@ class StrTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Expected: $limit >= 0. Got: -1.');
         self::$ref::remove('', '', -1);
+    }
+
+    public function test_removeFirst(): void
+    {
+        $this->assertSame('', self::$ref::removeFirst('', ''), 'empty');
+        $this->assertSame('', self::$ref::removeFirst('', 'abc'), 'empty string');
+        $this->assertSame('abc', self::$ref::removeFirst('abc', ''), 'empty substring');
+        $this->assertSame('bac', self::$ref::removeFirst('abac', 'a'), 'delete first');
+        $this->assertSame('👋👋🏿', self::$ref::removeFirst('👋🏿👋🏿', '🏿'), 'dont delete grapheme code point');
+    }
+
+    public function test_removeLast(): void
+    {
+        $this->assertSame('', self::$ref::removeLast('', ''), 'empty');
+        $this->assertSame('', self::$ref::removeLast('', 'abc'), 'empty string');
+        $this->assertSame('abc', self::$ref::removeLast('abc', ''), 'empty substring');
+        $this->assertSame('abc', self::$ref::removeLast('abac', 'a'), 'delete last');
+        $this->assertSame('👋🏿👋', self::$ref::removeLast('👋🏿👋🏿', '🏿'), 'dont delete grapheme code point');
     }
 
     public function test_repeat(): void

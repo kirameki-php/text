@@ -691,6 +691,24 @@ class Utf8Test extends TestCase
         self::$ref::remove('', '', -1);
     }
 
+    public function test_removeFirst(): void
+    {
+        $this->assertSame('', self::$ref::removeFirst('', ''), 'empty');
+        $this->assertSame('', self::$ref::removeFirst('', 'abc'), 'empty string');
+        $this->assertSame('abc', self::$ref::removeFirst('abc', ''), 'empty substring');
+        $this->assertSame('bac', self::$ref::removeFirst('abac', 'a'), 'delete first');
+        $this->assertSame('👋🏿👋🏿', self::$ref::removeFirst('👋🏿👋🏿', '🏿'), 'dont delete grapheme code point');
+    }
+
+    public function test_removeLast(): void
+    {
+        $this->assertSame('', self::$ref::removeLast('', ''), 'empty');
+        $this->assertSame('', self::$ref::removeLast('', 'abc'), 'empty string');
+        $this->assertSame('abc', self::$ref::removeLast('abc', ''), 'empty substring');
+        $this->assertSame('abc', self::$ref::removeLast('abac', 'a'), 'delete last');
+        $this->assertSame('👋🏿👋🏿', self::$ref::removeLast('👋🏿👋🏿', '🏿'), 'dont delete grapheme code point');
+    }
+
     public function test_repeat(): void
     {
         $this->assertSame('aaa', self::$ref::repeat('a', 3), 'ascii');
