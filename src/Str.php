@@ -944,9 +944,16 @@ class Str
             ? iterator_to_array($replace)
             : $replace;
 
-        static::assertNotEmpty('delimiterStart', $delimiterStart, compact('text', 'replace'));
-        static::assertNotEmpty('delimiterEnd', $delimiterEnd, compact('text', 'replace'));
-        static::assertArrayIsMap('replace', $replace);
+        if ($delimiterStart === self::EMPTY || $delimiterEnd === self::EMPTY) {
+            throw new InvalidArgumentException("\$delimiterStart and \$delimiterEnd must not be empty.", [
+                'text' => $text,
+                'replace' => $replace,
+                'delimiterStart' => $delimiterStart,
+                'delimiterEnd' => $delimiterEnd,
+            ]);
+        }
+
+        static::assertArrayIsMap('replace', $replace, ['text' => $text, 'replace' => $replace]);
 
         $start = preg_quote($delimiterStart);
         $end = preg_quote($delimiterEnd);
@@ -2400,16 +2407,17 @@ class Str
     /**
      * @param string $name
      * @param array<array-key, mixed> $array
+     * @param iterable<string, mixed> $context
      * @return void
      */
-    protected static function assertArrayIsMap(string $name, array $array): void
+    protected static function assertArrayIsMap(string $name, array $array, iterable $context): void
     {
         if ($array === []) {
             return;
         }
 
         if (array_is_list($array)) {
-            throw new InvalidArgumentException("Expected \${$name} to be a map. List given.", compact('array'));
+            throw new InvalidArgumentException("Expected \${$name} to be a map. List given.", $context);
         }
     }
 }

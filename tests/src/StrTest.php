@@ -527,14 +527,14 @@ class StrTest extends TestCase
 
     public function test_interpolate_empty_delimiterStart(): void
     {
-        $this->expectExceptionMessage('$delimiterStart must not be empty.');
+        $this->expectExceptionMessage('$delimiterStart and $delimiterEnd must not be empty.');
         $this->expectException(InvalidArgumentException::class);
         self::$ref::interpolate('', [1, 2], '');
     }
 
     public function test_interpolate_empty_delimiterEnd(): void
     {
-        $this->expectExceptionMessage('$delimiterEnd must not be empty.');
+        $this->expectExceptionMessage('$delimiterStart and $delimiterEnd must not be empty.');
         $this->expectException(InvalidArgumentException::class);
         self::$ref::interpolate('', [1, 2], '{', '');
     }
