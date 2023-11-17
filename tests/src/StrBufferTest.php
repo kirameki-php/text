@@ -331,6 +331,27 @@ class StrBufferTest extends TestCase
         $this->assertNull($match);
     }
 
+    public function test_padBoth(): void
+    {
+        $after = $this->buffer('a')->padBoth(3, 'b');
+        $this->assertInstanceOf(StrBuffer::class, $after);
+        $this->assertSame('bab', $after->toString());
+    }
+
+    public function test_padEnd(): void
+    {
+        $after = $this->buffer('a')->padEnd(3, 'b');
+        $this->assertInstanceOf(StrBuffer::class, $after);
+        $this->assertSame('abb', $after->toString());
+    }
+
+    public function test_padStart(): void
+    {
+        $after = $this->buffer('a')->padStart(3, 'b');
+        $this->assertInstanceOf(StrBuffer::class, $after);
+        $this->assertSame('bba', $after->toString());
+    }
+
     public function test_pipe(): void
     {
         $count = 0;
