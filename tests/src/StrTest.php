@@ -515,6 +515,7 @@ class StrTest extends TestCase
         $this->assertSame('1.23', self::$ref::interpolate('{a:%.2f}', ['a' => 1.2345]), 'with formatting');
         $this->assertSame('005', self::$ref::interpolate('{a:%1$03d}', ['a' => 5]), 'with formatting');
         $this->assertSame('...5', self::$ref::interpolate('{a:%\'.4d}', ['a' => 5]), 'with formatting');
+        $this->assertSame('{a:}', self::$ref::interpolate('{a:}', ['a' => 5]), 'empty formatting');
     }
 
     public function test_interpolate_non_list(): void
