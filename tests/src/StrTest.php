@@ -512,6 +512,9 @@ class StrTest extends TestCase
         $this->assertSame('{a!}', self::$ref::interpolate('{a!}', ['a!' => 1]), 'only match ascii placeholder');
         $this->assertSame(' 1 ', self::$ref::interpolate(' {_a_b} ', ['_a_b' => 1]), 'allow under score');
         $this->assertSame('1', self::$ref::interpolate('<a>', ['a' => 1], '<', '>'), 'different delimiters');
+        $this->assertSame('1.23', self::$ref::interpolate('{a:%.2f}', ['a' => 1.2345]), 'with formatting');
+        $this->assertSame('005', self::$ref::interpolate('{a:%1$03d}', ['a' => 5]), 'with formatting');
+        $this->assertSame('...5', self::$ref::interpolate('{a:%\'.4d}', ['a' => 5]), 'with formatting');
     }
 
     public function test_interpolate_non_list(): void
@@ -519,6 +522,20 @@ class StrTest extends TestCase
         $this->expectExceptionMessage('Expected $replace to be a map. List given.');
         $this->expectException(InvalidArgumentException::class);
         self::$ref::interpolate('', [1, 2]);
+    }
+
+    public function test_interpolate_empty_delimiterStart(): void
+    {
+        $this->expectExceptionMessage('$delimiterStart must not be empty.');
+        $this->expectException(InvalidArgumentException::class);
+        self::$ref::interpolate('', [1, 2], '');
+    }
+
+    public function test_interpolate_empty_delimiterEnd(): void
+    {
+        $this->expectExceptionMessage('$delimiterEnd must not be empty.');
+        $this->expectException(InvalidArgumentException::class);
+        self::$ref::interpolate('', [1, 2], '{', '');
     }
 
     public function test_isBlank(): void

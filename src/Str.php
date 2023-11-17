@@ -24,6 +24,7 @@ use function preg_match_all;
 use function preg_quote;
 use function preg_replace;
 use function preg_replace_callback;
+use function sprintf;
 use function str_contains;
 use function str_ends_with;
 use function str_pad;
@@ -943,23 +944,31 @@ class Str
             ? iterator_to_array($replace)
             : $replace;
 
+        static::assertNotEmpty('delimiterStart', $delimiterStart, compact('text', 'replace'));
+        static::assertNotEmpty('delimiterEnd', $delimiterEnd, compact('text', 'replace'));
         static::assertArrayIsMap('replace', $replace);
 
         $start = preg_quote($delimiterStart);
         $end = preg_quote($delimiterEnd);
 
-        $pattern = '/(?<slashes>\\\\*)' . $start . '(?<placeholder>\w+)' . $end . '/';
+        $pattern = '/(?<slashes>\\\\*)' . $start . '(?<placeholder>\w+)(:(?<format>[.%$\'\+\-\d\w]+))?' . $end . '/';
 
         $callback = static function ($m) use ($replace) {
             $slashes = $m['slashes'];
             $placeholder = $m['placeholder'];
+            $format = $m['format'] ?? null;
 
             $notEscaped = strlen($slashes) % 2 === 0;
             $replaceable = array_key_exists($placeholder, $replace);
 
-            return $notEscaped && $replaceable
-                ? str_replace('\\\\', '\\', $slashes . $replace[$placeholder])
-                : str_replace('\\\\', '\\', $m[0]);
+            if ($notEscaped && $replaceable) {
+                $replaced = $replace[$placeholder];
+                if ($format !== null) {
+                    $replaced = sprintf($format, $replaced);
+                }
+                return str_replace('\\\\', '\\', $slashes . $replaced);
+            }
+            return str_replace('\\\\', '\\', $m[0]);
         };
 
         return preg_replace_callback($pattern, $callback, $text) ?? '';
