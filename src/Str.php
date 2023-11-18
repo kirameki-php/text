@@ -2145,29 +2145,6 @@ class Str
     }
 
     /**
-     * Convert the given string to kebab-case.
-     *
-     * Example:
-     * ```php
-     * Str::toKebabCase('foo bar'); // 'foo-bar'
-     * Str::toKebabCase('foo_bar'); // 'foo-bar'
-     * Str::toKebabCase('FooBar'); // 'foo-bar'
-     * Str::toKebabCase('HTTPClient'); // 'http-client'
-     * ```
-     *
-     * @param string $string
-     * String to be converted to kebab-case.
-     * @return string
-     * Kebab-cased string.
-     */
-    public static function toKebabCase(string $string): string
-    {
-        $converting = (string) preg_replace(['/([a-z\d])([A-Z])/', '/([^-])([A-Z][a-z])/'], '$1-$2', $string);
-        $converting = (string) str_replace([' ', '_'], '-', $converting);
-        return static::toLowerCase($converting);
-    }
-
-    /**
      * Convert the string to integer value.
      * If string contains anything other than a number or is larger than PHP_INT_MAX,
      * a RuntimeException will be thrown.
@@ -2217,6 +2194,29 @@ class Str
             return filter_var($string, FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE);
         }
         return null;
+    }
+
+    /**
+     * Convert the given string to kebab-case.
+     *
+     * Example:
+     * ```php
+     * Str::toKebabCase('foo bar'); // 'foo-bar'
+     * Str::toKebabCase('foo_bar'); // 'foo-bar'
+     * Str::toKebabCase('FooBar'); // 'foo-bar'
+     * Str::toKebabCase('HTTPClient'); // 'http-client'
+     * ```
+     *
+     * @param string $string
+     * String to be converted to kebab-case.
+     * @return string
+     * Kebab-cased string.
+     */
+    public static function toKebabCase(string $string): string
+    {
+        $converting = (string) preg_replace(['/([a-z\d])([A-Z])/', '/([^-])([A-Z][a-z])/'], '$1-$2', $string);
+        $converting = (string) str_replace([' ', '_'], '-', $converting);
+        return static::toLowerCase($converting);
     }
 
     /**

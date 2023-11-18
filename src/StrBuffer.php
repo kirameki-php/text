@@ -772,19 +772,19 @@ class StrBuffer implements Stringable
     }
 
     /**
-     * @return static
-     */
-    public function toUpperCase(): static
-    {
-        return new static(static::$ref::toUpperCase($this->value));
-    }
-
-    /**
      * @return string
      */
     public function toString(): string
     {
         return $this->value;
+    }
+
+    /**
+     * @return static
+     */
+    public function toUpperCase(): static
+    {
+        return new static(static::$ref::toUpperCase($this->value));
     }
 
     /**

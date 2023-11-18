@@ -454,39 +454,6 @@ class StrBufferTest extends TestCase
         $this->assertSame(['a', 'b', 'c'], $after);
     }
 
-    public function test_takeFirst(): void
-    {
-        $after = $this->buffer('abc')->takeFirst(1);
-        $this->assertInstanceOf(StrBuffer::class, $after);
-        $this->assertSame('a', $after->toString());
-    }
-
-    public function test_toCamelCase(): void
-    {
-        $after = $this->buffer('foo bar')->toCamelCase();
-        $this->assertInstanceOf(StrBuffer::class, $after);
-        $this->assertSame('fooBar', $after->toString());
-    }
-
-    public function test_tap(): void
-    {
-        $count = 0;
-        $tapped = $this->buffer('a')->tap(function(StrBuffer $b) use (&$count) {
-            $count++;
-            return 'x';
-        });
-        self::assertSame(1, $count);
-        self::assertInstanceOf(StrBuffer::class, $tapped);
-        self::assertSame('a', $tapped->toString());
-    }
-
-    public function test_toKebabCase(): void
-    {
-        $after = $this->buffer('foo barBaz')->toKebabCase();
-        $this->assertInstanceOf(StrBuffer::class, $after);
-        $this->assertSame('foo-bar-baz', $after->toString());
-    }
-
     public function test_startsWith(): void
     {
         $sb = $this->buffer('/test/path/of.php');
@@ -511,4 +478,105 @@ class StrBufferTest extends TestCase
         $this->assertTrue($sb->startsWithNone(['path', '.php']));
     }
 
+    public function test_takeFirst(): void
+    {
+        $after = $this->buffer('abc')->takeFirst(1);
+        $this->assertInstanceOf(StrBuffer::class, $after);
+        $this->assertSame('a', $after->toString());
+    }
+
+    public function test_tap(): void
+    {
+        $count = 0;
+        $tapped = $this->buffer('a')->tap(function(StrBuffer $b) use (&$count) {
+            $count++;
+            return 'x';
+        });
+        self::assertSame(1, $count);
+        self::assertInstanceOf(StrBuffer::class, $tapped);
+        self::assertSame('a', $tapped->toString());
+    }
+
+    public function test_toBool(): void
+    {
+        $this->assertTrue($this->buffer('true')->toBool());
+        $this->assertFalse($this->buffer('false')->toBool());
+    }
+
+    public function test_toBoolOrNull(): void
+    {
+        $this->assertTrue($this->buffer('true')->toBoolOrNull());
+        $this->assertNull($this->buffer('T')->toBoolOrNull());
+        $this->assertFalse($this->buffer('false')->toBoolOrNull());
+        $this->assertNull($this->buffer('')->toBoolOrNull());
+    }
+
+    public function test_toCamelCase(): void
+    {
+        $after = $this->buffer('foo bar')->toCamelCase();
+        $this->assertInstanceOf(StrBuffer::class, $after);
+        $this->assertSame('fooBar', $after->toString());
+    }
+
+    public function test_toFloat(): void
+    {
+        $this->assertSame(12.3, $this->buffer('12.3')->toFloat());
+    }
+
+    public function test_toFloatOrNull(): void
+    {
+        $this->assertSame(12.3, $this->buffer('12.3')->toFloatOrNull());
+        $this->assertNull($this->buffer('12.3a')->toFloatOrNull());
+    }
+
+    public function test_toInt(): void
+    {
+        $this->assertSame(123, $this->buffer('123')->toInt());
+    }
+
+    public function test_toIntOrNull(): void
+    {
+        $this->assertSame(123, $this->buffer('123')->toIntOrNull());
+        $this->assertNull($this->buffer('123a')->toIntOrNull());
+    }
+
+    public function test_toKebabCase(): void
+    {
+        $after = $this->buffer('foo barBaz')->toKebabCase();
+        $this->assertInstanceOf(StrBuffer::class, $after);
+        $this->assertSame('foo-bar-baz', $after->toString());
+    }
+
+    public function test_toLowerCase(): void
+    {
+        $after = $this->buffer('FOO BAR')->toLowerCase();
+        $this->assertInstanceOf(StrBuffer::class, $after);
+        $this->assertSame('foo bar', $after->toString());
+    }
+
+    public function test_toPascalCase(): void
+    {
+        $after = $this->buffer('foo bar')->toPascalCase();
+        $this->assertInstanceOf(StrBuffer::class, $after);
+        $this->assertSame('FooBar', $after->toString());
+    }
+
+    public function test_toSnakeCase(): void
+    {
+        $after = $this->buffer('foo barBaz')->toSnakeCase();
+        $this->assertInstanceOf(StrBuffer::class, $after);
+        $this->assertSame('foo_bar_baz', $after->toString());
+    }
+
+    public function test_toString(): void
+    {
+        $this->assertSame('a', $this->buffer('a')->toString());
+    }
+
+    public function test_toUpperCase(): void
+    {
+        $after = $this->buffer('foo bar')->toUpperCase();
+        $this->assertInstanceOf(StrBuffer::class, $after);
+        $this->assertSame('FOO BAR', $after->toString());
+    }
 }
