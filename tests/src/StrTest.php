@@ -199,6 +199,18 @@ class StrTest extends TestCase
         $this->assertSame(1, strlen($chunked[1]), 'invalid');
     }
 
+    public function test_chunk_with_invalid_size(): void
+    {
+        $this->expectExceptionMessage('Expected: $size >= 1. Got: 0.');
+        self::$ref::chunk('abc', 0);
+    }
+
+    public function test_chunk_with_invalid_limit(): void
+    {
+        $this->expectExceptionMessage('Expected: $limit >= 0. Got: -1.');
+        self::$ref::chunk('abc', 2, -1);
+    }
+
     public function test_concat(): void
     {
         $this->assertSame('', self::$ref::concat('', '', ''), 'empty');
@@ -904,6 +916,45 @@ class StrTest extends TestCase
         $this->assertSame('', self::$ref::reverse(''));
         $this->assertSame('ba', self::$ref::reverse('ab'));
         $this->assertSame("\x82\x81\xE3", self::$ref::reverse('あ'));
+    }
+
+    public function test_split(): void
+    {
+        $this->assertSame(['', ''], self::$ref::split(' ', ' '), 'empty');
+        $this->assertSame(['abc'], self::$ref::split('abc', '_'), 'no match');
+        $this->assertSame(['a', 'c', 'd'], self::$ref::split('abcbd', 'b'), 'match');
+        $this->assertSame(['あ', 'う'], self::$ref::split('あいう', 'い'), 'match utf-8');
+        $this->assertSame(['a', 'cbd'], self::$ref::split('abcbd', 'b', 2), 'match with limit');
+        $this->assertSame(['a', 'b', 'c'], self::$ref::split('abc', ''), 'match with limit');
+        $this->assertSame(['👨‍👨‍👧', ''], self::$ref::split('👨‍👨‍👧‍👦', '‍👦'), 'match emoji');
+    }
+
+    public function test_split_with_negative_limit(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Expected: $limit >= 0. Got: -1.');
+        self::$ref::split('a', 'b', -1);
+    }
+
+    public function test_startsWith(): void
+    {
+        $this->assertTrue(self::$ref::startsWith('', ''));
+        $this->assertTrue(self::$ref::startsWith('bb', ''));
+        $this->assertTrue(self::$ref::startsWith('bb', 'b'));
+        $this->assertTrue(self::$ref::startsWith('あ-い-う', 'あ'));
+        $this->assertTrue(self::$ref::startsWith('👨‍👨‍👧‍👦', '👨‍'));
+        $this->assertTrue(self::$ref::startsWith('🏴󠁧󠁢󠁳󠁣󠁴󠁿 👨‍👨‍👧‍👦', '🏴󠁧󠁢󠁳󠁣󠁴󠁿'));
+        $this->assertFalse(self::$ref::startsWith('🏴󠁧󠁢󠁳󠁣󠁴󠁿 👨‍👨‍👧‍👦', '👨‍👨‍👧‍👦'));
+        $this->assertTrue(self::$ref::startsWith('🏴󠁧󠁢󠁳󠁣󠁴󠁿a🏴󠁧󠁢󠁳󠁣󠁴󠁿a🏴󠁧󠁢󠁳󠁣󠁴󠁿', '🏴󠁧󠁢󠁳󠁣󠁴󠁿a'));
+        $this->assertFalse(self::$ref::startsWith('ba', 'a'));
+        $this->assertFalse(self::$ref::startsWith('', 'a'));
+    }
+
+    public function test_startsWithAny(): void
+    {
+        $this->assertFalse(self::$ref::startsWithAny('abc', ['d', 'e']));
+        $this->assertTrue(self::$ref::startsWithAny('abc', ['d', 'a']));
+        $this->assertTrue(self::$ref::startsWithAny('👋🏿', ['👋', 'a']));
     }
 
     public function test_startsWithNone(): void

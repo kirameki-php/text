@@ -6,6 +6,7 @@ use Closure;
 use Kirameki\Core\Exceptions\ErrorException;
 use Kirameki\Core\Exceptions\InvalidArgumentException;
 use Kirameki\Text\Exceptions\NoMatchException;
+use Kirameki\Text\Exceptions\ParseException;
 use RuntimeException;
 use Traversable;
 use ValueError;
@@ -333,19 +334,32 @@ class Str
      * @param string $string
      * String to be chunked.
      * @param int $size
-     * Size of each chunk. Must be > 1.
+     * Size of each chunk. Must be >= 1.
      * @param int|null $limit
      * Maximum number times to chunk the string.
      * @return list<string>
      */
     public static function chunk(string $string, int $size, ?int $limit = null): array
     {
-        $remains = $limit ?? INF;
+        if ($size < 1) {
+            throw new InvalidArgumentException("Expected: \$size >= 1. Got: {$size}.", [
+                'string' => $string,
+                'size' => $size,
+                'limit' => $limit,
+            ]);
+        }
 
-        static::assertGreaterThanEqual('size', $size, 1, compact('string', 'size', 'remains'));
+        if ($limit !== null && $limit < 0) {
+            throw new InvalidArgumentException("Expected: \$limit >= 0. Got: {$limit}.", [
+                'string' => $string,
+                'size' => $size,
+                'limit' => $limit,
+            ]);
+        }
 
         $chunk = [];
         $offset = 0;
+        $remains = $limit ?? INF;
         while (true) {
             $piece = static::substring($string, $offset, $size);
             if ($piece === static::EMPTY) {
@@ -678,7 +692,12 @@ class Str
      */
     public static function dropFirst(string $string, int $amount): string
     {
-        static::assertGreaterThanEqual('amount', $amount, 0, compact('string', 'amount'));
+        if ($amount < 0) {
+            throw new InvalidArgumentException("Expected: \$amount >= 0. Got: {$amount}.", [
+                'string' => $string,
+                'amount' => $amount,
+            ]);
+        }
 
         return static::substring($string, $amount);
     }
@@ -702,7 +721,12 @@ class Str
      */
     public static function dropLast(string $string, int $amount): string
     {
-        static::assertGreaterThanEqual('amount', $amount, 0, compact('string', 'amount'));
+        if ($amount < 0) {
+            throw new InvalidArgumentException("Expected: \$amount >= 0. Got: {$amount}.", [
+                'string' => $string,
+                'amount' => $amount,
+            ]);
+        }
 
         if ($amount === 0) {
             return $string;
@@ -1449,10 +1473,16 @@ class Str
         int &$count = 0,
     ): string
     {
-        $max = $limit ?? INF;
-        $count = 0;
+        if ($limit !== null && $limit < 0) {
+            throw new InvalidArgumentException("Expected: \$limit >= 0. Got: {$limit}.", [
+                'string' => $string,
+                'search' => $search,
+                'replacement' => $replacement,
+                'limit' => $limit,
+            ]);
+        }
 
-        static::assertGreaterThanEqual('limit', $max, 0, compact('string', 'limit'));
+        $count = 0;
 
         if ($search === self::EMPTY) {
             return $string;
@@ -1462,6 +1492,7 @@ class Str
         $searchLength = static::length($search);
         $replacementLength = static::length($replacement);
         $offset = 0;
+        $max = $limit ?? INF;
         while (($position = static::indexOfFirst($replaced, $search, $offset)) !== null && $max > $count) {
             $before = static::substring($replaced, 0, $position);
             $after = static::substring($replaced, $position + $searchLength);
@@ -1683,16 +1714,20 @@ class Str
      * The string to be split.
      * @param string $separator
      * The boundary string(s) used to split.
-     * @param int<0, max>|null $limit
+     * @param int|null $limit
      * [Optional] Maximum number of chunks. Defaults to **null**.
-     * @return array<int, string>
+     * @return list<string>
      * Returns an array of strings created by splitting.
      */
     public static function split(string $string, string $separator, ?int $limit = null): array
     {
-        $remains = $limit ?? INF;
-
-        static::assertGreaterThanEqual('remains', $remains, 0, compact('string', 'remains'));
+        if ($limit !== null && $limit < 0) {
+            throw new InvalidArgumentException("Expected: \$limit >= 0. Got: {$limit}.", [
+                'string' => $string,
+                'separator' => $separator,
+                'limit' => $limit,
+            ]);
+        }
 
         $splits = [];
         $offset = 0;
@@ -1703,6 +1738,7 @@ class Str
             return static::chunk($string, 1, $limit);
         }
 
+        $remains = $limit ?? INF;
         while (($pos = static::indexOfFirst($string, $separator, $offset)) !== null && (--$remains) > 0) {
             $splits[] = static::substring($string, $offset, $pos - $offset);
             $offset = $pos + $separatorLength;
@@ -1832,7 +1868,12 @@ class Str
      */
     public static function takeFirst(string $string, int $amount): string
     {
-        static::assertGreaterThanEqual('amount', $amount, 0, compact('string', 'amount'));
+        if ($amount < 0) {
+            throw new InvalidArgumentException("Expected: \$amount >= 0. Got: {$amount}.", [
+                'string' => $string,
+                'amount' => $amount,
+            ]);
+        }
 
         return static::substring($string, 0, $amount);
     }
@@ -1856,7 +1897,12 @@ class Str
      */
     public static function takeLast(string $string, int $amount): string
     {
-        static::assertGreaterThanEqual('amount', $amount, 0, compact('string', 'amount'));
+        if ($amount < 0) {
+            throw new InvalidArgumentException("Expected: \$amount >= 0. Got: {$amount}.", [
+                'string' => $string,
+                'amount' => $amount,
+            ]);
+        }
 
         return static::substring($string, -$amount);
     }
@@ -1902,8 +1948,8 @@ class Str
      * Str::toBool('FALSE'); // false
      * Str::toBool('1'); // true
      * Str::toBool('0'); // false
-     * Str::toBool(''); // RuntimeException: "" is not a valid boolean string.
-     * Str::toBool('👨‍👨‍👧‍👦'); // RuntimeException: "👨‍👨‍👧‍👦" is not a valid boolean string.
+     * Str::toBool(''); // ParseException: "" is not a valid boolean string.
+     * Str::toBool('👨‍👨‍👧‍👦'); // ParseException: "👨‍👨‍👧‍👦" is not a valid boolean string.
      * ```
      *
      * @param string $string
@@ -1915,7 +1961,7 @@ class Str
     {
         $bool = static::toBoolOrNull($string);
         if ($bool === null) {
-            throw new RuntimeException("\"$string\" is not a valid boolean string.");
+            throw new ParseException("\"$string\" is not a valid boolean string.");
         }
         return $bool;
     }
@@ -1951,7 +1997,7 @@ class Str
      * Str::toFloat('1'); // 1.0
      * Str::toFloat('0.0'); // 0.0
      * Str::toFloat('-0.0'); // 0.0
-     * Str::toFloat(''); // RuntimeException: "" is not a valid float string.
+     * Str::toFloat(''); // ParseException: "" is not a valid float string.
      * ```
      *
      * @param string $string
@@ -1964,8 +2010,8 @@ class Str
         $float = static::toFloatOrNull($string, $precisionLost);
         if ($float === null) {
             $precisionLost
-                ? throw new RuntimeException("Float precision lost for \"$string\"")
-                : throw new RuntimeException("\"{$string}\" is not a valid float.");
+                ? throw new ParseException("Float precision lost for \"$string\"")
+                : throw new ParseException("\"{$string}\" is not a valid float.");
         }
         return $float;
     }
@@ -2099,7 +2145,7 @@ class Str
     {
         $int = static::toIntOrNull($string);
         if ($int === null) {
-            throw new RuntimeException("\"{$string}\" is not a valid integer.");
+            throw new ParseException("\"{$string}\" is not a valid integer.");
         }
         return $int;
     }
@@ -2378,26 +2424,6 @@ class Str
     {
         if ($string === '') {
             throw new InvalidArgumentException("\${$name} must not be empty.", $context);
-        }
-    }
-
-    /**
-     * @template TNum of int|float
-     * @param string $name
-     * @param TNum $value
-     * @param TNum $limit
-     * @param iterable<string, mixed> $context
-     * @return void
-     */
-    protected static function assertGreaterThanEqual(
-        string $name,
-        mixed $value,
-        mixed $limit,
-        iterable $context,
-    ): void
-    {
-        if ($value < $limit) {
-            throw new InvalidArgumentException("Expected: \${$name} >= {$limit}. Got: {$value}.", $context);
         }
     }
 }

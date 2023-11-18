@@ -441,6 +441,19 @@ class StrBufferTest extends TestCase
         $this->assertSame('FOO BAR', $after->toString());
     }
 
+    public function test_reverse(): void
+    {
+        $after = $this->buffer('abc')->reverse();
+        $this->assertInstanceOf(StrBuffer::class, $after);
+        $this->assertSame('cba', $after->toString());
+    }
+
+    public function test_split(): void
+    {
+        $after = $this->buffer('a b c')->split(' ');
+        $this->assertSame(['a', 'b', 'c'], $after);
+    }
+
     public function test_takeFirst(): void
     {
         $after = $this->buffer('abc')->takeFirst(1);

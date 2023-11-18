@@ -876,32 +876,19 @@ class Utf8Test extends TestCase
 
     public function test_split(): void
     {
-        // empty
-        $this->assertSame(['', ''], self::$ref::split(' ', ' '));
-
-        // no match
-        $this->assertSame(['abc'], self::$ref::split('abc', '_'));
-
-        // match
-        $this->assertSame(['a', 'c', 'd'], self::$ref::split('abcbd', 'b'));
-
-        // match utf-8
-        $this->assertSame(['あ', 'う'], self::$ref::split('あいう', 'い'));
-
-        // match with limit
-        $this->assertSame(['a', 'cbd'], self::$ref::split('abcbd', 'b', 2));
-
-        // match with limit
-        $this->assertSame(['a', 'b', 'c'], self::$ref::split('abc', ''));
-
-        // match emoji
-        $this->assertSame(['👨‍👨‍👧‍👦'], self::$ref::split('👨‍👨‍👧‍👦', '‍👦'));
+        $this->assertSame(['', ''], self::$ref::split(' ', ' '), 'empty');
+        $this->assertSame(['abc'], self::$ref::split('abc', '_'), 'no match');
+        $this->assertSame(['a', 'c', 'd'], self::$ref::split('abcbd', 'b'), 'match');
+        $this->assertSame(['あ', 'う'], self::$ref::split('あいう', 'い'), 'match utf-8');
+        $this->assertSame(['a', 'cbd'], self::$ref::split('abcbd', 'b', 2), 'match with limit');
+        $this->assertSame(['a', 'b', 'c'], self::$ref::split('abc', ''), 'match with limit');
+        $this->assertSame(['👨‍👨‍👧‍👦'], self::$ref::split('👨‍👨‍👧‍👦', '‍👦'), 'match emoji');
     }
 
     public function test_split_with_negative_limit(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Expected: $remains >= 0. Got: -1.');
+        $this->expectExceptionMessage('Expected: $limit >= 0. Got: -1.');
         self::$ref::split('a', 'b', -1);
     }
 
