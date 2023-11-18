@@ -5,9 +5,9 @@ namespace Kirameki\Text;
 use Closure;
 use Kirameki\Core\Exceptions\ErrorException;
 use Kirameki\Core\Exceptions\InvalidArgumentException;
+use Kirameki\Core\Exceptions\RuntimeException;
 use Kirameki\Text\Exceptions\NoMatchException;
 use Kirameki\Text\Exceptions\ParseException;
-use RuntimeException;
 use ValueError;
 use function abs;
 use function array_is_list;
@@ -1761,6 +1761,34 @@ class Str
 
         // add remains
         $splits[] = static::substring($string, $offset);
+
+        return $splits;
+    }
+
+    /**
+     * @param string $string
+     * @param string $pattern
+     * @param int|null $limit
+     * @return list<string>
+     */
+    public static function splitMatch(string $string, string $pattern, ?int $limit = null): array
+    {
+        if ($limit !== null && $limit < 0) {
+            throw new InvalidArgumentException("Expected: \$limit >= 0. Got: {$limit}.", [
+                'string' => $string,
+                'pattern' => $pattern,
+                'limit' => $limit,
+            ]);
+        }
+
+        $splits = preg_split($pattern, $string);
+
+        if ($splits === false) {
+            throw new RuntimeException("Failed to split string: {$string} with pattern: {$pattern}", [
+                'string' => $string,
+                'pattern' => $pattern,
+            ]);
+        }
 
         return $splits;
     }

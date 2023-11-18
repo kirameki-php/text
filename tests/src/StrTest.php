@@ -5,10 +5,10 @@ namespace Tests\Kirameki\Text;
 use Kirameki\Core\Exceptions\InvalidArgumentException;
 use Kirameki\Core\Testing\TestCase;
 use Kirameki\Text\Exceptions\NoMatchException;
+use Kirameki\Text\Exceptions\ParseException;
 use Kirameki\Text\Str;
-use function array_pop;
 use function array_shift;
-use function dump;
+use function str_repeat;
 use function strlen;
 use const PHP_EOL;
 use const STR_PAD_LEFT;
@@ -963,4 +963,324 @@ class StrTest extends TestCase
         $this->assertFalse(self::$ref::startsWithNone('abc', ['d', 'a']));
         $this->assertFalse(self::$ref::startsWithNone('👋🏿', ['👋', 'a']));
     }
+
+    public function test_substring(): void
+    {
+        $this->assertSame('', self::$ref::substring('', 0));
+        $this->assertSame('', self::$ref::substring('', 0, 1));
+        $this->assertSame('abc', self::$ref::substring('abc', 0));
+        $this->assertSame('bc', self::$ref::substring('abc', 1));
+        $this->assertSame('c', self::$ref::substring('abc', -1));
+        $this->assertSame('a', self::$ref::substring('abc', 0, 1));
+        $this->assertSame('b', self::$ref::substring('abc', 1, 1));
+        $this->assertSame('b', self::$ref::substring('abc', -2, 1));
+        $this->assertSame('bc', self::$ref::substring('abc', -2, 2));
+        $this->assertSame('ab', self::$ref::substring('abc', -9999, 2));
+        $this->assertSame('ab', self::$ref::substring('abc', 0, -1));
+        $this->assertSame('a', self::$ref::substring('abc', 0, -2));
+        $this->assertSame('', self::$ref::substring('abc', 0, -3));
+        $this->assertSame('', self::$ref::substring('abc', 2, -1));
+        $this->assertSame("\x81\x82", self::$ref::substring('あ', 1), 'utf-8');
+        $this->assertSame('🏿', self::$ref::substring('👋🏿', 4), 'grapheme');
+    }
+
+    public function test_toBool(): void
+    {
+        $this->assertTrue(self::$ref::toBool('true'), 'true as string');
+        $this->assertTrue(self::$ref::toBool('TRUE'), 'TRUE as string');
+        $this->assertFalse(self::$ref::toBool('false'), 'false as string');
+        $this->assertFalse(self::$ref::toBool('FALSE'), 'FALSE as string');
+        $this->assertTrue(self::$ref::toBool('1'), 'empty as string');
+    }
+
+    public function test_toBool_empty(): void
+    {
+        $this->expectException(ParseException::class);
+        $this->expectExceptionMessage('"" is not a valid boolean string.');
+        // empty as string
+        self::$ref::toBool('');
+    }
+
+    public function test_toBool_with_negative(): void
+    {
+        $this->expectException(ParseException::class);
+        $this->expectExceptionMessage('"-2" is not a valid boolean string.');
+        // invalid boolean (number)
+        self::$ref::toBool('-2');
+    }
+
+    public function test_toBool_with_yes(): void
+    {
+        $this->expectException(ParseException::class);
+        $this->expectExceptionMessage('"yes" is not a valid boolean string.');
+        // truthy will fail
+        self::$ref::toBool('yes');
+    }
+
+    public function test_toBoolOrNull(): void
+    {
+        $this->assertTrue(self::$ref::toBoolOrNull('true'), 'true as string');
+        $this->assertTrue(self::$ref::toBoolOrNull('TRUE'), 'TRUE as string');
+        $this->assertFalse(self::$ref::toBoolOrNull('false'), 'false as string');
+        $this->assertFalse(self::$ref::toBoolOrNull('FALSE'), 'FALSE as string');
+        $this->assertTrue(self::$ref::toBoolOrNull('1'), 'empty as string');
+        $this->assertNull(self::$ref::toBoolOrNull(''), 'empty as string');
+        $this->assertNull(self::$ref::toBoolOrNull('-2'), 'invalid boolean (number)');
+        $this->assertNull(self::$ref::toBoolOrNull('yes'), 'truthy will fail');
+    }
+
+    public function test_toCamelCase(): void
+    {
+        $this->assertSame('test', self::$ref::toCamelCase('test'));
+        $this->assertSame('test', self::$ref::toCamelCase('Test'));
+        $this->assertSame('testTest', self::$ref::toCamelCase('test-test'));
+        $this->assertSame('testTest', self::$ref::toCamelCase('test_test'));
+        $this->assertSame('testTest', self::$ref::toCamelCase('test test'));
+        $this->assertSame('testTestTest', self::$ref::toCamelCase('test test test'));
+        $this->assertSame('testTest', self::$ref::toCamelCase(' test  test  '));
+        $this->assertSame('testTestTest', self::$ref::toCamelCase("--test_test-test__"));
+    }
+
+    public function test_toFloat(): void
+    {
+        $this->assertSame(1.0, self::$ref::toFloat('1'), 'positive int');
+        $this->assertSame(-1.0, self::$ref::toFloat('-1'), 'negative int');
+        $this->assertSame(1.23, self::$ref::toFloat('1.23'), 'positive float');
+        $this->assertSame(-1.23, self::$ref::toFloat('-1.23'), 'negative float');
+        $this->assertSame(0.0, self::$ref::toFloat('0'), 'zero int');
+        $this->assertSame(0.0, self::$ref::toFloat('0.0'), 'zero float');
+        $this->assertSame(0.0, self::$ref::toFloat('-0'), 'negative zero int');
+        $this->assertSame(0.0, self::$ref::toFloat('-0.0'), 'negative zero float');
+        $this->assertSame(0.123, self::$ref::toFloat('0.123'), 'start from zero');
+        $this->assertSame(123.456, self::$ref::toFloat('123.456'), 'multiple digits');
+        $this->assertSame(1230.0, self::$ref::toFloat('1.23e3'), 'scientific notation with e');
+        $this->assertSame(1230.0, self::$ref::toFloat('1.23E3'), 'scientific notation with E');
+        $this->assertSame(-1230.0, self::$ref::toFloat('-1.23e3'), 'scientific notation as negative');
+        $this->assertSame(1.234, self::$ref::toFloatOrNull('123.4E-2'), 'scientific notation irregular');
+        $this->assertSame(1230.0, self::$ref::toFloat('1.23e+3'), 'with +e');
+        $this->assertSame(1230.0, self::$ref::toFloat('1.23E+3'), 'with +E');
+        $this->assertSame(0.012, self::$ref::toFloat('1.2e-2'), 'with -e');
+        $this->assertSame(0.012, self::$ref::toFloat('1.2E-2'), 'with -E');
+        $this->assertNan(self::$ref::toFloat('NAN'), 'NAN');
+        $this->assertNan(self::$ref::toFloat('-NAN'), 'Negative NAN');
+        $this->assertNan(self::$ref::toFloat('NaN'), 'NaN from Javascript');
+        $this->assertNan(self::$ref::toFloat('-NaN'), 'Negative NaN');
+        $this->assertInfinite(self::$ref::toFloat('INF'), 'upper case INF');
+        $this->assertInfinite(self::$ref::toFloat('Infinity'), 'INF from Javascript');
+    }
+
+    public function test_toFloat_overflow_e_notation(): void
+    {
+        $this->expectException(ParseException::class);
+        $this->expectExceptionMessage('Float precision lost for "1e20"');
+        self::$ref::toFloat('1e20');
+    }
+
+    public function test_toFloat_empty_string(): void
+    {
+        $this->expectException(ParseException::class);
+        $this->expectExceptionMessage('"" is not a valid float.');
+        self::$ref::toFloat('');
+    }
+
+    public function test_toFloat_invalid_string(): void
+    {
+        $this->expectException(ParseException::class);
+        $this->expectExceptionMessage('"1a" is not a valid float.');
+        self::$ref::toFloat('1a');
+    }
+
+    public function test_toFloat_dot_start(): void
+    {
+        $this->expectException(ParseException::class);
+        $this->expectExceptionMessage('".1" is not a valid float.');
+        self::$ref::toFloat('.1');
+    }
+
+    public function test_toFloat_zero_start(): void
+    {
+        $this->expectException(ParseException::class);
+        $this->expectExceptionMessage('"00.1" is not a valid float.');
+        self::$ref::toFloat('00.1');
+    }
+
+    public function test_toFloat_overflow_number(): void
+    {
+        $this->expectException(ParseException::class);
+        $this->expectExceptionMessage('Float precision lost for "1.11111111111111"');
+        self::$ref::toFloat('1.' . str_repeat('1', 14));
+    }
+
+    public function test_toFloatOrNull(): void
+    {
+        $this->assertSame(1.0, self::$ref::toFloatOrNull('1'), 'positive int');
+        $this->assertSame(-1.0, self::$ref::toFloatOrNull('-1'), 'negative int');
+        $this->assertSame(1.23, self::$ref::toFloatOrNull('1.23'), 'positive float');
+        $this->assertSame(-1.23, self::$ref::toFloatOrNull('-1.23'), 'negative float');
+        $this->assertSame(0.0, self::$ref::toFloatOrNull('0'), 'zero int');
+        $this->assertSame(0.0, self::$ref::toFloatOrNull('0.0'), 'zero float');
+        $this->assertSame(0.0, self::$ref::toFloatOrNull('-0'), 'negative zero int');
+        $this->assertSame(0.0, self::$ref::toFloatOrNull('-0.0'), 'negative zero float');
+        $this->assertSame(0.123, self::$ref::toFloatOrNull('0.123'), 'start from zero');
+        $this->assertSame(123.456, self::$ref::toFloatOrNull('123.456'), 'multiple digits');
+        $this->assertSame(1230.0, self::$ref::toFloatOrNull('1.23e3'), 'scientific notation with e');
+        $this->assertSame(1230.0, self::$ref::toFloatOrNull('1.23E3'), 'scientific notation with E');
+        $this->assertSame(-1230.0, self::$ref::toFloatOrNull('-1.23e3'), 'scientific notation as negative');
+        $this->assertSame(1230.0, self::$ref::toFloatOrNull('1.23e+3'), 'with +e');
+        $this->assertSame(1230.0, self::$ref::toFloatOrNull('1.23E+3'), 'with +E');
+        $this->assertSame(0.012, self::$ref::toFloatOrNull('1.2e-2'), 'with -e');
+        $this->assertSame(0.012, self::$ref::toFloatOrNull('1.2E-2'), 'with -E');
+        $this->assertSame(1.234, self::$ref::toFloatOrNull('123.4E-2'), 'scientific notation irregular');
+        $this->assertNull(self::$ref::toFloatOrNull('1e+20'), 'overflowing +e notation');
+        $this->assertNull(self::$ref::toFloatOrNull('1e-20'), 'overflowing -e notation');
+        $this->assertNull(self::$ref::toFloatOrNull('nan'), 'Lowercase nan is not NAN');
+        $this->assertNan(self::$ref::toFloatOrNull('NAN'), 'NAN');
+        $this->assertNan(self::$ref::toFloatOrNull('-NAN'), 'Negative NAN');
+        $this->assertNan(self::$ref::toFloatOrNull('NaN'), 'NaN from Javascript');
+        $this->assertNan(self::$ref::toFloatOrNull('-NaN'), 'Negative NaN');
+        $this->assertNull(self::$ref::toFloatOrNull('inf'), 'Lowercase inf is not INF');
+        $this->assertInfinite(self::$ref::toFloatOrNull('INF'), 'upper case INF');
+        $this->assertInfinite(self::$ref::toFloatOrNull('Infinity'), 'INF from Javascript');
+        $this->assertNull(self::$ref::toFloatOrNull(''), 'empty');
+        $this->assertNull(self::$ref::toFloatOrNull('a1'), 'invalid string');
+        $this->assertNull(self::$ref::toFloatOrNull('01.1'), 'zero start');
+        $this->assertNull(self::$ref::toFloatOrNull('.1'), 'dot start');
+        $this->assertNull(self::$ref::toFloatOrNull('1.' . str_repeat('1', 100)), 'overflow');
+    }
+
+    public function test_toInt(): void
+    {
+        $this->assertSame(123, self::$ref::toIntOrNull('123'));
+    }
+
+    public function test_toInt_blank(): void
+    {
+        $this->expectException(ParseException::class);
+        $this->expectExceptionMessage('"" is not a valid integer.');
+        self::$ref::toInt('');
+    }
+
+    public function test_toInt_float(): void
+    {
+        $this->expectException(ParseException::class);
+        $this->expectExceptionMessage('"1.0" is not a valid integer.');
+        self::$ref::toInt('1.0');
+    }
+
+    public function test_toInt_with_e_notation(): void
+    {
+        $this->expectException(ParseException::class);
+        $this->expectExceptionMessage('"1.23E+3" is not a valid integer.');
+        self::$ref::toInt('1.23E+3');
+    }
+
+    public function test_toInt_float_with_e_notation(): void
+    {
+        $this->expectException(ParseException::class);
+        $this->expectExceptionMessage('"1.0e-2" is not a valid integer.');
+        self::$ref::toInt('1.0e-2');
+    }
+
+    public function test_toInt_zero_start(): void
+    {
+        $this->expectException(ParseException::class);
+        $this->expectExceptionMessage('"01" is not a valid integer.');
+        self::$ref::toInt('01');
+    }
+
+    public function test_toInt_not_compatible(): void
+    {
+        $this->expectException(ParseException::class);
+        $this->expectExceptionMessage('"a1" is not a valid integer.');
+        self::$ref::toInt('a1');
+    }
+
+    public function test_toInt_positive_overflow(): void
+    {
+        $this->expectException(ParseException::class);
+        $this->expectExceptionMessage('"11111111111111111111" is not a valid integer.');
+        self::$ref::toInt(str_repeat('1', 20));
+    }
+
+    public function test_toInt_negative_overflow(): void
+    {
+        $this->expectException(ParseException::class);
+        $this->expectExceptionMessage('"-11111111111111111111" is not a valid integer.');
+        self::$ref::toInt('-' . str_repeat('1', 20));
+    }
+
+    public function test_toIntOrNull(): void
+    {
+        $this->assertSame(123, self::$ref::toIntOrNull('123'));
+        $this->assertNull(self::$ref::toIntOrNull(str_repeat('1', 20)), 'overflow positive');
+        $this->assertNull(self::$ref::toIntOrNull('-' . str_repeat('1', 20)), 'overflow positive');
+        $this->assertNull(self::$ref::toIntOrNull(''), 'blank');
+        $this->assertNull(self::$ref::toIntOrNull('1.0'), 'float value');
+        $this->assertNull(self::$ref::toIntOrNull('1.0e-2'), 'float value with e notation');
+        $this->assertNull(self::$ref::toIntOrNull('a1'), 'invalid string');
+        $this->assertNull(self::$ref::toIntOrNull('01'), 'zero start');
+    }
+
+    public function test_toKebabCase(): void
+    {
+        $this->assertSame('test', self::$ref::toKebabCase('test'));
+        $this->assertSame('test', self::$ref::toKebabCase('Test'));
+        $this->assertSame('ttt', self::$ref::toKebabCase('TTT'));
+        $this->assertSame('tt-test', self::$ref::toKebabCase('TTTest'));
+        $this->assertSame('test-test', self::$ref::toKebabCase('testTest'));
+        $this->assertSame('test-t-test', self::$ref::toKebabCase('testTTest'));
+        $this->assertSame('test-test', self::$ref::toKebabCase('test-test'));
+        $this->assertSame('test-test', self::$ref::toKebabCase('test_test'));
+        $this->assertSame('test-test', self::$ref::toKebabCase('test test'));
+        $this->assertSame('test-test-test', self::$ref::toKebabCase('test test test'));
+        $this->assertSame('-test--test--', self::$ref::toKebabCase(' test  test  '));
+        $this->assertSame('--test-test-test--', self::$ref::toKebabCase("--test_test-test__"));
+    }
+
+    public function test_toLowerCase(): void
+    {
+        $this->assertSame('', self::$ref::toLowerCase(''), 'empty (nothing happens)');
+        $this->assertSame('abc', self::$ref::toLowerCase('ABC'), 'basic');
+        $this->assertSame('あいう', self::$ref::toLowerCase('あいう'), 'utf-8 chars (nothing happens)');
+        $this->assertSame('ÇĞİÖŞÜ', self::$ref::toLowerCase('ÇĞİÖŞÜ'), 'utf-8 special chars');
+        $this->assertSame('👨‍👨‍👧‍👦🏴󠁧󠁢󠁳󠁣󠁴󠁿', self::$ref::toLowerCase('👨‍👨‍👧‍👦🏴󠁧󠁢󠁳󠁣󠁴󠁿'), 'grapheme (nothing happens)');
+    }
+
+    public function test_toPascalCase(): void
+    {
+        $this->assertSame('A', self::$ref::toPascalCase('a'));
+        $this->assertSame('TestMe', self::$ref::toPascalCase('test_me'));
+        $this->assertSame('TestMe', self::$ref::toPascalCase('test-me'));
+        $this->assertSame('TestMe', self::$ref::toPascalCase('test me'));
+        $this->assertSame('TestMe', self::$ref::toPascalCase('testMe'));
+        $this->assertSame('TestMe', self::$ref::toPascalCase('TestMe'));
+        $this->assertSame('TestMe', self::$ref::toPascalCase(' test_me '));
+        $this->assertSame('TestMeNow!', self::$ref::toPascalCase('test_me now-!'));
+    }
+
+    public function test_toSnakeCase(): void
+    {
+        $this->assertSame('', self::$ref::toSnakeCase(''), 'empty');
+        $this->assertSame('abc', self::$ref::toSnakeCase('abc'), 'no-change');
+        $this->assertSame('the_test_for_case', self::$ref::toSnakeCase('the test for case'));
+        $this->assertSame('the_test_for_case', self::$ref::toSnakeCase('the-test-for-case'));
+        $this->assertSame('the_test_for_case', self::$ref::toSnakeCase('theTestForCase'));
+        $this->assertSame('ttt', self::$ref::toSnakeCase('TTT'));
+        $this->assertSame('tt_t', self::$ref::toSnakeCase('TtT'));
+        $this->assertSame('tt_t', self::$ref::toSnakeCase('TtT'));
+        $this->assertSame('the__test', self::$ref::toSnakeCase('the  test'));
+        $this->assertSame('__test', self::$ref::toSnakeCase('  test'));
+        $this->assertSame("test\nabc", self::$ref::toSnakeCase("test\nabc"));
+        $this->assertSame('__test_test_test__', self::$ref::toSnakeCase("--test_test-test__"));
+    }
+
+    public function test_toUpperCase(): void
+    {
+        $this->assertSame('', self::$ref::toUpperCase(''), 'empty (nothing happens)');
+        $this->assertSame('ABC', self::$ref::toUpperCase('abc'), 'basic');
+        $this->assertSame('あいう', self::$ref::toUpperCase('あいう'), 'utf-8 chars (nothing happens)');
+        $this->assertSame('çğ', self::$ref::toUpperCase('çğ'), 'utf-8 special chars');
+        $this->assertSame('👨‍👨‍👧‍👦🏴󠁧󠁢󠁳󠁣󠁴󠁿', self::$ref::toUpperCase('👨‍👨‍👧‍👦🏴󠁧󠁢󠁳󠁣󠁴󠁿'), 'grapheme (nothing happens)');
+    }
+
 }

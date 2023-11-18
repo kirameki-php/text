@@ -661,6 +661,15 @@ class StrBuffer implements Stringable
     }
 
     /**
+     * @param int $position
+     * @return static
+     */
+    public function takeLast(int $position): static
+    {
+        return new static(static::$ref::takeLast($this->value, $position));
+    }
+
+    /**
      * Invokes `$callback` with `$this` as argument and returns `$this`.
      *
      * @param Closure($this): mixed $callback
@@ -674,11 +683,59 @@ class StrBuffer implements Stringable
     }
 
     /**
+     * @return bool
+     */
+    public function toBool(): bool
+    {
+        return static::$ref::toBool($this->value);
+    }
+
+    /**
+     * @return bool|null
+     */
+    public function toBoolOrNull(): ?bool
+    {
+        return static::$ref::toBoolOrNull($this->value);
+    }
+
+    /**
      * @return static
      */
     public function toCamelCase(): static
     {
         return new static(static::$ref::toCamelCase($this->value));
+    }
+
+    /**
+     * @return float
+     */
+    public function toFloat(): float
+    {
+        return static::$ref::toFloat($this->value);
+    }
+
+    /**
+     * @return float|null
+     */
+    public function toFloatOrNull(): ?float
+    {
+        return static::$ref::toFloatOrNull($this->value);
+    }
+
+    /**
+     * @return int
+     */
+    public function toInt(): int
+    {
+        return static::$ref::toInt($this->value);
+    }
+
+    /**
+     * @return int|null
+     */
+    public function toIntOrNull(): ?int
+    {
+        return static::$ref::toIntOrNull($this->value);
     }
 
     /**
@@ -709,17 +766,17 @@ class StrBuffer implements Stringable
     /**
      * @return static
      */
-    public function toUpperCase(): static
+    public function toSnakeCase(): static
     {
-        return new static(static::$ref::toUpperCase($this->value));
+        return new static(static::$ref::toSnakeCase($this->value));
     }
 
     /**
      * @return static
      */
-    public function toSnakeCase(): static
+    public function toUpperCase(): static
     {
-        return new static(static::$ref::toSnakeCase($this->value));
+        return new static(static::$ref::toUpperCase($this->value));
     }
 
     /**
