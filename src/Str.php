@@ -2,6 +2,7 @@
 
 namespace Kirameki\Text;
 
+use Closure;
 use Kirameki\Core\Exceptions\ErrorException;
 use Kirameki\Core\Exceptions\InvalidArgumentException;
 use Kirameki\Text\Exceptions\NoMatchException;
@@ -49,6 +50,7 @@ use const STR_PAD_RIGHT;
 
 /**
  * TODO mask
+ * TODO splitPattern
  */
 class Str
 {
@@ -425,11 +427,7 @@ class Str
      */
     public static function containsAll(string $string, iterable $substrings): bool
     {
-        $substrings = ($substrings instanceof Traversable)
-            ? iterator_to_array($substrings)
-            : $substrings;
-
-        foreach ($substrings as $substring) {
+        foreach (iterator_to_array($substrings) as $substring) {
             if (!static::contains($string, $substring)) {
                 return false;
             }
@@ -458,9 +456,7 @@ class Str
      */
     public static function containsAny(string $string, iterable $substrings): bool
     {
-        $substrings = ($substrings instanceof Traversable)
-            ? iterator_to_array($substrings)
-            : $substrings;
+        $substrings = iterator_to_array($substrings);
 
         if ($substrings === []) {
             return true;
@@ -495,9 +491,7 @@ class Str
      */
     public static function containsNone(string $string, iterable $substrings): bool
     {
-        $substrings = ($substrings instanceof Traversable)
-            ? iterator_to_array($substrings)
-            : $substrings;
+        $substrings = iterator_to_array($substrings);
 
         if ($substrings === []) {
             return true;
@@ -940,9 +934,7 @@ class Str
         string $delimiterEnd = '}',
     ): string
     {
-        $replace = $replace instanceof Traversable
-            ? iterator_to_array($replace)
-            : $replace;
+        $replace = iterator_to_array($replace);
 
         if ($delimiterStart === self::EMPTY || $delimiterEnd === self::EMPTY) {
             throw new InvalidArgumentException("\$delimiterStart and \$delimiterEnd must not be empty.", [
@@ -1482,61 +1474,6 @@ class Str
     }
 
     /**
-     * Replace occurrences of the search strings with replacements in the same index.
-     * Example:
-     * ```php
-     * Str::replaceEach('? and ?', ['?', '?'], [1, 2]); // "1 and 2"
-     * Str::replaceEach('foo bar', ['foo', 'bar'], ['hi', 'ho']); // "hi ho"
-     * Str::replaceEach('', ['?'], ['a']); // ''
-     * ```
-     *
-     * @param string $string
-     * The string to be replaced.
-     * @param iterable<int, string> $searches
-     * The string to replace.
-     * @param iterable<int, string> $replacements
-     * Replacements for the found string.
-     * @return string
-     * String with the replaced values.
-     */
-    public static function replaceEach(
-        string $string,
-        iterable $searches,
-        iterable $replacements,
-    ): string
-    {
-        // turn iterator to array
-        $replacements = ($replacements instanceof Traversable)
-            ? iterator_to_array($replacements)
-            : $replacements;
-
-        if (!array_is_list($replacements)) {
-            $replacements = array_values($replacements);
-        }
-
-        $replaced = $string;
-        $index = 0;
-        $offset = 0;
-        foreach ($searches as $search) {
-            if ($search === static::EMPTY) {
-                continue;
-            }
-            $replacement = $replacements[$index];
-            $position = static::indexOfFirst($replaced, $search, $offset);
-            if ($position === null) {
-                continue;
-            }
-            $before = static::substring($replaced, 0, $position);
-            $after = static::substring($replaced, $position + static::length($search));
-            $replaced = $before . $replacement . $after;
-            $offset = $position + static::length($replacement);
-            ++$index;
-        }
-
-        return $replaced;
-    }
-
-    /**
      * Replace the first occurrence of the search string with the replacement string.
      *
      * Example:
@@ -1646,26 +1583,81 @@ class Str
         int &$count = 0,
     ): string
     {
-        if ($limit !== null) {
-            static::assertGreaterThanEqual('limit', $limit, 0, compact('string', 'limit'));
+        if ($limit !== null && $limit < 0) {
+            throw new InvalidArgumentException("Expected: \$limit >= 0. Got: {$limit}.", [
+                'string' => $string,
+                'pattern' => $pattern,
+                'replacement' => $replacement,
+                'limit' => $limit,
+            ]);
         }
-
-        $count = 0;
 
         if ($string === self::EMPTY) {
             return $string;
         }
 
+        $count = 0;
+
         return (string) preg_replace($pattern, $replacement, $string, $limit ?? -1, $count);
     }
 
     /**
-     * Reverse a string.
+     * Replace substring that match the pattern with the replacement string.
+     *
+     * Example:
+     * ```php
+     * Str::replaceMatchWithCallback('abc', '/[ac]/', fn() => 'b'); // 'bbb'
+     * ```
+     *
+     * @param string $string
+     * The string to be matched and replaced.
+     * @param string $pattern
+     * The pattern to search for. Must be a valid regex.
+     * @param Closure(array<int|string, string>): string $callback
+     * Replacement for the found pattern.
+     * Must be a closure that returns a string.
+     * @param int|null $limit
+     * [Optional] The maximum possible replacements for each pattern.
+     * Unlimited, if **null** is given.
+     * Defaults to **null**.
+     * @param int &$count
+     * [Optional][Reference] Sets the number of times replacements occurred.
+     * Any value previously set will be reset.
+     * @return string
+     * String with the replaced values.
+     */
+    public static function replaceMatchWithCallback(
+        string $string,
+        string $pattern,
+        Closure $callback,
+        ?int $limit = null,
+        int &$count = 0,
+    ): string
+    {
+        if ($limit !== null && $limit < 0) {
+            throw new InvalidArgumentException("Expected: \$limit >= 0. Got: {$limit}.", [
+                'string' => $string,
+                'pattern' => $pattern,
+                'callback' => $callback,
+                'limit' => $limit,
+            ]);
+        }
+
+        if ($string === self::EMPTY) {
+            return $string;
+        }
+
+        $count = 0;
+
+        return (string) preg_replace_callback($pattern, $callback, $string, $limit ?? -1, $count);
+    }
+
+    /**
+     * Reverse a string (single byte).
      *
      * Example:
      * ```php
      * Str::reverse('Foo'); // 'ooF'
-     * Str::reverse('あい'); // 'いあ'
      * ```
      *
      * @param string $string

@@ -6,8 +6,12 @@ use Kirameki\Core\Exceptions\InvalidArgumentException;
 use Kirameki\Core\Testing\TestCase;
 use Kirameki\Text\Exceptions\NoMatchException;
 use Kirameki\Text\Str;
+use function array_pop;
+use function array_shift;
+use function dump;
 use function strlen;
 use const PHP_EOL;
+use const STR_PAD_LEFT;
 
 class StrTest extends TestCase
 {
@@ -665,6 +669,7 @@ class StrTest extends TestCase
         $this->assertSame('abcd', self::$ref::pad('a', 4, 'bcde'), 'overflow padding');
         $this->assertSame('あ_', self::$ref::pad('あ', 4, '_'), 'multi byte');
         $this->assertSame('👋🏿_', self::$ref::pad('👋🏿', 9, '_'), 'grapheme');
+        $this->assertSame('_👋🏿', self::$ref::pad('👋🏿', 9, '_', STR_PAD_LEFT), 'Set type');
     }
 
     public function test_pad_invalid_pad(): void
@@ -780,6 +785,125 @@ class StrTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Expected: $times >= 0. Got: -1.');
         self::$ref::repeat('a', -1);
+    }
+
+    public function test_replace(): void
+    {
+        $this->assertSame('', self::$ref::replace('', '', ''), 'empty string');
+        $this->assertSame('b', self::$ref::replace('b', '', 'a'), 'empty search');
+        $this->assertSame('aa', self::$ref::replace('bb', 'b', 'a'), 'basic');
+        $this->assertSame('', self::$ref::replace('b', 'b', ''), 'empty replacement');
+        $this->assertSame('あえいえう', self::$ref::replace('あ-い-う', '-', 'え'), 'mbstring');
+        $this->assertSame('__🏴󠁧󠁢󠁳󠁣󠁴󠁿', self::$ref::replace('🏴󠁧󠁢󠁳󠁣󠁴󠁿a🏴󠁧󠁢󠁳󠁣󠁴󠁿a🏴󠁧󠁢󠁳󠁣󠁴󠁿', '🏴󠁧󠁢󠁳󠁣󠁴󠁿a', '_'), 'multiple codepoints');
+        $this->assertSame('abc', self::$ref::replace('ab\c', '\\', ''), 'escape char');
+        $this->assertSame('abc', self::$ref::replace('abc.*', '.*', ''), 'regex chars');
+        $this->assertSame('a', self::$ref::replace('[]/\\!?', '[]/\\!?', 'a'), 'regex chars');
+
+        $count = 0;
+        $this->assertSame('a', self::$ref::replace('aaa', 'a', '', 2, $count), 'with limit and count');
+        $this->assertSame(2, $count, 'with limit and count');
+
+        $count = 0;
+        $this->assertSame('', self::$ref::replace('', '', '', null, $count), '0 count for no match');
+        $this->assertSame(0, $count, '0 count for no match');
+
+        $this->assertSame('🏿', self::$ref::replace('👋🏿', '👋', ''), 'grapheme');
+    }
+
+    public function test_replace_with_negative_limit(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Expected: $limit >= 0. Got: -1.');
+        self::$ref::replace('', 'a', 'a', -1);
+    }
+
+    public function test_replaceFirst(): void
+    {
+        $this->assertSame('', self::$ref::replaceFirst('', '', ''), 'empty string');
+        $this->assertSame('bb', self::$ref::replaceFirst('bb', '', 'a'), 'empty search');
+        $this->assertSame('abb', self::$ref::replaceFirst('bbb', 'b', 'a'), 'basic');
+        $this->assertSame('b', self::$ref::replaceFirst('bb', 'b', ''), 'empty replacement');
+        $this->assertSame('あえい-う', self::$ref::replaceFirst('あ-い-う', '-', 'え'), 'mbstring');
+        $this->assertSame('🏴󠁧󠁢󠁳󠁣󠁴󠁿 a', self::$ref::replaceFirst('🏴󠁧󠁢󠁳󠁣󠁴󠁿 👨‍👨‍👧‍👦', '👨‍👨‍👧‍👦', 'a'), 'multiple codepoints');
+        $this->assertSame('_🏴󠁧󠁢󠁳󠁣󠁴󠁿a🏴󠁧󠁢󠁳󠁣󠁴󠁿', self::$ref::replaceFirst('🏴󠁧󠁢󠁳󠁣󠁴󠁿a🏴󠁧󠁢󠁳󠁣󠁴󠁿a🏴󠁧󠁢󠁳󠁣󠁴󠁿', '🏴󠁧󠁢󠁳󠁣󠁴󠁿a', '_'));
+        $this->assertSame('🏿', self::$ref::replaceFirst('👋🏿', '👋', ''), 'grapheme');
+
+        $replaced = false;
+        self::$ref::replaceFirst('bbb', 'b', 'a', $replaced);
+        $this->assertTrue($replaced, 'validate flag');
+
+        $replaced = true;
+        self::$ref::replaceFirst('b', 'z', '', $replaced);
+        $this->assertFalse($replaced, 'flag is overridden with false');
+    }
+
+    public function test_replaceLast(): void
+    {
+        $this->assertSame('', self::$ref::replaceLast('', '', ''), 'empty string');
+        $this->assertSame('bb', self::$ref::replaceLast('bb', '', 'a'), 'empty search');
+        $this->assertSame('bba', self::$ref::replaceLast('bbb', 'b', 'a'), 'basic');
+        $this->assertSame('b', self::$ref::replaceLast('bb', 'b', ''), 'empty replacement');
+        $this->assertSame('あ-いえう', self::$ref::replaceLast('あ-い-う', '-', 'え'), 'mbstring');
+        $this->assertSame('🏴󠁧󠁢󠁳󠁣󠁴󠁿 a', self::$ref::replaceLast('🏴󠁧󠁢󠁳󠁣󠁴󠁿 👨‍👨‍👧‍👦', '👨‍👨‍👧‍👦', 'a'), 'multiple codepoints');
+        $this->assertSame('🏴󠁧󠁢󠁳󠁣󠁴󠁿a_🏴󠁧󠁢󠁳󠁣󠁴󠁿', self::$ref::replaceLast('🏴󠁧󠁢󠁳󠁣󠁴󠁿a🏴󠁧󠁢󠁳󠁣󠁴󠁿a🏴󠁧󠁢󠁳󠁣󠁴󠁿', '🏴󠁧󠁢󠁳󠁣󠁴󠁿a', '_'));
+        $this->assertSame('🏿', self::$ref::replaceLast('👋🏿', '👋', ''), 'grapheme');
+
+        $replaced = false;
+        self::$ref::replaceLast('bbb', 'b', 'a', $replaced);
+        $this->assertTrue($replaced, 'validate flag');
+
+        $replaced = true;
+        self::$ref::replaceLast('b', 'z', '', $replaced);
+        $this->assertFalse($replaced, 'flag is overridden with false');
+    }
+
+    public function test_replaceMatch(): void
+    {
+        $this->assertSame('', self::$ref::replaceMatch('', '', ''));
+        $this->assertSame('abb', self::$ref::replaceMatch('abc', '/c/', 'b'));
+        $this->assertSame('abbb', self::$ref::replaceMatch('abcc', '/c/', 'b'));
+        $this->assertSame('あいい', self::$ref::replaceMatch('あいう', '/う/', 'い'));
+        $this->assertSame('x', self::$ref::replaceMatch('abcde', '/[A-Za-z]+/', 'x'));
+        $this->assertSame('a👋-b', self::$ref::replaceMatch('a👋-b', '/🏿/', '-'), 'grapheme');
+
+        $count = 0;
+        $this->assertSame('', self::$ref::replaceMatch('', '', '', null, $count), 'check count: no match');
+        $this->assertSame(0, $count, 'check count: no match');
+
+        $count = 0;
+        $this->assertSame('', self::$ref::replaceMatch('aaa', '/a/', '', null, $count), 'unlimited match');
+        $this->assertSame(3, $count, 'unlimited match');
+
+        $count = 1;
+        $this->assertSame('', self::$ref::replaceMatch('aaa', '/a/', '', null, $count), 'counter is reset');
+        $this->assertSame(3, $count, 'counter is reset');
+
+        $this->assertSame('a', self::$ref::replaceMatch('aaa', '/a/', '', 2), 'limit to 2');
+    }
+
+    public function test_replaceMatchWithCallback(): void
+    {
+        $this->assertSame('', Str::replaceMatchWithCallback('', '/./', fn() => 'b'));
+        $this->assertSame('bbb', Str::replaceMatchWithCallback('abc', '/[ac]/', fn() => 'b'));
+
+        $list = ['a', 'b', 'c'];
+        $this->assertSame('a b c', self::$ref::replaceMatchWithCallback('? ? ?', '/\?/', function (array $m) use (&$list) {
+            return array_shift($list) ?? '';
+        }), 'with callback');
+    }
+
+    public function test_replaceMatch_with_negative_limit(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Expected: $limit >= 0. Got: -1.');
+        self::$ref::replaceMatch('', '/a/', 'a', -1);
+    }
+
+    public function test_reverse(): void
+    {
+        $this->assertSame('', self::$ref::reverse(''));
+        $this->assertSame('ba', self::$ref::reverse('ab'));
+        $this->assertSame("\x82\x81\xE3", self::$ref::reverse('あ'));
     }
 
     public function test_startsWithNone(): void

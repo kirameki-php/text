@@ -763,24 +763,6 @@ class Utf8Test extends TestCase
         self::$ref::replace('', 'a', 'a', -1);
     }
 
-    public function test_replaceEach(): void
-    {
-        // empty string
-        $this->assertSame('', self::$ref::replaceEach('', ['?'], ['!']));
-
-        // empty search string
-        $this->assertSame('test', self::$ref::replaceEach('test', [''], ['a']));
-
-        // replace each ?
-        $this->assertSame('x & y', self::$ref::replaceEach('? & ?', ['?', '?'], ['x', 'y']));
-
-        // utf-8
-        $this->assertSame('うえ', self::$ref::replaceEach('あい', ['あ', 'い'], ['う', 'え']));
-
-        // should treat emoji cluster as one character
-        $this->assertSame('👋🏿', self::$ref::replaceEach('👋🏿', ['👋'], ['']));
-    }
-
     public function test_replaceFirst(): void
     {
         $this->assertSame('', self::$ref::replaceFirst('', '', ''), 'empty string');

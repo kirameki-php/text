@@ -572,13 +572,28 @@ class StrBuffer implements Stringable
 
     /**
      * @param string $pattern
-     * @param string $replace
+     * @param string $replacement
+     * Replacement for the found pattern.
+     * Can be a string or a closure that returns a string.
      * @param int|null $limit
      * @return static
      */
-    public function replaceMatch(string $pattern, string $replace, ?int $limit = null): static
+    public function replaceMatch(string $pattern, string $replacement, ?int $limit = null): static
     {
-        return new static(static::$ref::replaceMatch($this->value, $pattern, $replace, $limit ?? -1));
+        return new static(static::$ref::replaceMatch($this->value, $pattern, $replacement, $limit));
+    }
+
+    /**
+     * @param string $pattern
+     * @param Closure(array<int|string, string>): string $callback
+     * Replacement for the found pattern.
+     * Can be a string or a closure that returns a string.
+     * @param int|null $limit
+     * @return static
+     */
+    public function replaceMatchWithCallback(string $pattern, Closure $callback, ?int $limit = null): static
+    {
+        return new static(static::$ref::replaceMatchWithCallback($this->value, $pattern, $callback, $limit));
     }
 
     /**

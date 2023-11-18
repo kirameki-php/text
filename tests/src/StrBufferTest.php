@@ -406,6 +406,41 @@ class StrBufferTest extends TestCase
         $this->assertSame('aaa', $after->toString());
     }
 
+    public function test_replace(): void
+    {
+        $after = $this->buffer('foo bar foo')->replace('foo', 'baz');
+        $this->assertInstanceOf(StrBuffer::class, $after);
+        $this->assertSame('baz bar baz', $after->toString());
+    }
+
+    public function test_replaceFirst(): void
+    {
+        $after = $this->buffer('foo bar foo')->replaceFirst('foo', 'baz');
+        $this->assertInstanceOf(StrBuffer::class, $after);
+        $this->assertSame('baz bar foo', $after->toString());
+    }
+
+    public function test_replaceLast(): void
+    {
+        $after = $this->buffer('foo bar foo')->replaceLast('foo', 'baz');
+        $this->assertInstanceOf(StrBuffer::class, $after);
+        $this->assertSame('foo bar baz', $after->toString());
+    }
+
+    public function test_replaceMatch(): void
+    {
+        $after = $this->buffer('foo bar foo')->replaceMatch('/[a-z]+/', 'baz');
+        $this->assertInstanceOf(StrBuffer::class, $after);
+        $this->assertSame('baz baz baz', $after->toString());
+    }
+
+    public function test_replaceMatchWithCallback(): void
+    {
+        $after = $this->buffer('foo bar')->replaceMatchWithCallback('/[a-z]+/', fn(array $m) => strtoupper($m[0]));
+        $this->assertInstanceOf(StrBuffer::class, $after);
+        $this->assertSame('FOO BAR', $after->toString());
+    }
+
     public function test_takeFirst(): void
     {
         $after = $this->buffer('abc')->takeFirst(1);
