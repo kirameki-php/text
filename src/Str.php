@@ -8,12 +8,10 @@ use Kirameki\Core\Exceptions\InvalidArgumentException;
 use Kirameki\Text\Exceptions\NoMatchException;
 use Kirameki\Text\Exceptions\ParseException;
 use RuntimeException;
-use Traversable;
 use ValueError;
 use function abs;
 use function array_is_list;
 use function array_key_exists;
-use function array_values;
 use function bcdiv;
 use function bcmul;
 use function bcpow;
@@ -208,8 +206,13 @@ class Str
      */
     public static function between(string $string, string $from, string $to): string
     {
-        static::assertNotEmpty('from', $from, compact('string', 'from', 'to'));
-        static::assertNotEmpty('to', $to, compact('string', 'from', 'to'));
+        if ($from === '') {
+            throw new InvalidArgumentException("\$from must not be empty.", compact('string', 'from', 'to'));
+        }
+
+        if ($to === '') {
+            throw new InvalidArgumentException("\$to must not be empty.", compact('string', 'from', 'to'));
+        }
 
         $startPos = static::indexOfFirst($string, $from);
         if ($startPos === null) {
@@ -245,8 +248,13 @@ class Str
      */
     public static function betweenFurthest(string $string, string $from, string $to): string
     {
-        static::assertNotEmpty('from', $from, compact('string', 'from', 'to'));
-        static::assertNotEmpty('to', $to, compact('string', 'from', 'to'));
+        if ($from === '') {
+            throw new InvalidArgumentException("\$from must not be empty.", compact('string', 'from', 'to'));
+        }
+
+        if ($to === '') {
+            throw new InvalidArgumentException("\$to must not be empty.", compact('string', 'from', 'to'));
+        }
 
         $startPos = static::indexOfFirst($string, $from);
         if ($startPos === null) {
@@ -282,8 +290,13 @@ class Str
      */
     public static function betweenLast(string $string, string $from, string $to): string
     {
-        static::assertNotEmpty('from', $from, compact('string', 'from', 'to'));
-        static::assertNotEmpty('to', $to, compact('string', 'from', 'to'));
+        if ($from === '') {
+            throw new InvalidArgumentException("\$from must not be empty.", compact('string', 'from', 'to'));
+        }
+
+        if ($to === '') {
+            throw new InvalidArgumentException("\$to must not be empty.", compact('string', 'from', 'to'));
+        }
 
         $startPos = static::indexOfLast($string, $from);
         if ($startPos === null) {
@@ -566,7 +579,9 @@ class Str
      */
     public static function count(string $string, string $substring, bool $overlapping = false): int
     {
-        static::assertNotEmpty('substring', $substring, compact('string', 'substring'));
+        if ($substring === '') {
+            throw new InvalidArgumentException("\$substring must not be empty.", compact('string', 'substring'));
+        }
 
         $counter = 0;
         $offset = 0;
@@ -2412,18 +2427,5 @@ class Str
     public static function wrap(string $string, string $before, string $after): string
     {
         return static::concat($before, $string, $after);
-    }
-
-    /**
-     * @param string $name
-     * @param string $string
-     * @param iterable<string, mixed> $context
-     * @return void
-     */
-    protected static function assertNotEmpty(string $name, string $string, iterable $context): void
-    {
-        if ($string === '') {
-            throw new InvalidArgumentException("\${$name} must not be empty.", $context);
-        }
     }
 }
