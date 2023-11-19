@@ -1283,13 +1283,8 @@ class Utf8Test extends TestCase
 
     public function test_toSnakeCase(): void
     {
-        // empty
-        $this->assertSame('', self::$ref::toSnakeCase(''));
-
-        // no-change
-        $this->assertSame('abc', self::$ref::toSnakeCase('abc'));
-
-        // case
+        $this->assertSame('', self::$ref::toSnakeCase(''), 'empty');
+        $this->assertSame('abc', self::$ref::toSnakeCase('abc'), 'no-change');
         $this->assertSame('the_test_for_case', self::$ref::toSnakeCase('the test for case'));
         $this->assertSame('the_test_for_case', self::$ref::toSnakeCase('the-test-for-case'));
         $this->assertSame('the_test_for_case', self::$ref::toSnakeCase('theTestForCase'));
@@ -1304,131 +1299,57 @@ class Utf8Test extends TestCase
 
     public function test_toUpperCase(): void
     {
-        // empty (nothing happens)
-        $this->assertSame('', self::$ref::toUpperCase(''));
-
-        // basic
-        $this->assertSame('ABC', self::$ref::toUpperCase('abc'));
-
-        // utf-8 chars (nothing happens)
-        $this->assertSame('あいう', self::$ref::toUpperCase('あいう'));
-
-        // utf-8 special chars
-        $this->assertSame('ÇĞİÖŞÜ', self::$ref::toUpperCase('çği̇öşü'));
-
-        // grapheme (nothing happens)
-        $this->assertSame('👨‍👨‍👧‍👦🏴󠁧󠁢󠁳󠁣󠁴󠁿', self::$ref::toUpperCase('👨‍👨‍👧‍👦🏴󠁧󠁢󠁳󠁣󠁴󠁿'));
+        $this->assertSame('', self::$ref::toUpperCase(''), 'empty (nothing happens)');
+        $this->assertSame('ABC', self::$ref::toUpperCase('abc'), 'basic');
+        $this->assertSame('あいう', self::$ref::toUpperCase('あいう'), 'utf-8 chars (nothing happens)');
+        $this->assertSame('ÇĞİÖŞÜ', self::$ref::toUpperCase('çği̇öşü'), 'utf-8 special chars');
+        $this->assertSame('👨‍👨‍👧‍👦🏴󠁧󠁢󠁳󠁣󠁴󠁿', self::$ref::toUpperCase('👨‍👨‍👧‍👦🏴󠁧󠁢󠁳󠁣󠁴󠁿'), 'grapheme (nothing happens)');
     }
 
     public function test_trim(): void
     {
-        // empty (nothing happens)
-        $this->assertSame('', self::$ref::trim(''));
-
-        // left only
-        $this->assertSame('a', self::$ref::trim("\ta"));
-
-        // right only
-        $this->assertSame('a', self::$ref::trim("a\t"));
-
-        // new line on both ends
-        $this->assertSame('abc', self::$ref::trim("\nabc\n"));
-
-        // tab and mixed line on both ends
-        $this->assertSame('abc', self::$ref::trim("\t\nabc\n\t"));
-
-        // tab and mixed line on both ends
-        $this->assertSame('abc', self::$ref::trim("\t\nabc\n\t"));
-
-        // multibyte spaces (https://3v4l.org/s16FF)
-        $this->assertSame('abc', self::$ref::trim("\u{2000}\u{2001}abc\u{2002}\u{2003}"));
-
-        // grapheme (nothing happens)
-        $this->assertSame('👨‍👨‍👧‍👦🏴󠁧󠁢󠁳󠁣󠁴󠁿', self::$ref::trim('👨‍👨‍👧‍👦🏴󠁧󠁢󠁳󠁣󠁴󠁿'));
-
-        // custom
-        $this->assertSame('b', self::$ref::trim('aba', 'a'));
-
-        // custom empty
-        $this->assertSame('a', self::$ref::trim('a', ''));
-
-        // custom overrides delimiter
-        $this->assertSame("\nb\n", self::$ref::trim("a\nb\na", 'a'));
-
-        // custom multiple
-        $this->assertSame('b', self::$ref::trim("_ab_a_", 'a_'));
+        $this->assertSame('', self::$ref::trim(''), 'empty (nothing happens)');
+        $this->assertSame('a', self::$ref::trim("\ta"), 'left only');
+        $this->assertSame('a', self::$ref::trim("a\t"), 'right only');
+        $this->assertSame('abc', self::$ref::trim("\nabc\n"), 'new line on both ends');
+        $this->assertSame('abc', self::$ref::trim("\t\nabc\n\t"), 'tab and mixed line on both ends');
+        $this->assertSame('abc', self::$ref::trim("\t\nabc\n\t"), 'tab and mixed line on both ends');
+        $this->assertSame('abc', self::$ref::trim("\u{2000}\u{2001}abc\u{2002}\u{2003}"), 'multibyte spaces (https://3v4l.org/s16FF)');
+        $this->assertSame('👨‍👨‍👧‍👦🏴󠁧󠁢󠁳󠁣󠁴󠁿', self::$ref::trim('👨‍👨‍👧‍👦🏴󠁧󠁢󠁳󠁣󠁴󠁿'), 'grapheme (nothing happens)');
+        $this->assertSame('b', self::$ref::trim('aba', 'a'), 'custom');
+        $this->assertSame('a', self::$ref::trim('a', ''), 'custom empty');
+        $this->assertSame("\nb\n", self::$ref::trim("a\nb\na", 'a'), 'custom overrides delimiter');
+        $this->assertSame('b', self::$ref::trim("_ab_a_", 'a_'), 'custom multiple');
     }
 
     public function test_trimEnd(): void
     {
-        // empty (nothing happens)
-        $this->assertSame('', self::$ref::trimEnd(''));
-
-        // left only
-        $this->assertSame("\ta", self::$ref::trimEnd("\ta"));
-
-        // right only
-        $this->assertSame('a', self::$ref::trimEnd("a\t"));
-
-        // new line on both ends
-        $this->assertSame("\nabc", self::$ref::trimEnd("\nabc\n"));
-
-        // tab and mixed line on both ends
-        $this->assertSame('abc', self::$ref::trimEnd("abc\n\t"));
-
-        // multibyte spaces (https://3v4l.org/s16FF)
-        $this->assertSame(' abc', self::$ref::trimEnd(" abc\n\t\u{0009}\u{2028}\u{2029}\v "));
-
-        // grapheme (nothing happens)
-        $this->assertSame('👨‍👨‍👧‍👦🏴󠁧󠁢󠁳󠁣󠁴󠁿', self::$ref::trimEnd('👨‍👨‍👧‍👦🏴󠁧󠁢󠁳󠁣󠁴󠁿'));
-
-        // custom
-        $this->assertSame('ab', self::$ref::trimEnd('aba', 'a'));
-
-        // custom empty
-        $this->assertSame('a', self::$ref::trimEnd('a', ''));
-
-        // custom overrides delimiter
-        $this->assertSame("ab\n", self::$ref::trimEnd("ab\na", 'a'));
-
-        // custom multiple
-        $this->assertSame('_ab', self::$ref::trimEnd("_ab_a_", 'a_'));
+        $this->assertSame('', self::$ref::trimEnd(''), 'empty (nothing happens)');
+        $this->assertSame("\ta", self::$ref::trimEnd("\ta"), 'left only');
+        $this->assertSame('a', self::$ref::trimEnd("a\t"), 'right only');
+        $this->assertSame("\nabc", self::$ref::trimEnd("\nabc\n"), 'new line on both ends');
+        $this->assertSame('abc', self::$ref::trimEnd("abc\n\t"), 'tab and mixed line on both ends');
+        $this->assertSame(' abc', self::$ref::trimEnd(" abc\n\t\u{0009}\u{2028}\u{2029}\v "), 'multibyte spaces (https://3v4l.org/s16FF)');
+        $this->assertSame('👨‍👨‍👧‍👦🏴󠁧󠁢󠁳󠁣󠁴󠁿', self::$ref::trimEnd('👨‍👨‍👧‍👦🏴󠁧󠁢󠁳󠁣󠁴󠁿'), 'grapheme (nothing happens)');
+        $this->assertSame('ab', self::$ref::trimEnd('aba', 'a'), 'custom');
+        $this->assertSame('a', self::$ref::trimEnd('a', ''), 'custom empty');
+        $this->assertSame("ab\n", self::$ref::trimEnd("ab\na", 'a'), 'custom overrides delimiter');
+        $this->assertSame('_ab', self::$ref::trimEnd("_ab_a_", 'a_'), 'custom multiple');
     }
 
     public function test_trimStart(): void
     {
-        // empty (nothing happens)
-        $this->assertSame('', self::$ref::trimStart(''));
-
-        // left only
-        $this->assertSame("a", self::$ref::trimStart("\ta"));
-
-        // right only
-        $this->assertSame("a\t", self::$ref::trimStart("a\t"));
-
-        // new line on both ends
-        $this->assertSame("abc\n", self::$ref::trimStart("\nabc\n"));
-
-        // tab and new line
-        $this->assertSame('abc', self::$ref::trimStart("\n\tabc"));
-
-        // multibyte spaces (https://3v4l.org/s16FF)
-        $this->assertSame('abc ', self::$ref::trimStart("\n\t\u{0009}\u{2028}\u{2029}\v abc "));
-
-        // grapheme (nothing happens)
-        $this->assertSame('👨‍👨‍👧‍👦🏴󠁧󠁢󠁳󠁣󠁴󠁿', self::$ref::trimStart('👨‍👨‍👧‍👦🏴󠁧󠁢󠁳󠁣󠁴󠁿'));
-
-        // custom
-        $this->assertSame('ba', self::$ref::trimStart('aba', 'a'));
-
-        // custom empty
-        $this->assertSame('a', self::$ref::trimStart('a', ''));
-
-        // custom overrides delimiter
-        $this->assertSame("\nba", self::$ref::trimStart("a\nba", 'a'));
-
-        // custom multiple
-        $this->assertSame('b_a_', self::$ref::trimStart("_ab_a_", 'a_'));
+        $this->assertSame('', self::$ref::trimStart(''), 'empty (nothing happens)');
+        $this->assertSame("a", self::$ref::trimStart("\ta"), 'left only');
+        $this->assertSame("a\t", self::$ref::trimStart("a\t"), 'right only');
+        $this->assertSame("abc\n", self::$ref::trimStart("\nabc\n"), 'new line on both ends');
+        $this->assertSame('abc', self::$ref::trimStart("\n\tabc"), 'tab and new line');
+        $this->assertSame('abc ', self::$ref::trimStart("\n\t\u{0009}\u{2028}\u{2029}\v abc "), 'multibyte spaces (https://3v4l.org/s16FF)');
+        $this->assertSame('👨‍👨‍👧‍👦🏴󠁧󠁢󠁳󠁣󠁴󠁿', self::$ref::trimStart('👨‍👨‍👧‍👦🏴󠁧󠁢󠁳󠁣󠁴󠁿'), 'grapheme (nothing happens)');
+        $this->assertSame('ba', self::$ref::trimStart('aba', 'a'), 'custom');
+        $this->assertSame('a', self::$ref::trimStart('a', ''), 'custom empty');
+        $this->assertSame("\nba", self::$ref::trimStart("a\nba", 'a'), 'custom overrides delimiter');
+        $this->assertSame('b_a_', self::$ref::trimStart("_ab_a_", 'a_'), 'custom multiple');
     }
 
     public function test_withPrefix(): void

@@ -7,6 +7,7 @@ use Kirameki\Core\Testing\TestCase;
 use Kirameki\Text\Exceptions\NoMatchException;
 use Kirameki\Text\Exceptions\ParseException;
 use Kirameki\Text\Str;
+use Kirameki\Text\StrBuffer;
 use function array_shift;
 use function str_repeat;
 use function strlen;
@@ -21,6 +22,13 @@ class StrTest extends TestCase
     {
         parent::setUp();
         self::$ref = new Str();
+    }
+
+    public function test_of(): void
+    {
+        $this->assertSame('', self::$ref::of('')->toString());
+        $this->assertSame('abc', self::$ref::of('abc')->toString());
+        $this->assertInstanceOf(StrBuffer::class, self::$ref::of(''));
     }
 
     public function test_after(): void
@@ -144,32 +152,32 @@ class StrTest extends TestCase
         $this->assertSame('1', self::$ref::betweenLast('test(1)', '(', ')'), 'basic');
         $this->assertSame('', self::$ref::betweenLast('()', '(', ')'), 'match edge: nothing in between');
         $this->assertSame('1', self::$ref::betweenLast('(1)', '(', ')'), 'match edge: char in between');
-        $this->assertSame('test)', self::$ref::between('test)', '(', ')'), 'missing from');
-        $this->assertSame('test(', self::$ref::between('test(', '(', ')'), 'missing to');
+        $this->assertSame('test)', self::$ref::betweenLast('test)', '(', ')'), 'missing from');
+        $this->assertSame('test(', self::$ref::betweenLast('test(', '(', ')'), 'missing to');
         $this->assertSame('1)', self::$ref::betweenLast('(test(1))', '(', ')'), 'nested');
         $this->assertSame('2', self::$ref::betweenLast('(1) to (2)', '(', ')'), 'multi occurrence');
         $this->assertSame('_ba_', self::$ref::betweenLast('ab_ab_ba_ba', 'ab', 'ba'), 'multi char');
         $this->assertSame('いうい', self::$ref::betweenLast('あいういう', 'あ', 'う'), 'utf8');
         $this->assertSame('🥹', self::$ref::betweenLast('👋🏿😃👋🏿🥹👋', '👋🏿', '👋'), 'grapheme');
-        $this->assertSame('', self::$ref::between('👋🏿', '👋', '🏿'), 'grapheme between codepoints');
+        $this->assertSame('', self::$ref::betweenLast('👋🏿', '👋', '🏿'), 'grapheme between codepoints');
     }
 
     public function test_betweenLast_empty_from(): void
     {
         $this->expectExceptionMessage('$from must not be empty.');
-        self::$ref::betweenFurthest('test)', '', ')');
+        self::$ref::betweenLast('test)', '', ')');
     }
 
     public function test_betweenLast_empty_to(): void
     {
         $this->expectExceptionMessage('$to must not be empty.');
-        self::$ref::betweenFurthest('test)', '(', '');
+        self::$ref::betweenLast('test)', '(', '');
     }
 
     public function test_betweenLast_empty_from_and_to(): void
     {
         $this->expectExceptionMessage('$from must not be empty.');
-        self::$ref::betweenFurthest('test)', '', '');
+        self::$ref::betweenLast('test)', '', '');
     }
 
     public function test_capitalize(): void
@@ -893,6 +901,13 @@ class StrTest extends TestCase
         $this->assertSame('a', self::$ref::replaceMatch('aaa', '/a/', '', 2), 'limit to 2');
     }
 
+    public function test_replaceMatch_with_negative_limit(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Expected: $limit >= 0. Got: -1.');
+        self::$ref::replaceMatch('', '/a/', 'a', -1);
+    }
+
     public function test_replaceMatchWithCallback(): void
     {
         $this->assertSame('', Str::replaceMatchWithCallback('', '/./', fn() => 'b'));
@@ -904,11 +919,11 @@ class StrTest extends TestCase
         }), 'with callback');
     }
 
-    public function test_replaceMatch_with_negative_limit(): void
+    public function test_replaceMatchWithCallback_with_negative_limit(): void
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Expected: $limit >= 0. Got: -1.');
-        self::$ref::replaceMatch('', '/a/', 'a', -1);
+        self::$ref::replaceMatchWithCallback('', '/a/', fn() => 'a', -1);
     }
 
     public function test_reverse(): void
@@ -1281,6 +1296,57 @@ class StrTest extends TestCase
         $this->assertSame('あいう', self::$ref::toUpperCase('あいう'), 'utf-8 chars (nothing happens)');
         $this->assertSame('çğ', self::$ref::toUpperCase('çğ'), 'utf-8 special chars');
         $this->assertSame('👨‍👨‍👧‍👦🏴󠁧󠁢󠁳󠁣󠁴󠁿', self::$ref::toUpperCase('👨‍👨‍👧‍👦🏴󠁧󠁢󠁳󠁣󠁴󠁿'), 'grapheme (nothing happens)');
+    }
+
+    public function test_trim(): void
+    {
+        $this->assertSame('', self::$ref::trim(''), 'empty (nothing happens)');
+        $this->assertSame('a', self::$ref::trim("\ta"), 'left only');
+        $this->assertSame('a', self::$ref::trim("a\t"), 'right only');
+        $this->assertSame('abc', self::$ref::trim("\nabc\n"), 'new line on both ends');
+        $this->assertSame('abc', self::$ref::trim("\t\nabc\n\t"), 'tab and mixed line on both ends');
+        $this->assertSame('abc', self::$ref::trim("\t\nabc\n\t"), 'tab and mixed line on both ends');
+        $this->assertSame('👨‍👨‍👧‍👦🏴󠁧󠁢󠁳󠁣󠁴󠁿', self::$ref::trim('👨‍👨‍👧‍👦🏴󠁧󠁢󠁳󠁣󠁴󠁿'), 'grapheme (nothing happens)');
+        $this->assertSame('b', self::$ref::trim('aba', 'a'), 'custom');
+        $this->assertSame('a', self::$ref::trim('a', ''), 'custom empty');
+        $this->assertSame("\nb\n", self::$ref::trim("a\nb\na", 'a'), 'custom overrides delimiter');
+        $this->assertSame('b', self::$ref::trim("_ab_a_", 'a_'), 'custom multiple');
+
+        $trim = "\u{2000}\u{2001}abc\u{2002}\u{2003}";
+        $this->assertSame($trim, self::$ref::trim($trim), 'multibyte spaces (https://3v4l.org/s16FF)');
+    }
+
+    public function test_trimEnd(): void
+    {
+        $this->assertSame('', self::$ref::trimEnd(''), 'empty (nothing happens)');
+        $this->assertSame("\ta", self::$ref::trimEnd("\ta"), 'left only');
+        $this->assertSame('a', self::$ref::trimEnd("a\t"), 'right only');
+        $this->assertSame("\nabc", self::$ref::trimEnd("\nabc\n"), 'new line on both ends');
+        $this->assertSame('abc', self::$ref::trimEnd("abc\n\t"), 'tab and mixed line on both ends');
+        $this->assertSame('👨‍👨‍👧‍👦🏴󠁧󠁢󠁳󠁣󠁴󠁿', self::$ref::trimEnd('👨‍👨‍👧‍👦🏴󠁧󠁢󠁳󠁣󠁴󠁿'), 'grapheme (nothing happens)');
+        $this->assertSame('ab', self::$ref::trimEnd('aba', 'a'), 'custom');
+        $this->assertSame('a', self::$ref::trimEnd('a', ''), 'custom empty');
+        $this->assertSame("ab\n", self::$ref::trimEnd("ab\na", 'a'), 'custom overrides delimiter');
+        $this->assertSame('_ab', self::$ref::trimEnd("_ab_a_", 'a_'), 'custom multiple');
+
+        $trim = " abc\n\t\u{0009}\u{2028}\u{2029}";
+        $this->assertSame($trim, self::$ref::trimEnd($trim . "\v "), 'multibyte spaces (https://3v4l.org/s16FF)');
+    }
+
+    public function test_trimStart(): void
+    {
+        $this->assertSame('', self::$ref::trimStart(''), 'empty (nothing happens)');
+        $this->assertSame("a", self::$ref::trimStart("\ta"), 'left only');
+        $this->assertSame("a\t", self::$ref::trimStart("a\t"), 'right only');
+        $this->assertSame("abc\n", self::$ref::trimStart("\nabc\n"), 'new line on both ends');
+        $this->assertSame('abc', self::$ref::trimStart("\n\tabc"), 'tab and new line');
+        $this->assertSame('👨‍👨‍👧‍👦🏴󠁧󠁢󠁳󠁣󠁴󠁿', self::$ref::trimStart('👨‍👨‍👧‍👦🏴󠁧󠁢󠁳󠁣󠁴󠁿'), 'grapheme (nothing happens)');
+        $this->assertSame('ba', self::$ref::trimStart('aba', 'a'), 'custom');
+        $this->assertSame('a', self::$ref::trimStart('a', ''), 'custom empty');
+        $this->assertSame("\nba", self::$ref::trimStart("a\nba", 'a'), 'custom overrides delimiter');
+        $this->assertSame('b_a_', self::$ref::trimStart("_ab_a_", 'a_'), 'custom multiple');
+        $trim = "\u{2028}\u{2029}\v abc ";
+        $this->assertSame($trim, self::$ref::trimStart(" \n\t\u{0009}" . $trim), 'multibyte spaces (https://3v4l.org/s16FF)');
     }
 
 }

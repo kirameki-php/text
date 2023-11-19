@@ -19,6 +19,7 @@ use function compact;
 use function filter_var;
 use function implode;
 use function iterator_to_array;
+use function ltrim;
 use function preg_match;
 use function preg_match_all;
 use function preg_quote;
@@ -54,6 +55,7 @@ use const STR_PAD_RIGHT;
 class Str
 {
     final public const EMPTY = '';
+    final public const WHITESPACE = " \t\n\r\0\x0B";
 
     /**
      * @param string $string
@@ -545,16 +547,7 @@ class Str
      */
     public static function containsPattern(string $string, string $pattern): bool
     {
-        $result = preg_match($pattern, $string);
-
-        if ($result !== false) {
-            return $result > 0;
-        }
-
-        throw ErrorException::fromErrorGetLast([
-            'string' => $string,
-            'pattern' => $pattern,
-        ]);
+        return ((int) preg_match($pattern, $string)) > 0;
     }
 
     /**
@@ -891,7 +884,9 @@ class Str
             if ($e->getMessage() === 'strpos(): Argument #3 ($offset) must be contained in argument #1 ($haystack)') {
                 return null;
             }
+            // @codeCoverageIgnoreStart
             throw $e;
+            // @codeCoverageIgnoreEnd
         }
     }
 
@@ -924,7 +919,9 @@ class Str
             if ($e->getMessage() === 'strrpos(): Argument #3 ($offset) must be contained in argument #1 ($haystack)') {
                 return null;
             }
+            // @codeCoverageIgnoreStart
             throw $e;
+            // @codeCoverageIgnoreEnd
         }
     }
 
@@ -2316,7 +2313,7 @@ class Str
      * @return string
      * The trimmed string.
      */
-    public static function trim(string $string, string $characters = '\s'): string
+    public static function trim(string $string, string $characters = self::WHITESPACE): string
     {
         return static::trimEnd(static::trimStart($string, $characters), $characters);
     }
@@ -2338,19 +2335,13 @@ class Str
      * @return string
      * The trimmed string.
      */
-    public static function trimEnd(string $string, string $characters = '\s'): string
+    public static function trimEnd(string $string, string $characters = self::WHITESPACE): string
     {
         if ($characters === self::EMPTY) {
             return $string;
         }
 
-        $result = preg_replace('/[' . $characters . ']*$/su', self::EMPTY, $string);
-
-        if ($result === null) {
-            return $string;
-        }
-
-        return $result;
+        return rtrim($string, $characters);
     }
 
     /**
@@ -2370,19 +2361,13 @@ class Str
      * @return string
      * The trimmed string.
      */
-    public static function trimStart(string $string, string $characters = '\s'): string
+    public static function trimStart(string $string, string $characters = self::WHITESPACE): string
     {
         if ($characters === self::EMPTY) {
             return $string;
         }
 
-        $result = preg_replace('/^[' . $characters . ']*/su', self::EMPTY, $string);
-
-        if ($result === null) {
-            return $string;
-        }
-
-        return $result;
+        return ltrim($string, $characters);
     }
 
     /**

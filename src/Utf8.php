@@ -20,8 +20,10 @@ use function grapheme_substr;
 use function implode;
 use function ini_get;
 use function intl_get_error_message;
+use function ltrim;
 use function mb_strtolower;
 use function mb_strtoupper;
+use function rtrim;
 use function str_repeat;
 use function strlen;
 use function strrev;
@@ -415,6 +417,92 @@ class Utf8 extends Str
     public static function toUpperCase(string $string): string
     {
         return mb_strtoupper($string);
+    }
+
+    /**
+     * Strip whitespace (or other characters) from the beginning and end of a string.
+     *
+     * Example:
+     * ```php
+     * Str::trim(' foo bar '); // 'foo bar'
+     * Str::trim("\t\rfoo bar\n\r"); // 'foo bar'
+     * ```
+     *
+     * @param string $string
+     * The string to be trimmed.
+     * @param string $characters
+     * [Optional] Characters that would be stripped.
+     * Defaults to PCRE spaces. (https://www.pcre.org/original/doc/html/pcrepattern.html)
+     * @return string
+     * The trimmed string.
+     */
+    public static function trim(string $string, string $characters = '\s'): string
+    {
+        return static::trimEnd(static::trimStart($string, $characters), $characters);
+    }
+
+    /**
+     * Strip whitespace (or other characters) from the end of a string.
+     *
+     * Example:
+     * ```php
+     * Str::trimEnd(' foo bar '); // ' foo bar'
+     * Str::trimEnd("\t\rfoo bar\n\r"); // "\t\rfoo bar"
+     * ```
+     *
+     * @param string $string
+     * The string to be trimmed.
+     * @param string $characters
+     * [Optional] Characters that would be stripped.
+     * Defaults to PCRE spaces. (https://www.pcre.org/original/doc/html/pcrepattern.html)
+     * @return string
+     * The trimmed string.
+     */
+    public static function trimEnd(string $string, string $characters = '\s'): string
+    {
+        if ($characters === self::EMPTY) {
+            return $string;
+        }
+
+        $result = preg_replace('/[' . $characters . ']*$/su', self::EMPTY, $string);
+
+        if ($result === null) {
+            return $string;
+        }
+
+        return $result;
+    }
+
+    /**
+     * Strip whitespace (or other characters) from the start of a string.
+     *
+     * Example:
+     * ```php
+     * Str::trimStart(' foo bar '); // 'foo bar '
+     * Str::trimStart("\t\rfoo bar\n\r"); // "foo bar\n\r"
+     * ```
+     *
+     * @param string $string
+     * The string to be trimmed.
+     * @param string $characters
+     * [Optional] Characters that would be stripped.
+     * Defaults to PCRE spaces. (https://www.pcre.org/original/doc/html/pcrepattern.html)
+     * @return string
+     * The trimmed string.
+     */
+    public static function trimStart(string $string, string $characters = '\s'): string
+    {
+        if ($characters === self::EMPTY) {
+            return $string;
+        }
+
+        $result = preg_replace('/^[' . $characters . ']*/su', self::EMPTY, $string);
+
+        if ($result === null) {
+            return $string;
+        }
+
+        return $result;
     }
 
     /**
