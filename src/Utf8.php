@@ -100,7 +100,7 @@ class Utf8 extends Str
      */
     public static function cut(string $string, int $position, string $ellipsis = self::EMPTY): string
     {
-        static::assertIntlSetup(__METHOD__);
+        static::assertIntlSetup();
 
         if ($string === '') {
             return $string;
@@ -232,7 +232,7 @@ class Utf8 extends Str
      */
     public static function length(string $string): int
     {
-        static::assertIntlSetup(__METHOD__);
+        static::assertIntlSetup();
 
         $result = grapheme_strlen($string);
 
@@ -382,7 +382,7 @@ class Utf8 extends Str
      */
     public static function substring(string $string, int $offset, ?int $length = null): string
     {
-        self::assertIntlSetup(__METHOD__);
+        self::assertIntlSetup();
 
         $substring = grapheme_substr($string, $offset, $length);
         assert($substring !== false);
@@ -513,21 +513,20 @@ class Utf8 extends Str
     }
 
     /**
-     * @param string $method
      * @return void
      */
-    protected static function assertIntlSetup(string $method): void
+    protected static function assertIntlSetup(): void
     {
         if (static::$setupChecked) {
             return;
         }
 
         if (!extension_loaded('intl')) {
-            throw new ExtensionRequiredException('extension: "intl" is required to use ' . $method . '().');
+            throw new ExtensionRequiredException('extension: "intl" is required to use this method.');
         }
 
         if (!ini_get('intl.use_exceptions')) {
-            throw new LogicException('"intl.use_exceptions" must be enabled to use ' . $method . '().');
+            throw new LogicException('"intl.use_exceptions" must be enabled to use this method.');
         }
 
         static::$setupChecked = true;

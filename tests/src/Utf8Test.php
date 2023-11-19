@@ -559,7 +559,7 @@ class Utf8Test extends TestCase
 
     public function test_length_intl_use_exceptions(): void
     {
-        $this->expectExceptionMessage('"intl.use_exceptions" must be enabled to use Kirameki\Text\Utf8::length().');
+        $this->expectExceptionMessage('"intl.use_exceptions" must be enabled to use this method.');
         $this->expectException(LogicException::class);
 
         try {
@@ -953,13 +953,13 @@ class Utf8Test extends TestCase
 
     public function test_substring_intl_use_exceptions(): void
     {
-        $this->expectExceptionMessage('"intl.use_exceptions" must be enabled to use Kirameki\Text\Utf8::length().');
+        $this->expectExceptionMessage('"intl.use_exceptions" must be enabled to use this method.');
         $this->expectException(LogicException::class);
 
         try {
             ini_set('intl.use_exceptions', '0');
             Utf8::resetSetupCheckedFlag();
-            self::$ref::length(substr('あ', 1));
+            self::$ref::substring(substr('あ', 1), 0, 2);
         } finally {
             ini_set('intl.use_exceptions', '1');
         }
