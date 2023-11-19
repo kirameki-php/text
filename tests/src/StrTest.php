@@ -963,6 +963,42 @@ class StrTest extends TestCase
         self::$ref::split('a', 'b', -1);
     }
 
+    public function test_splitMatch(): void
+    {
+        $this->assertSame(['abc'], self::$ref::splitMatch('abc', '/_/'), 'no match');
+        $this->assertSame(['', '1', '', ''], self::$ref::splitMatch('a1bc', '/[a-z]/'), 'no match');
+        $this->assertSame(['a', 'c', 'd'], self::$ref::splitMatch('abcbd', '/b/'), 'match');
+        $this->assertSame(['あ', 'う'], self::$ref::splitMatch('あいう', '/い/'), 'match utf-8');
+        $this->assertSame(['a', 'cbd'], self::$ref::splitMatch('abcbd', '/b/', 2), 'match with limit');
+        $this->assertSame(['', 'a', 'b', 'c', ''], self::$ref::splitMatch('abc', '//'), 'match with limit');
+        $this->assertSame(['', '🏿'], self::$ref::splitMatch('👋🏿', '/👋/'), 'match emoji');
+    }
+
+    public function test_splitMatch_negative_limit(): void
+    {
+        $this->expectExceptionMessage('Expected: $limit >= 0. Got: -1.');
+        $this->expectException(InvalidArgumentException::class);
+        self::$ref::splitMatch('a', '/b/', -1);
+    }
+
+    public function test_splitMatch_invalid_empty_pattern(): void
+    {
+        $this->expectWarningMessage('preg_split(): Empty regular expression');
+        self::$ref::splitMatch('a', '', 1);
+    }
+
+    public function test_splitMatch_invalid_non_pattern(): void
+    {
+        $this->expectWarningMessage('preg_split(): Delimiter must not be alphanumeric, backslash, or NUL');
+        self::$ref::splitMatch('a', 'a', 1);
+    }
+
+    public function test_splitMatch_invalid_no_matching_delimiter(): void
+    {
+        $this->expectWarningMessage('preg_split(): No ending matching delimiter \']\' found');
+        self::$ref::splitMatch('a', '[', 1);
+    }
+
     public function test_startsWith(): void
     {
         $this->assertTrue(self::$ref::startsWith('', ''));

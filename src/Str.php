@@ -11,6 +11,7 @@ use ValueError;
 use function abs;
 use function array_is_list;
 use function array_key_exists;
+use function assert;
 use function bcdiv;
 use function bcmul;
 use function bcpow;
@@ -48,8 +49,8 @@ use const STR_PAD_LEFT;
 use const STR_PAD_RIGHT;
 
 /**
+ * TODO cut
  * TODO mask
- * TODO splitPattern
  */
 class Str
 {
@@ -1777,15 +1778,8 @@ class Str
             ]);
         }
 
-        $splits = preg_split($pattern, $string);
-
-        if ($splits === false) {
-            throw new RuntimeException("Failed to split string: {$string} with pattern: {$pattern}", [
-                'string' => $string,
-                'pattern' => $pattern,
-            ]);
-        }
-
+        $splits = preg_split($pattern, $string, $limit ?? -1);
+        assert(is_array($splits));
         return $splits;
     }
 

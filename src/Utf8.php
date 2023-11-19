@@ -9,6 +9,7 @@ use Kirameki\Core\Exceptions\LogicException;
 use RuntimeException;
 use ValueError;
 use function array_reverse;
+use function assert;
 use function ceil;
 use function extension_loaded;
 use function floor;
@@ -121,7 +122,9 @@ class Utf8 extends Str
             if ($e->getMessage() === 'grapheme_extract: start not contained in string') {
                 $addEllipsis = false;
             } else {
+                // @codeCoverageIgnoreStart
                 throw $e;
+                // @codeCoverageIgnoreEnd
             }
         }
 
@@ -379,12 +382,10 @@ class Utf8 extends Str
      */
     public static function substring(string $string, int $offset, ?int $length = null): string
     {
+        self::assertIntlSetup(__METHOD__);
+
         $substring = grapheme_substr($string, $offset, $length);
-
-        if ($substring === false) {
-            throw new RuntimeException(intl_get_error_message());
-        }
-
+        assert($substring !== false);
         return $substring;
     }
 

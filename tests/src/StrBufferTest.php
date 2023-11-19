@@ -258,6 +258,20 @@ class StrBufferTest extends TestCase
         $this->assertFalse($sb->endsWithNone(['path', '.php']));
     }
 
+    public function test_equals(): void
+    {
+        $sb = $this->buffer('foo bar');
+        $this->assertTrue($sb->equals('foo bar'));
+        $this->assertFalse($sb->equals('foo'));
+    }
+
+    public function test_equalsAny(): void
+    {
+        $sb = $this->buffer('foo bar');
+        $this->assertTrue($sb->equalsAny(['foo bar']));
+        $this->assertFalse($sb->equalsAny(['foo']));
+    }
+
     public function test_indexOfFirst(): void
     {
         $sb = $this->buffer('aabbcc');
@@ -484,6 +498,13 @@ class StrBufferTest extends TestCase
         $this->assertTrue($sb->startsWithNone(['path', '.php']));
     }
 
+    public function test_substring(): void
+    {
+        $after = $this->buffer('abcd')->substring(1, 2);
+        $this->assertInstanceOf(StrBuffer::class, $after);
+        $this->assertSame('bc', $after->toString());
+    }
+
     public function test_surround(): void
     {
         $after = $this->buffer('a')->surround('1', '2');
@@ -496,6 +517,13 @@ class StrBufferTest extends TestCase
         $after = $this->buffer('abc')->takeFirst(1);
         $this->assertInstanceOf(StrBuffer::class, $after);
         $this->assertSame('a', $after->toString());
+    }
+
+    public function test_takeLast(): void
+    {
+        $after = $this->buffer('abc')->takeLast(1);
+        $this->assertInstanceOf(StrBuffer::class, $after);
+        $this->assertSame('c', $after->toString());
     }
 
     public function test_tap(): void
