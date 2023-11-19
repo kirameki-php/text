@@ -484,6 +484,13 @@ class StrBufferTest extends TestCase
         $this->assertTrue($sb->startsWithNone(['path', '.php']));
     }
 
+    public function test_surround(): void
+    {
+        $after = $this->buffer('a')->surround('1', '2');
+        $this->assertInstanceOf(StrBuffer::class, $after);
+        $this->assertSame('1a2', $after->toString());
+    }
+
     public function test_takeFirst(): void
     {
         $after = $this->buffer('abc')->takeFirst(1);

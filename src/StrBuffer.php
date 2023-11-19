@@ -660,6 +660,16 @@ class StrBuffer implements Stringable
     }
 
     /**
+     * @param string $prefix
+     * @param string $suffix
+     * @return static
+     */
+    public function surround(string $prefix, string $suffix): static
+    {
+        return new static(static::$ref::surround($this->value, $prefix, $suffix));
+    }
+
+    /**
      * @param int $position
      * @return static
      */

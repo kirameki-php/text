@@ -1469,19 +1469,4 @@ class Utf8Test extends TestCase
         // grapheme (treats combined grapheme as 1 whole character)
         $this->assertSame('👨‍👨‍👧‍👧‍👧‍', self::$ref::withSuffix('👨‍👨‍👧‍👧‍', '👧‍'));
     }
-
-    public function test_wrap(): void
-    {
-        // blanks
-        $this->assertSame('', self::$ref::wrap('', '', ''));
-
-        // simple case
-        $this->assertSame('[a]', self::$ref::wrap('a', '[', ']'));
-
-        // multibyte
-        $this->assertSame('１a２', self::$ref::wrap('a', '１', '２'));
-
-        // grapheme
-        $this->assertSame('👨‍👨‍👧‍a🏴󠁧󠁢󠁳󠁣󠁴󠁿', self::$ref::wrap('a', '👨‍👨‍👧‍', '🏴󠁧󠁢󠁳󠁣󠁴󠁿'));
-    }
 }

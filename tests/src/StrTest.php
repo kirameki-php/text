@@ -999,6 +999,14 @@ class StrTest extends TestCase
         $this->assertSame('🏿', self::$ref::substring('👋🏿', 4), 'grapheme');
     }
 
+    public function test_surround(): void
+    {
+        $this->assertSame('', self::$ref::surround('', '', ''), 'blanks');
+        $this->assertSame('[a]', self::$ref::surround('a', '[', ']'), 'simple case');
+        $this->assertSame('１a２', self::$ref::surround('a', '１', '２'), 'multibyte');
+        $this->assertSame('👨‍👨‍👧‍a🏴󠁧󠁢󠁳󠁣󠁴󠁿', self::$ref::surround('a', '👨‍👨‍👧‍', '🏴󠁧󠁢󠁳󠁣󠁴󠁿'), 'grapheme');
+    }
+
     public function test_toBool(): void
     {
         $this->assertTrue(self::$ref::toBool('true'), 'true as string');

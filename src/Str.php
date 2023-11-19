@@ -1889,6 +1889,28 @@ class Str
     }
 
     /**
+     * Surround given string with `$before` and `$after`.
+     *
+     * Example:
+     * ```php
+     * Str::surround('foo', '"', '"'); // "foo"
+     * Str::surround('bar', '[', ']'); // [bar]
+     * ```
+     *
+     * @param string $string
+     * String to be wrapped.
+     * @param string $before
+     * String that will be prepended.
+     * @param string $after
+     * String that will be appended.
+     * @return string
+     */
+    public static function surround(string $string, string $before, string $after): string
+    {
+        return static::concat($before, $string, $after);
+    }
+
+    /**
      * Return a string which only contain the first n characters.
      *
      * Example:
@@ -2421,27 +2443,5 @@ class Str
             return $string;
         }
         return $string . $suffix;
-    }
-
-    /**
-     * Wrap given text around the string.
-     *
-     * Example:
-     * ```php
-     * Str::wrap('foo', '"', '"'); // "foo"
-     * Str::wrap('bar', '[', ']'); // [bar]
-     * ```
-     *
-     * @param string $string
-     * String to be wrapped.
-     * @param string $before
-     * String that will be prepended.
-     * @param string $after
-     * String that will be appended.
-     * @return string
-     */
-    public static function wrap(string $string, string $before, string $after): string
-    {
-        return static::concat($before, $string, $after);
     }
 }
