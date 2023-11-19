@@ -1855,16 +1855,14 @@ class Str
     }
 
     /**
-     * Return a subset of given string.
-     * If offset is out of range, a RuntimeException is thrown unless a fallback string is defined.
+     * Return a subset of `$string` starting at `$offset`.
      *
      * Example:
      * ```php
      * Str::substring('abc', 1); // 'a'
      * Str::substring('abc', 0, 1); // 'a'
      * Str::substring('abc', 1, 2); // 'bc'
-     * Str::substring('a', 1); // RuntimeException: Offset: 1 is out of range for string "a"
-     * Str::substring('👨‍👨‍👧‍👦', 1, 'not found'); // 'not found'
+     * Str::substring('a', 1); // ''
      * ```
      *
      * @param string $string
