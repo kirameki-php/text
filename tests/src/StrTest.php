@@ -740,10 +740,22 @@ class StrTest extends TestCase
 
     public function test_range(): void
     {
-        // TODO fix
-//        $this->assertSame('', self::$ref::range('', 0, 1), 'empty string');
-//        $this->assertSame('', self::$ref::range('abc', 0, 0), 'zero length');
-//        $this->assertSame('', self::$ref::range('abc', 0, -1), 'negative length');
+        $this->assertSame('', self::$ref::range('', 0, 1), 'empty string');
+        $this->assertSame('', self::$ref::range('abc', 0, 0), 'zero length');
+        $this->assertSame('', self::$ref::range('1234', 1, 1));
+        $this->assertSame('ab', self::$ref::range('abc', 0, -1), 'negative length');
+        $this->assertSame('34', self::$ref::range('12345', -3, -1));
+        $this->assertSame('23', self::$ref::range('1234', 1, 3));
+        $this->assertSame('123', self::$ref::range('1234', -10, -1));
+        $this->assertSame('', self::$ref::range('1234', -10, -9));
+        $this->assertSame('', self::$ref::range('1234', -10, -10));
+    }
+
+    public function test_range_negative_length(): void
+    {
+        $this->expectExceptionMessage('$end: -2 cannot be > $start: -1.');
+        $this->expectException(InvalidArgumentException::class);
+        self::$ref::range('abc', -1, -2);
     }
 
     public function test_remove(): void

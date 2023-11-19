@@ -1336,23 +1336,23 @@ class Str
 
         $length = static::length($string);
 
-        if ($start < 0) {
-            $start = $length + $start;
+        $_start = $start < 0
+            ? $length + $start
+            : $start;
+
+        $_end = $end < 0
+            ? $length + $end
+            : $end;
+
+        if ($_start > $_end) {
+            throw new InvalidArgumentException("\$end: {$end} cannot be > \$start: {$start}.", [
+                'string' => $string,
+                'start' => $start,
+                'end' => $end,
+            ]);
         }
 
-        if ($end < 0) {
-            $end = $length + $end;
-        }
-
-        if ($start < 0 || $end < 0 || $start > $length || $end > $length) {
-            throw new RuntimeException("position: [$start, $end] is out of range for string: \"$string\"");
-        }
-
-        if ($start > $end) {
-            throw new RuntimeException("end position: $end cannot be greater than start position $start");
-        }
-
-        return static::substring($string, $start, -($length - $end));
+        return static::substring($string, $_start, -($length - $_end));
     }
 
     /**
