@@ -531,4 +531,9 @@ class Utf8 extends Str
 
         static::$setupChecked = true;
     }
+
+    public static function resetSetupCheckedFlag(): void
+    {
+        static::$setupChecked = false;
+    }
 }

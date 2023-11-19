@@ -4,10 +4,12 @@ namespace Tests\Kirameki\Text;
 
 use IntlException;
 use Kirameki\Core\Exceptions\InvalidArgumentException;
+use Kirameki\Core\Exceptions\LogicException;
 use Kirameki\Core\Testing\TestCase;
 use Kirameki\Text\Exceptions\NoMatchException;
 use Kirameki\Text\Utf8;
 use RuntimeException;
+use function ini_set;
 use function str_repeat;
 use function substr;
 use const PHP_EOL;
@@ -553,6 +555,20 @@ class Utf8Test extends TestCase
         $this->expectExceptionMessage('Error converting input string to UTF-16');
         $this->expectException(IntlException::class);
         self::$ref::length(substr('あ', 1));
+    }
+
+    public function test_length_intl_use_exceptions(): void
+    {
+        $this->expectExceptionMessage('"intl.use_exceptions" must be enabled to use Kirameki\Text\Utf8::length().');
+        $this->expectException(LogicException::class);
+
+        try {
+            ini_set('intl.use_exceptions', '0');
+            Utf8::resetSetupCheckedFlag();
+            self::$ref::length(substr('あ', 1));
+        } finally {
+            ini_set('intl.use_exceptions', '1');
+        }
     }
 
     public function test_matchAll(): void
