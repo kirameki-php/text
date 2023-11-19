@@ -3,7 +3,6 @@
 namespace Kirameki\Text;
 
 use Closure;
-use Kirameki\Core\Exceptions\ErrorException;
 use Kirameki\Core\Exceptions\InvalidArgumentException;
 use Kirameki\Core\Exceptions\RuntimeException;
 use Kirameki\Text\Exceptions\NoMatchException;
@@ -55,7 +54,7 @@ use const STR_PAD_RIGHT;
 class Str
 {
     final public const EMPTY = '';
-    final public const WHITESPACE = " \t\n\r\0\x0B";
+    public const WHITESPACE = " \t\n\r\0\x0B";
 
     /**
      * @param string $string
@@ -2307,13 +2306,13 @@ class Str
      *
      * @param string $string
      * The string to be trimmed.
-     * @param string $characters
+     * @param string|null $characters
      * [Optional] Characters that would be stripped.
      * Defaults to PCRE spaces. (https://www.pcre.org/original/doc/html/pcrepattern.html)
      * @return string
      * The trimmed string.
      */
-    public static function trim(string $string, string $characters = self::WHITESPACE): string
+    public static function trim(string $string, ?string $characters = null): string
     {
         return static::trimEnd(static::trimStart($string, $characters), $characters);
     }
@@ -2329,14 +2328,16 @@ class Str
      *
      * @param string $string
      * The string to be trimmed.
-     * @param string $characters
+     * @param string|null $characters
      * [Optional] Characters that would be stripped.
      * Defaults to PCRE spaces. (https://www.pcre.org/original/doc/html/pcrepattern.html)
      * @return string
      * The trimmed string.
      */
-    public static function trimEnd(string $string, string $characters = self::WHITESPACE): string
+    public static function trimEnd(string $string, ?string $characters = null): string
     {
+        $characters ??= self::WHITESPACE;
+
         if ($characters === self::EMPTY) {
             return $string;
         }
@@ -2355,14 +2356,16 @@ class Str
      *
      * @param string $string
      * The string to be trimmed.
-     * @param string $characters
+     * @param string|null $characters
      * [Optional] Characters that would be stripped.
      * Defaults to PCRE spaces. (https://www.pcre.org/original/doc/html/pcrepattern.html)
      * @return string
      * The trimmed string.
      */
-    public static function trimStart(string $string, string $characters = self::WHITESPACE): string
+    public static function trimStart(string $string, ?string $characters = null): string
     {
+        $characters ??= self::WHITESPACE;
+
         if ($characters === self::EMPTY) {
             return $string;
         }

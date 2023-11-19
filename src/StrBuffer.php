@@ -30,6 +30,14 @@ class StrBuffer implements Stringable
     }
 
     /**
+     * @return string
+     */
+    public function __toString(): string
+    {
+        return $this->toString();
+    }
+
+    /**
      * @see Str::after()
      *
      * @param string $search
@@ -788,46 +796,29 @@ class StrBuffer implements Stringable
     }
 
     /**
-     * @param string $characters
+     * @param string|null $characters
      * @return static
      */
-    public function trim(string $characters = '\s'): static
+    public function trim(?string $characters = null): static
     {
         return new static(static::$ref::trim($this->value, $characters));
     }
 
     /**
-     * @param string $characters
+     * @param string|null $characters
      * @return static
      */
-    public function trimStart(string $characters = '\s'): static
+    public function trimStart(?string $characters = null): static
     {
         return new static(static::$ref::trimStart($this->value, $characters));
     }
 
     /**
-     * @param string $characters
+     * @param string|null $characters
      * @return static
      */
-    public function trimEnd(string $characters = '\s'): static
+    public function trimEnd(?string $characters = null): static
     {
         return new static(static::$ref::trimEnd($this->value, $characters));
-    }
-
-    /**
-     * @return string
-     */
-    public function __toString(): string
-    {
-        return $this->toString();
-    }
-
-    /**
-     * @param string $string
-     * @return static
-     */
-    public static function of(string $string): static
-    {
-        return new static($string);
     }
 }

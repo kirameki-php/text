@@ -1319,7 +1319,15 @@ class Utf8Test extends TestCase
         $this->assertSame('b', self::$ref::trim('aba', 'a'), 'custom');
         $this->assertSame('a', self::$ref::trim('a', ''), 'custom empty');
         $this->assertSame("\nb\n", self::$ref::trim("a\nb\na", 'a'), 'custom overrides delimiter');
+        $this->assertSame("aba", self::$ref::trim("aba", 'z'), 'custom no match');
         $this->assertSame('b', self::$ref::trim("_ab_a_", 'a_'), 'custom multiple');
+    }
+
+    public function test_trim_with_invalid_trim_chars(): void
+    {
+        $this->expectWarningMessage('preg_replace(): Compilation failed: UTF-8 error: isolated byte with 0x80 bit set at offset 2');
+        $invalidString = substr('あ', 1);
+        $this->assertSame("aba", self::$ref::trim("aba", $invalidString), 'custom no match');
     }
 
     public function test_trimEnd(): void
@@ -1334,7 +1342,15 @@ class Utf8Test extends TestCase
         $this->assertSame('ab', self::$ref::trimEnd('aba', 'a'), 'custom');
         $this->assertSame('a', self::$ref::trimEnd('a', ''), 'custom empty');
         $this->assertSame("ab\n", self::$ref::trimEnd("ab\na", 'a'), 'custom overrides delimiter');
+        $this->assertSame("aba", self::$ref::trimEnd("aba", 'z'), 'custom no match');
         $this->assertSame('_ab', self::$ref::trimEnd("_ab_a_", 'a_'), 'custom multiple');
+    }
+
+    public function test_trimEnd_with_invalid_trim_chars(): void
+    {
+        $this->expectWarningMessage('preg_replace(): Compilation failed: UTF-8 error: isolated byte with 0x80 bit set at offset 1');
+        $invalidString = substr('あ', 1);
+        $this->assertSame("aba", self::$ref::trimEnd("aba", $invalidString), 'custom no match');
     }
 
     public function test_trimStart(): void
@@ -1349,7 +1365,15 @@ class Utf8Test extends TestCase
         $this->assertSame('ba', self::$ref::trimStart('aba', 'a'), 'custom');
         $this->assertSame('a', self::$ref::trimStart('a', ''), 'custom empty');
         $this->assertSame("\nba", self::$ref::trimStart("a\nba", 'a'), 'custom overrides delimiter');
+        $this->assertSame("aba", self::$ref::trimStart("aba", 'z'), 'custom no match');
         $this->assertSame('b_a_', self::$ref::trimStart("_ab_a_", 'a_'), 'custom multiple');
+    }
+
+    public function test_trimStart_with_invalid_trim_chars(): void
+    {
+        $this->expectWarningMessage('preg_replace(): Compilation failed: UTF-8 error: isolated byte with 0x80 bit set at offset 2');
+        $invalidString = substr('あ', 1);
+        $this->assertSame("aba", self::$ref::trimStart("aba", $invalidString), 'custom no match');
     }
 
     public function test_withPrefix(): void

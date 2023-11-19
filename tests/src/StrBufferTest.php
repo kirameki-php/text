@@ -19,6 +19,12 @@ class StrBufferTest extends TestCase
         $this->assertSame('a', $sb->toString());
     }
 
+    public function test___toString(): void
+    {
+        $sb = $this->buffer('a');
+        $this->assertSame('a', (string) $sb);
+    }
+
     public function test_after(): void
     {
         $after = $this->buffer('buffer')->after('f');
@@ -578,5 +584,26 @@ class StrBufferTest extends TestCase
         $after = $this->buffer('foo bar')->toUpperCase();
         $this->assertInstanceOf(StrBuffer::class, $after);
         $this->assertSame('FOO BAR', $after->toString());
+    }
+
+    public function test_trim(): void
+    {
+        $after = $this->buffer(" \n\r\vfoo \n\r\v")->trim();
+        $this->assertInstanceOf(StrBuffer::class, $after);
+        $this->assertSame('foo', $after->toString());
+    }
+
+    public function test_trimEnd(): void
+    {
+        $after = $this->buffer(" \n\r\vfoo \n\r\v")->trimEnd();
+        $this->assertInstanceOf(StrBuffer::class, $after);
+        $this->assertSame(" \n\r\vfoo", $after->toString());
+    }
+
+    public function test_trimStart(): void
+    {
+        $after = $this->buffer(" \n\r\vfoo \n\r\v")->trimStart();
+        $this->assertInstanceOf(StrBuffer::class, $after);
+        $this->assertSame("foo \n\r\v", $after->toString());
     }
 }

@@ -35,6 +35,8 @@ use const STR_PAD_RIGHT;
 
 class Utf8 extends Str
 {
+    public const WHITESPACE = '\s';
+
     protected static bool $setupChecked = false;
 
     /**
@@ -179,7 +181,9 @@ class Utf8 extends Str
             if ($e->getMessage() === 'grapheme_strpos(): Argument #3 ($offset) must be contained in argument #1 ($haystack)') {
                 return null;
             }
+            // @codeCoverageIgnoreStart
             throw $e;
+            // @codeCoverageIgnoreEnd
         }
     }
 
@@ -204,7 +208,9 @@ class Utf8 extends Str
             if ($e->getMessage() === 'grapheme_strrpos(): Argument #3 ($offset) must be contained in argument #1 ($haystack)') {
                 return null;
             }
+            // @codeCoverageIgnoreStart
             throw $e;
+            // @codeCoverageIgnoreEnd
         }
     }
 
@@ -430,13 +436,13 @@ class Utf8 extends Str
      *
      * @param string $string
      * The string to be trimmed.
-     * @param string $characters
+     * @param string|null $characters
      * [Optional] Characters that would be stripped.
      * Defaults to PCRE spaces. (https://www.pcre.org/original/doc/html/pcrepattern.html)
      * @return string
      * The trimmed string.
      */
-    public static function trim(string $string, string $characters = '\s'): string
+    public static function trim(string $string, ?string $characters = null): string
     {
         return static::trimEnd(static::trimStart($string, $characters), $characters);
     }
@@ -452,25 +458,25 @@ class Utf8 extends Str
      *
      * @param string $string
      * The string to be trimmed.
-     * @param string $characters
+     * @param string|null $characters
      * [Optional] Characters that would be stripped.
      * Defaults to PCRE spaces. (https://www.pcre.org/original/doc/html/pcrepattern.html)
      * @return string
      * The trimmed string.
      */
-    public static function trimEnd(string $string, string $characters = '\s'): string
+    public static function trimEnd(string $string, ?string $characters = null): string
     {
+        $characters ??= self::WHITESPACE;
+
         if ($characters === self::EMPTY) {
             return $string;
         }
 
         $result = preg_replace('/[' . $characters . ']*$/su', self::EMPTY, $string);
 
-        if ($result === null) {
-            return $string;
-        }
-
-        return $result;
+        return $result !== null
+            ? $result
+            : $string;
     }
 
     /**
@@ -484,25 +490,25 @@ class Utf8 extends Str
      *
      * @param string $string
      * The string to be trimmed.
-     * @param string $characters
+     * @param string|null $characters
      * [Optional] Characters that would be stripped.
      * Defaults to PCRE spaces. (https://www.pcre.org/original/doc/html/pcrepattern.html)
      * @return string
      * The trimmed string.
      */
-    public static function trimStart(string $string, string $characters = '\s'): string
+    public static function trimStart(string $string, ?string $characters = null): string
     {
+        $characters ??= self::WHITESPACE;
+
         if ($characters === self::EMPTY) {
             return $string;
         }
 
         $result = preg_replace('/^[' . $characters . ']*/su', self::EMPTY, $string);
 
-        if ($result === null) {
-            return $string;
-        }
-
-        return $result;
+        return $result !== null
+            ? $result
+            : $string;
     }
 
     /**
