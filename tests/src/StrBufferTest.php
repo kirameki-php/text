@@ -447,6 +447,12 @@ class StrBufferTest extends TestCase
         $this->assertSame(['a', 'b', 'c'], $after);
     }
 
+    public function test_splitMatch(): void
+    {
+        $after = $this->buffer('a1b2c3')->splitMatch('/[0-9]+/');
+        $this->assertSame(['a', 'b', 'c', ''], $after);
+    }
+
     public function test_startsWith(): void
     {
         $sb = $this->buffer('/test/path/of.php');

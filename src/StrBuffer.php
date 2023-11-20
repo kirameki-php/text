@@ -567,11 +567,21 @@ class StrBuffer implements Stringable
     /**
      * @param non-empty-string $separator
      * @param int<0, max>|null $limit
-     * @return array<int, string>
+     * @return list<string>
      */
     public function split(string $separator, ?int $limit = null): array
     {
         return static::$ref::split($this->value, $separator, $limit);
+    }
+
+    /**
+     * @param string $pattern
+     * @param int|null $limit
+     * @return list<string>
+     */
+    public function splitMatch(string $pattern, ?int $limit = null): array
+    {
+        return static::$ref::splitMatch($this->value, $pattern, $limit);
     }
 
     /**
