@@ -1376,79 +1376,33 @@ class Utf8Test extends TestCase
 
     public function test_withPrefix(): void
     {
-        // empty string always adds
-        $this->assertSame('foo', self::$ref::withPrefix('', 'foo'));
-
-        // empty start does nothing
-        $this->assertSame('foo', self::$ref::withPrefix('foo', ''));
-
-        // has match
-        $this->assertSame('foo', self::$ref::withPrefix('foo', 'f'));
-
-        // no match
-        $this->assertSame('_foo', self::$ref::withPrefix('foo', '_'));
-
-        // partial matching doesn't count
-        $this->assertSame('___foo', self::$ref::withPrefix('_foo', '__'));
-
-        // repeats handled properly
-        $this->assertSame('__foo', self::$ref::withPrefix('__foo', '_'));
-
-        // try escape chars
-        $this->assertSame('\s foo', self::$ref::withPrefix(' foo', "\s"));
-
-        // new line
-        $this->assertSame("\n foo", self::$ref::withPrefix(' foo', "\n"));
-
-        // slashes
-        $this->assertSame('/foo', self::$ref::withPrefix('foo', '/'));
-
-        // utf8 match
-        $this->assertSame('あい', self::$ref::withPrefix('あい', 'あ'));
-
-        // utf8 no match
-        $this->assertSame('うえあい', self::$ref::withPrefix('あい', 'うえ'));
-
-        // grapheme (treats combined grapheme as 1 whole character)
-        $this->assertSame('👨👨‍👨‍👧‍👧', self::$ref::withPrefix('👨‍👨‍👧‍👧', '👨'));
+        $this->assertSame('foo', self::$ref::withPrefix('', 'foo'), 'empty string always adds');
+        $this->assertSame('foo', self::$ref::withPrefix('foo', ''), 'empty start does nothing');
+        $this->assertSame('foo', self::$ref::withPrefix('foo', 'f'), 'has match');
+        $this->assertSame('_foo', self::$ref::withPrefix('foo', '_'), 'no match');
+        $this->assertSame('___foo', self::$ref::withPrefix('_foo', '__'), 'partial matching doesn\'t count');
+        $this->assertSame('__foo', self::$ref::withPrefix('__foo', '_'), 'repeats handled properly');
+        $this->assertSame('\s foo', self::$ref::withPrefix(' foo', "\s"), 'try escape chars');
+        $this->assertSame("\n foo", self::$ref::withPrefix(' foo', "\n"), 'new line');
+        $this->assertSame('/foo', self::$ref::withPrefix('foo', '/'), 'slashes');
+        $this->assertSame('あい', self::$ref::withPrefix('あい', 'あ'), 'utf8 match');
+        $this->assertSame('うえあい', self::$ref::withPrefix('あい', 'うえ'), 'utf8 no match');
+        $this->assertSame('👨👨‍👨‍👧‍👧', self::$ref::withPrefix('👨‍👨‍👧‍👧', '👨'), 'grapheme (treats combined grapheme as 1 whole character)');
     }
 
     public function test_withSuffix(): void
     {
-        // empty string always adds
-        $this->assertSame('foo', self::$ref::withSuffix('', 'foo'));
-
-        // empty start does nothing
-        $this->assertSame('foo', self::$ref::withSuffix('foo', ''));
-
-        // has match
-        $this->assertSame('foo', self::$ref::withSuffix('foo', 'oo'));
-
-        // no match
-        $this->assertSame('foo bar', self::$ref::withSuffix('foo', ' bar'));
-
-        // partial matching doesn't count
-        $this->assertSame('foo___', self::$ref::withSuffix('foo_', '__'));
-
-        // repeats handled properly
-        $this->assertSame('foo__', self::$ref::withSuffix('foo__', '_'));
-
-        // try escape chars
-        $this->assertSame('foo \s', self::$ref::withSuffix('foo ', "\s"));
-
-        // new line
-        $this->assertSame("foo \n", self::$ref::withSuffix('foo ', "\n"));
-
-        // slashes
-        $this->assertSame('foo/', self::$ref::withSuffix('foo', '/'));
-
-        // utf8 match
-        $this->assertSame('あい', self::$ref::withSuffix('あい', 'い'));
-
-        // utf8 no match
-        $this->assertSame('あいうえ', self::$ref::withSuffix('あい', 'うえ'));
-
-        // grapheme (treats combined grapheme as 1 whole character)
-        $this->assertSame('👨‍👨‍👧‍👧‍👧‍', self::$ref::withSuffix('👨‍👨‍👧‍👧‍', '👧‍'));
+        $this->assertSame('foo', self::$ref::withSuffix('', 'foo'), 'empty string always adds');
+        $this->assertSame('foo', self::$ref::withSuffix('foo', ''), 'empty start does nothing');
+        $this->assertSame('foo', self::$ref::withSuffix('foo', 'oo'), 'has match');
+        $this->assertSame('foo bar', self::$ref::withSuffix('foo', ' bar'), 'no match');
+        $this->assertSame('foo___', self::$ref::withSuffix('foo_', '__'), 'partial matching doesn\'t count');
+        $this->assertSame('foo__', self::$ref::withSuffix('foo__', '_'), 'repeats handled properly');
+        $this->assertSame('foo \s', self::$ref::withSuffix('foo ', "\s"), 'try escape chars');
+        $this->assertSame("foo \n", self::$ref::withSuffix('foo ', "\n"), 'new line');
+        $this->assertSame('foo/', self::$ref::withSuffix('foo', '/'), 'slashes');
+        $this->assertSame('あい', self::$ref::withSuffix('あい', 'い'), 'utf8 match');
+        $this->assertSame('あいうえ', self::$ref::withSuffix('あい', 'うえ'), 'utf8 no match');
+        $this->assertSame('👨‍👨‍👧‍👧‍👧‍', self::$ref::withSuffix('👨‍👨‍👧‍👧‍', '👧‍'), 'grapheme (treats combined grapheme as 1 whole character)');
     }
 }
