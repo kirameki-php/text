@@ -967,26 +967,11 @@ class Utf8Test extends TestCase
 
     public function test_takeFirst(): void
     {
-        // empty string
-        $this->assertSame('', self::$ref::takeFirst('', 1));
-
-        // empty string
-        $this->assertSame('', self::$ref::takeFirst('', 1));
-
-        // zero amount
-        $this->assertSame('', self::$ref::takeFirst('a', 0));
-
-        // mid amount
-        $this->assertSame('abcd', self::$ref::takeFirst('abcde', 4));
-
-        // exact length
-        $this->assertSame('abc', self::$ref::takeFirst('abc', 3));
-
-        // grapheme
-        $this->assertSame('abc🏴󠁧󠁢󠁳󠁣󠁴󠁿', self::$ref::takeFirst('abc🏴󠁧󠁢󠁳󠁣󠁴󠁿d🏴󠁧󠁢󠁳󠁣󠁴󠁿e🏴󠁧󠁢󠁳󠁣󠁴󠁿f', 4));
-
-        // grapheme cluster
-        $this->assertSame('👋🏿', self::$ref::takeFirst('👋🏿', 1));
+        $this->assertSame('', self::$ref::takeFirst('', 1), 'empty string');
+        $this->assertSame('', self::$ref::takeFirst('a', 0), 'zero amount');
+        $this->assertSame('abcd', self::$ref::takeFirst('abcde', 4), 'mid amount');
+        $this->assertSame('abc', self::$ref::takeFirst('abc', 3), 'exact length');
+        $this->assertSame('👋🏿', self::$ref::takeFirst('👋🏿', 1), 'grapheme');
     }
 
     public function test_takeFirst_out_of_range_negative(): void
@@ -997,29 +982,12 @@ class Utf8Test extends TestCase
 
     public function test_takeLast(): void
     {
-        // empty string
-        $this->assertSame('', self::$ref::takeLast('', 1));
-
-        // empty string
-        $this->assertSame('', self::$ref::takeLast('', 1));
-
-        // zero amount
-        $this->assertSame('a', self::$ref::takeLast('a', 0));
-
-        // mid amount
-        $this->assertSame('bcde', self::$ref::takeLast('abcde', 4));
-
-        // exact length
-        $this->assertSame('abc', self::$ref::takeLast('abc', 3));
-
-        // over length
-        $this->assertSame('abc', self::$ref::takeLast('abc', 4));
-
-        // grapheme
-        $this->assertSame('🏴󠁧󠁢󠁳󠁣󠁴󠁿e🏴󠁧󠁢󠁳󠁣󠁴󠁿f', self::$ref::takeLast('abc🏴󠁧󠁢󠁳󠁣󠁴󠁿d🏴󠁧󠁢󠁳󠁣󠁴󠁿e🏴󠁧󠁢󠁳󠁣󠁴󠁿f', 4));
-
-        // grapheme cluster
-        $this->assertSame('👋🏿', self::$ref::takeLast('👋🏿', 1));
+        $this->assertSame('', self::$ref::takeLast('', 1), 'empty string');
+        $this->assertSame('a', self::$ref::takeLast('a', 0), 'zero amount');
+        $this->assertSame('bcde', self::$ref::takeLast('abcde', 4), 'mid amount');
+        $this->assertSame('abc', self::$ref::takeLast('abc', 3), 'exact length');
+        $this->assertSame('abc', self::$ref::takeLast('abc', 4), 'over length');
+        $this->assertSame('👋🏿', self::$ref::takeLast('👋🏿', 1), 'grapheme');
     }
 
     public function test_takeLast_out_of_range_negative(): void

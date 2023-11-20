@@ -55,6 +55,7 @@ use const STR_PAD_RIGHT;
 class Str
 {
     final public const EMPTY = '';
+
     public const WHITESPACE = " \t\n\r\0\x0B";
 
     /**
