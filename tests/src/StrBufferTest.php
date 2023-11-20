@@ -25,33 +25,6 @@ class StrBufferTest extends TestCase
         $this->assertSame('a', (string) $sb);
     }
 
-    public function test_after(): void
-    {
-        $after = $this->buffer('buffer')->after('f');
-        $this->assertInstanceOf(StrBuffer::class, $after);
-        $this->assertSame('fer', $after->toString());
-
-        $after = $this->buffer('abc')->after('d');
-        $this->assertInstanceOf(StrBuffer::class, $after);
-        $this->assertSame('abc', $after->toString());
-    }
-
-    public function test_afterLast(): void
-    {
-        $after = $this->buffer('abc abc')->afterLast('b');
-        $this->assertInstanceOf(StrBuffer::class, $after);
-        $this->assertSame('c', $after->toString());
-
-        $after = $this->buffer('buffer')->afterLast('f');
-        $this->assertInstanceOf(StrBuffer::class, $after);
-        $this->assertSame('er', $after->toString());
-
-        $after = $this->buffer('abc')->afterLast('d');
-        $this->assertInstanceOf(StrBuffer::class, $after);
-        $this->assertSame('abc', $after->toString());
-
-    }
-
     public function test_append(): void
     {
         $after = $this->buffer('a')->append('1');
@@ -79,22 +52,22 @@ class StrBufferTest extends TestCase
 
     public function test_before(): void
     {
-        $after = $this->buffer('abc')->before('b');
+        $after = $this->buffer('abc')->substringBefore('b');
         $this->assertInstanceOf(StrBuffer::class, $after);
         $this->assertSame('a', $after->toString());
 
-        $after = $this->buffer('abc')->before('d');
+        $after = $this->buffer('abc')->substringBefore('d');
         $this->assertInstanceOf(StrBuffer::class, $after);
         $this->assertSame('abc', $after->toString());
     }
 
     public function test_beforeLast(): void
     {
-        $after = $this->buffer('abbc')->beforeLast('b');
+        $after = $this->buffer('abbc')->substringBeforeLast('b');
         $this->assertInstanceOf(StrBuffer::class, $after);
         $this->assertSame('ab', $after->toString());
 
-        $after = $this->buffer('abbc')->beforeLast('d');
+        $after = $this->buffer('abbc')->substringBeforeLast('d');
         $this->assertInstanceOf(StrBuffer::class, $after);
         $this->assertSame('abbc', $after->toString());
     }
@@ -510,6 +483,33 @@ class StrBufferTest extends TestCase
         $after = $this->buffer('a')->surround('1', '2');
         $this->assertInstanceOf(StrBuffer::class, $after);
         $this->assertSame('1a2', $after->toString());
+    }
+
+    public function test_takeAfter(): void
+    {
+        $after = $this->buffer('buffer')->substringAfter('f');
+        $this->assertInstanceOf(StrBuffer::class, $after);
+        $this->assertSame('fer', $after->toString());
+
+        $after = $this->buffer('abc')->substringAfter('d');
+        $this->assertInstanceOf(StrBuffer::class, $after);
+        $this->assertSame('abc', $after->toString());
+    }
+
+    public function test_takeAfterLast(): void
+    {
+        $after = $this->buffer('abc abc')->substringAfterLast('b');
+        $this->assertInstanceOf(StrBuffer::class, $after);
+        $this->assertSame('c', $after->toString());
+
+        $after = $this->buffer('buffer')->substringAfterLast('f');
+        $this->assertInstanceOf(StrBuffer::class, $after);
+        $this->assertSame('er', $after->toString());
+
+        $after = $this->buffer('abc')->substringAfterLast('d');
+        $this->assertInstanceOf(StrBuffer::class, $after);
+        $this->assertSame('abc', $after->toString());
+
     }
 
     public function test_takeFirst(): void

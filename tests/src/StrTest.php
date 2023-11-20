@@ -31,56 +31,6 @@ class StrTest extends TestCase
         $this->assertInstanceOf(StrBuffer::class, self::$ref::of(''));
     }
 
-    public function test_after(): void
-    {
-        $this->assertSame('est', self::$ref::after('test', 't'), 'match first');
-        $this->assertSame('', self::$ref::after('test1', '1'), 'match last');
-        $this->assertSame('test', self::$ref::after('test', ''), 'match empty string');
-        $this->assertSame('test', self::$ref::after('test', 'a'), 'no match');
-        $this->assertSame('うえ', self::$ref::after('ああいうえ', 'い'), 'multi byte');
-        $this->assertSame('def', self::$ref::after('abc🏴󠁧󠁢󠁳󠁣󠁴󠁿def', '🏴󠁧󠁢󠁳󠁣󠁴󠁿'), 'grapheme');
-        $this->assertSame('🏿', self::$ref::after('👋🏿', '👋'), 'grapheme cluster');
-    }
-
-    public function test_afterLast(): void
-    {
-        $this->assertSame('bc', self::$ref::afterLast('abc', 'a'), 'match first (single occurrence)');
-        $this->assertSame('1', self::$ref::afterLast('test1', 't'), 'match first (multiple occurrence)');
-        $this->assertSame('', self::$ref::afterLast('test1', '1'), 'match last');
-        $this->assertSame('Foo', self::$ref::afterLast('----Foo', '---'), 'should match the last string');
-        $this->assertSame('test', self::$ref::afterLast('test', ''), 'match empty string');
-        $this->assertSame('test', self::$ref::afterLast('test', 'a'), 'no match');
-        $this->assertSame('え', self::$ref::afterLast('ああいういえ', 'い'), 'multi byte');
-        $this->assertSame('🏴󠁧󠁢󠁳󠁣󠁴󠁿f', self::$ref::afterLast('abc🏴󠁧󠁢󠁳󠁣󠁴󠁿d🏴󠁧󠁢󠁳󠁣󠁴󠁿e🏴󠁧󠁢󠁳󠁣󠁴󠁿f', 'e'), 'grapheme');
-        $this->assertSame('🏿', self::$ref::afterLast('👋🏿', '👋'), 'grapheme cluster');
-    }
-
-    public function test_before(): void
-    {
-        $this->assertSame('a', self::$ref::before('abc', 'b'), 'match first (single occurrence)');
-        $this->assertSame('a', self::$ref::before('abc-abc', 'b'), 'match first (multiple occurrence)');
-        $this->assertSame('test', self::$ref::before('test1', '1'), 'match last');
-        $this->assertSame('test', self::$ref::before('test123', '12'), 'match multiple chars');
-        $this->assertSame('test', self::$ref::before('test', ''), 'match empty string');
-        $this->assertSame('test', self::$ref::before('test', 'a'), 'no match');
-        $this->assertSame('ああ', self::$ref::before('ああいういえ', 'い'), 'multi byte');
-        $this->assertSame('abc', self::$ref::before('abc🏴󠁧󠁢󠁳󠁣󠁴󠁿d🏴󠁧󠁢󠁳󠁣󠁴󠁿e🏴󠁧󠁢󠁳󠁣󠁴󠁿f', '🏴󠁧󠁢󠁳󠁣󠁴󠁿'), 'grapheme substring');
-        $this->assertSame('abc🏴󠁧󠁢󠁳󠁣󠁴󠁿d🏴󠁧󠁢󠁳󠁣󠁴󠁿', self::$ref::before('abc🏴󠁧󠁢󠁳󠁣󠁴󠁿d🏴󠁧󠁢󠁳󠁣󠁴󠁿e🏴󠁧󠁢󠁳󠁣󠁴󠁿f', 'e'), 'grapheme string');
-        $this->assertSame('👋', self::$ref::before('👋🏿', '🏿'), 'substring is grapheme codepoint');
-    }
-
-    public function test_beforeLast(): void
-    {
-        $this->assertSame('a', self::$ref::beforeLast('abc', 'b'), 'match first (single occurrence)');
-        $this->assertSame('abc-a', self::$ref::beforeLast('abc-abc', 'b'), 'match first (multiple occurrence)');
-        $this->assertSame('test', self::$ref::beforeLast('test1', '1'), 'match last');
-        $this->assertSame('test', self::$ref::beforeLast('test', ''), 'match empty string');
-        $this->assertSame('test', self::$ref::beforeLast('test', 'a'), 'no match');
-        $this->assertSame('ああいう', self::$ref::beforeLast('ああいういえ', 'い'), 'multi byte');
-        $this->assertSame('abc🏴󠁧󠁢󠁳󠁣󠁴󠁿d🏴󠁧󠁢󠁳󠁣󠁴󠁿e', self::$ref::beforeLast('abc🏴󠁧󠁢󠁳󠁣󠁴󠁿d🏴󠁧󠁢󠁳󠁣󠁴󠁿e🏴󠁧󠁢󠁳󠁣󠁴󠁿f', '🏴󠁧󠁢󠁳󠁣󠁴󠁿'), 'substring is grapheme');
-        $this->assertSame('👋', self::$ref::beforeLast('👋🏿', '🏿'), 'substring is grapheme codepoint');
-    }
-
     public function test_between(): void
     {
         $this->assertSame('1', self::$ref::between('test(1)', '(', ')'), 'basic');
@@ -1047,12 +997,93 @@ class StrTest extends TestCase
         $this->assertSame('🏿', self::$ref::substring('👋🏿', 4), 'grapheme');
     }
 
+    public function test_substringAfter(): void
+    {
+        $this->assertSame('est', self::$ref::substringAfter('test', 't'), 'match first');
+        $this->assertSame('', self::$ref::substringAfter('test1', '1'), 'match last');
+        $this->assertSame('test', self::$ref::substringAfter('test', ''), 'match empty string');
+        $this->assertSame('test', self::$ref::substringAfter('test', 'a'), 'no match');
+        $this->assertSame('うえ', self::$ref::substringAfter('ああいうえ', 'い'), 'multi byte');
+        $this->assertSame('def', self::$ref::substringAfter('abc🏴󠁧󠁢󠁳󠁣󠁴󠁿def', '🏴󠁧󠁢󠁳󠁣󠁴󠁿'), 'grapheme');
+        $this->assertSame('🏿', self::$ref::substringAfter('👋🏿', '👋'), 'grapheme cluster');
+    }
+
+    public function test_substringAfterLast(): void
+    {
+        $this->assertSame('bc', self::$ref::substringAfterLast('abc', 'a'), 'match first (single occurrence)');
+        $this->assertSame('1', self::$ref::substringAfterLast('test1', 't'), 'match first (multiple occurrence)');
+        $this->assertSame('', self::$ref::substringAfterLast('test1', '1'), 'match last');
+        $this->assertSame('Foo', self::$ref::substringAfterLast('----Foo', '---'), 'should match the last string');
+        $this->assertSame('test', self::$ref::substringAfterLast('test', ''), 'match empty string');
+        $this->assertSame('test', self::$ref::substringAfterLast('test', 'a'), 'no match');
+        $this->assertSame('え', self::$ref::substringAfterLast('ああいういえ', 'い'), 'multi byte');
+        $this->assertSame('🏴󠁧󠁢󠁳󠁣󠁴󠁿f', self::$ref::substringAfterLast('abc🏴󠁧󠁢󠁳󠁣󠁴󠁿d🏴󠁧󠁢󠁳󠁣󠁴󠁿e🏴󠁧󠁢󠁳󠁣󠁴󠁿f', 'e'), 'grapheme');
+        $this->assertSame('🏿', self::$ref::substringAfterLast('👋🏿', '👋'), 'grapheme cluster');
+    }
+
+    public function test_substringBefore(): void
+    {
+        $this->assertSame('a', self::$ref::substringBefore('abc', 'b'), 'match first (single occurrence)');
+        $this->assertSame('a', self::$ref::substringBefore('abc-abc', 'b'), 'match first (multiple occurrence)');
+        $this->assertSame('test', self::$ref::substringBefore('test1', '1'), 'match last');
+        $this->assertSame('test', self::$ref::substringBefore('test123', '12'), 'match multiple chars');
+        $this->assertSame('test', self::$ref::substringBefore('test', ''), 'match empty string');
+        $this->assertSame('test', self::$ref::substringBefore('test', 'a'), 'no match');
+        $this->assertSame('ああ', self::$ref::substringBefore('ああいういえ', 'い'), 'multi byte');
+        $this->assertSame('abc', self::$ref::substringBefore('abc🏴󠁧󠁢󠁳󠁣󠁴󠁿d🏴󠁧󠁢󠁳󠁣󠁴󠁿e🏴󠁧󠁢󠁳󠁣󠁴󠁿f', '🏴󠁧󠁢󠁳󠁣󠁴󠁿'), 'grapheme substring');
+        $this->assertSame('abc🏴󠁧󠁢󠁳󠁣󠁴󠁿d🏴󠁧󠁢󠁳󠁣󠁴󠁿', self::$ref::substringBefore('abc🏴󠁧󠁢󠁳󠁣󠁴󠁿d🏴󠁧󠁢󠁳󠁣󠁴󠁿e🏴󠁧󠁢󠁳󠁣󠁴󠁿f', 'e'), 'grapheme string');
+        $this->assertSame('👋', self::$ref::substringBefore('👋🏿', '🏿'), 'substring is grapheme codepoint');
+    }
+
+    public function test_substringBeforeLast(): void
+    {
+        $this->assertSame('a', self::$ref::substringBeforeLast('abc', 'b'), 'match first (single occurrence)');
+        $this->assertSame('abc-a', self::$ref::substringBeforeLast('abc-abc', 'b'), 'match first (multiple occurrence)');
+        $this->assertSame('test', self::$ref::substringBeforeLast('test1', '1'), 'match last');
+        $this->assertSame('test', self::$ref::substringBeforeLast('test', ''), 'match empty string');
+        $this->assertSame('test', self::$ref::substringBeforeLast('test', 'a'), 'no match');
+        $this->assertSame('ああいう', self::$ref::substringBeforeLast('ああいういえ', 'い'), 'multi byte');
+        $this->assertSame('abc🏴󠁧󠁢󠁳󠁣󠁴󠁿d🏴󠁧󠁢󠁳󠁣󠁴󠁿e', self::$ref::substringBeforeLast('abc🏴󠁧󠁢󠁳󠁣󠁴󠁿d🏴󠁧󠁢󠁳󠁣󠁴󠁿e🏴󠁧󠁢󠁳󠁣󠁴󠁿f', '🏴󠁧󠁢󠁳󠁣󠁴󠁿'), 'substring is grapheme');
+        $this->assertSame('👋', self::$ref::substringBeforeLast('👋🏿', '🏿'), 'substring is grapheme codepoint');
+    }
+
     public function test_surround(): void
     {
         $this->assertSame('', self::$ref::surround('', '', ''), 'blanks');
         $this->assertSame('[a]', self::$ref::surround('a', '[', ']'), 'simple case');
         $this->assertSame('１a２', self::$ref::surround('a', '１', '２'), 'multibyte');
         $this->assertSame('👨‍👨‍👧‍a🏴󠁧󠁢󠁳󠁣󠁴󠁿', self::$ref::surround('a', '👨‍👨‍👧‍', '🏴󠁧󠁢󠁳󠁣󠁴󠁿'), 'grapheme');
+    }
+
+    public function test_takeFirst(): void
+    {
+        $this->assertSame('', self::$ref::takeFirst('', 1), 'empty string');
+        $this->assertSame('', self::$ref::takeFirst('a', 0), 'zero amount');
+        $this->assertSame('abcd', self::$ref::takeFirst('abcde', 4), 'mid amount');
+        $this->assertSame('abc', self::$ref::takeFirst('abc', 3), 'exact length');
+        $this->assertSame('👋', self::$ref::takeFirst('👋🏿', 4), 'grapheme');
+    }
+
+    public function test_takeFirst_out_of_range_negative(): void
+    {
+        $this->expectExceptionMessage('Expected: $amount >= 0. Got: -4.');
+        self::$ref::takeFirst('abc', -4);
+    }
+
+    public function test_takeLast(): void
+    {
+        $this->assertSame('', self::$ref::takeLast('', 1), 'empty string');
+        $this->assertSame('a', self::$ref::takeLast('a', 0), 'zero amount');
+        $this->assertSame('bcde', self::$ref::takeLast('abcde', 4), 'mid amount');
+        $this->assertSame('abc', self::$ref::takeLast('abc', 3), 'exact length');
+        $this->assertSame('abc', self::$ref::takeLast('abc', 4), 'over length');
+        $this->assertSame('🏿', self::$ref::takeLast('👋🏿', 4), 'grapheme');
+    }
+
+    public function test_takeLast_out_of_range_negative(): void
+    {
+        $this->expectExceptionMessage('Expected: $amount >= 0. Got: -4.');
+        self::$ref::takeLast('abc', -4);
     }
 
     public function test_toBool(): void

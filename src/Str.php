@@ -67,128 +67,6 @@ class Str
     }
 
     /**
-     * Extract string after the specified substring.
-     * Returns the original string if substring is not found.
-     *
-     * Example:
-     * ```php
-     * Str::after('buffer', 'f'); // 'fer'
-     * Str::after('abc', '_'); // 'abc'
-     * ```
-     *
-     * @param string $string
-     * The string to look in.
-     * @param string $substring
-     * The substring to look for.
-     * @return string
-     * The extracted part of the string.
-     */
-    public static function after(string $string, string $substring): string
-    {
-        if ($substring === self::EMPTY) {
-            return $string;
-        }
-
-        $position = static::indexOfFirst($string, $substring);
-
-        return $position !== null
-            ? static::substring($string, $position + static::length($substring))
-            : $string;
-    }
-
-    /**
-     * Extract string after the last occurrence of the specified substring.
-     * Returns the original string if substring is not found.
-     *
-     * Example:
-     * ```php
-     * Str::afterLast('buffer', 'f'); // 'er'
-     * Str::afterLast('abc', '_'); // 'abc'
-     * ```
-     *
-     * @param string $string
-     * The string to look in.
-     * @param string $substring
-     * The substring to look for.
-     * If no match is found, the entire `$string` is returned.
-     * @return string
-     * The extracted part of the string.
-     */
-    public static function afterLast(string $string, string $substring): string
-    {
-        if ($substring === self::EMPTY) {
-            return $string;
-        }
-
-        $position = static::indexOfLast($string, $substring);
-
-        return $position !== null
-            ? static::substring($string, $position + static::length($substring))
-            : $string;
-    }
-
-    /**
-     * Extract string before the specified substring.
-     * Returns the original string if substring is not found.
-     *
-     * Example:
-     * ```php
-     * Str::before('buffer', 'f'); // 'bu'
-     * Str::before('abc', '_'); // 'abc'
-     * ```
-     *
-     * @param string $string
-     * The string to look in.
-     * @param string $substring
-     * The substring to look for.
-     * @return string
-     * The extracted part of the string.
-     */
-    public static function before(string $string, string $substring): string
-    {
-        if ($substring === self::EMPTY) {
-            return $string;
-        }
-
-        $position = static::indexOfFirst($string, $substring);
-
-        return $position !== null
-            ? static::substring($string, 0, $position)
-            : $string;
-    }
-
-    /**
-     * Extract string before the last occurrence of the specified substring.
-     * Original string is returned if substring is not found.
-     *
-     * Example:
-     * ```php
-     * Str::beforeLast('buffer', 'f'); // 'buf'
-     * Str::beforeLast('abc', '_'); // 'abc'
-     * ```
-     *
-     * @param string $string
-     * The string to look in.
-     * @param string $substring
-     * The substring to look for.
-     * @return string
-     * The extracted part of the string.
-     */
-    public static function beforeLast(string $string, string $substring): string
-    {
-        // If empty string is searched, return the string as is since there is nothing to search.
-        if ($substring === self::EMPTY) {
-            return $string;
-        }
-
-        $position = static::indexOfLast($string, $substring);
-
-        return $position !== null
-            ? static::substring($string, 0, $position)
-            : $string;
-    }
-
-    /**
      * Extract string between the first occurrence of `$from` and `$to`.
      *
      * Example:
@@ -1878,6 +1756,128 @@ class Str
     public static function substring(string $string, int $offset, ?int $length = null): string
     {
         return substr($string, $offset, $length);
+    }
+
+    /**
+     * Extract string after the specified substring.
+     * Returns the original string if substring is not found.
+     *
+     * Example:
+     * ```php
+     * Str::substringAfter('buffer', 'f'); // 'fer'
+     * Str::substringAfter('abc', '_'); // 'abc'
+     * ```
+     *
+     * @param string $string
+     * The string to look in.
+     * @param string $substring
+     * The substring to look for.
+     * @return string
+     * The extracted part of the string.
+     */
+    public static function substringAfter(string $string, string $substring): string
+    {
+        if ($substring === self::EMPTY) {
+            return $string;
+        }
+
+        $position = static::indexOfFirst($string, $substring);
+
+        return $position !== null
+            ? static::substring($string, $position + static::length($substring))
+            : $string;
+    }
+
+    /**
+     * Extract string after the last occurrence of the specified substring.
+     * Returns the original string if substring is not found.
+     *
+     * Example:
+     * ```php
+     * Str::substringAfterLast('buffer', 'f'); // 'er'
+     * Str::substringAfterLast('abc', '_'); // 'abc'
+     * ```
+     *
+     * @param string $string
+     * The string to look in.
+     * @param string $substring
+     * The substring to look for.
+     * If no match is found, the entire `$string` is returned.
+     * @return string
+     * The extracted part of the string.
+     */
+    public static function substringAfterLast(string $string, string $substring): string
+    {
+        if ($substring === self::EMPTY) {
+            return $string;
+        }
+
+        $position = static::indexOfLast($string, $substring);
+
+        return $position !== null
+            ? static::substring($string, $position + static::length($substring))
+            : $string;
+    }
+
+    /**
+     * Extract string before the specified substring.
+     * Returns the original string if substring is not found.
+     *
+     * Example:
+     * ```php
+     * Str::substringBefore('buffer', 'f'); // 'bu'
+     * Str::substringBefore('abc', '_'); // 'abc'
+     * ```
+     *
+     * @param string $string
+     * The string to look in.
+     * @param string $substring
+     * The substring to look for.
+     * @return string
+     * The extracted part of the string.
+     */
+    public static function substringBefore(string $string, string $substring): string
+    {
+        if ($substring === self::EMPTY) {
+            return $string;
+        }
+
+        $position = static::indexOfFirst($string, $substring);
+
+        return $position !== null
+            ? static::substring($string, 0, $position)
+            : $string;
+    }
+
+    /**
+     * Extract string before the last occurrence of the specified substring.
+     * Original string is returned if substring is not found.
+     *
+     * Example:
+     * ```php
+     * Str::substringBeforeLast('buffer', 'f'); // 'buf'
+     * Str::substringBeforeLast('abc', '_'); // 'abc'
+     * ```
+     *
+     * @param string $string
+     * The string to look in.
+     * @param string $substring
+     * The substring to look for.
+     * @return string
+     * The extracted part of the string.
+     */
+    public static function substringBeforeLast(string $string, string $substring): string
+    {
+        // If empty string is searched, return the string as is since there is nothing to search.
+        if ($substring === self::EMPTY) {
+            return $string;
+        }
+
+        $position = static::indexOfLast($string, $substring);
+
+        return $position !== null
+            ? static::substring($string, 0, $position)
+            : $string;
     }
 
     /**

@@ -38,30 +38,6 @@ class StrBuffer implements Stringable
     }
 
     /**
-     * @see Str::after()
-     *
-     * @param string $search
-     * The substring to look for.
-     * @return static
-     */
-    public function after(string $search): static
-    {
-        return new static(static::$ref::after($this->value, $search));
-    }
-
-    /**
-     * @see Str::afterLast()
-     *
-     * @param string $search
-     * The substring to look for.
-     * @return static
-     */
-    public function afterLast(string $search): static
-    {
-        return new static(static::$ref::afterLast($this->value, $search));
-    }
-
-    /**
      * Appends the given string(s) to the end of the current string.
      *
      * @param string ...$string
@@ -96,30 +72,6 @@ class StrBuffer implements Stringable
     public function basename(string $suffix = ''): static
     {
         return new static(basename($this->value, $suffix));
-    }
-
-    /**
-     * @see Str::before()
-     *
-     * @param string $search
-     * The substring to look for.
-     * @return static
-     */
-    public function before(string $search): static
-    {
-        return new static(static::$ref::before($this->value, $search));
-    }
-
-    /**
-     * @see Str::beforeLast()
-     *
-     * @param string $search
-     * The substring to look for.
-     * @return static
-     */
-    public function beforeLast(string $search): static
-    {
-        return new static(static::$ref::beforeLast($this->value, $search));
     }
 
     /**
@@ -657,6 +609,54 @@ class StrBuffer implements Stringable
     public function substring(int $offset, ?int $length = null): static
     {
         return new static(static::$ref::substring($this->value, $offset, $length));
+    }
+
+    /**
+     * @param string $search
+     * The substring to look for.
+     * @return static
+     *@see Str::substringAfter()
+     *
+     */
+    public function substringAfter(string $search): static
+    {
+        return new static(static::$ref::substringAfter($this->value, $search));
+    }
+
+    /**
+     * @param string $search
+     * The substring to look for.
+     * @return static
+     *@see Str::substringAfterLast()
+     *
+     */
+    public function substringAfterLast(string $search): static
+    {
+        return new static(static::$ref::substringAfterLast($this->value, $search));
+    }
+
+    /**
+     * @param string $search
+     * The substring to look for.
+     * @return static
+     *@see Str::substringBefore()
+     *
+     */
+    public function substringBefore(string $search): static
+    {
+        return new static(static::$ref::substringBefore($this->value, $search));
+    }
+
+    /**
+     * @param string $search
+     * The substring to look for.
+     * @return static
+     *@see Str::substringBeforeLast()
+     *
+     */
+    public function substringBeforeLast(string $search): static
+    {
+        return new static(static::$ref::substringBeforeLast($this->value, $search));
     }
 
     /**
