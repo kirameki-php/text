@@ -24,56 +24,6 @@ class Utf8Test extends TestCase
         self::$ref = new Utf8();
     }
 
-    public function test_after(): void
-    {
-        $this->assertSame('est', self::$ref::substringAfter('test', 't'), 'match first');
-        $this->assertSame('', self::$ref::substringAfter('test1', '1'), 'match last');
-        $this->assertSame('test', self::$ref::substringAfter('test', ''), 'match empty string');
-        $this->assertSame('test', self::$ref::substringAfter('test', 'test2'), 'no match');
-        $this->assertSame('うえ', self::$ref::substringAfter('ああいうえ', 'い'), 'multi byte');
-        $this->assertSame('def', self::$ref::substringAfter('abc🏴󠁧󠁢󠁳󠁣󠁴󠁿def', '🏴󠁧󠁢󠁳󠁣󠁴󠁿'), 'grapheme');
-        $this->assertSame('👋🏿', self::$ref::substringAfter('👋🏿', '👋'), 'grapheme cluster');
-    }
-
-    public function test_afterLast(): void
-    {
-        $this->assertSame('bc', self::$ref::substringAfterLast('abc', 'a'), 'match first (single occurrence)');
-        $this->assertSame('1', self::$ref::substringAfterLast('test1', 't'), 'match first (multiple occurrence)');
-        $this->assertSame('', self::$ref::substringAfterLast('test1', '1'), 'match last');
-        $this->assertSame('Foo', self::$ref::substringAfterLast('----Foo', '---'), 'should match the last string');
-        $this->assertSame('test', self::$ref::substringAfterLast('test', ''), 'match empty string');
-        $this->assertSame('test', self::$ref::substringAfterLast('test', 'a'), 'no match');
-        $this->assertSame('え', self::$ref::substringAfterLast('ああいういえ', 'い'), 'multi byte');
-        $this->assertSame('🏴󠁧󠁢󠁳󠁣󠁴󠁿f', self::$ref::substringAfterLast('abc🏴󠁧󠁢󠁳󠁣󠁴󠁿d🏴󠁧󠁢󠁳󠁣󠁴󠁿e🏴󠁧󠁢󠁳󠁣󠁴󠁿f', 'e'), 'grapheme');
-        $this->assertSame('👋🏿', self::$ref::substringAfterLast('👋🏿', '👋'), 'grapheme cluster');
-    }
-
-    public function test_before(): void
-    {
-        $this->assertSame('a', self::$ref::substringBefore('abc', 'b'), 'match first (single occurrence)');
-        $this->assertSame('a', self::$ref::substringBefore('abc-abc', 'b'), 'match first (multiple occurrence)');
-        $this->assertSame('test', self::$ref::substringBefore('test1', '1'), 'match last');
-        $this->assertSame('test', self::$ref::substringBefore('test123', '12'), 'match multiple chars');
-        $this->assertSame('test', self::$ref::substringBefore('test', ''), 'match empty string');
-        $this->assertSame('test', self::$ref::substringBefore('test', 'a'), 'no match');
-        $this->assertSame('ああ', self::$ref::substringBefore('ああいういえ', 'い'), 'multi byte');
-        $this->assertSame('abc', self::$ref::substringBefore('abc🏴󠁧󠁢󠁳󠁣󠁴󠁿d🏴󠁧󠁢󠁳󠁣󠁴󠁿e🏴󠁧󠁢󠁳󠁣󠁴󠁿f', '🏴󠁧󠁢󠁳󠁣󠁴󠁿'), 'grapheme');
-        $this->assertSame('abc🏴󠁧󠁢󠁳󠁣󠁴󠁿d🏴󠁧󠁢󠁳󠁣󠁴󠁿', self::$ref::substringBefore('abc🏴󠁧󠁢󠁳󠁣󠁴󠁿d🏴󠁧󠁢󠁳󠁣󠁴󠁿e🏴󠁧󠁢󠁳󠁣󠁴󠁿f', 'e'), 'grapheme');
-        $this->assertSame('👋🏿', self::$ref::substringBefore('👋🏿', '🏿'), 'grapheme cluster');
-    }
-
-    public function test_beforeLast(): void
-    {
-        $this->assertSame('a', self::$ref::substringBeforeLast('abc', 'b'), 'match first (single occurrence)');
-        $this->assertSame('abc-a', self::$ref::substringBeforeLast('abc-abc', 'b'), 'match first (multiple occurrence)');
-        $this->assertSame('test', self::$ref::substringBeforeLast('test1', '1'), 'match last');
-        $this->assertSame('test', self::$ref::substringBeforeLast('test', ''), 'match empty string');
-        $this->assertSame('test', self::$ref::substringBeforeLast('test', 'a'), 'no match');
-        $this->assertSame('ああいう', self::$ref::substringBeforeLast('ああいういえ', 'い'), 'multi byte');
-        $this->assertSame('abc🏴󠁧󠁢󠁳󠁣󠁴󠁿d🏴󠁧󠁢󠁳󠁣󠁴󠁿e', self::$ref::substringBeforeLast('abc🏴󠁧󠁢󠁳󠁣󠁴󠁿d🏴󠁧󠁢󠁳󠁣󠁴󠁿e🏴󠁧󠁢󠁳󠁣󠁴󠁿f', '🏴󠁧󠁢󠁳󠁣󠁴󠁿'), 'grapheme');
-        $this->assertSame('👋🏿', self::$ref::substringBeforeLast('👋🏿', '🏿'), 'grapheme cluster');
-    }
-
     public function test_between(): void
     {
         $this->assertSame('1', self::$ref::between('test(1)', '(', ')'), 'basic');
@@ -862,6 +812,24 @@ class Utf8Test extends TestCase
         $this->assertSame('cbあ🏴󠁧󠁢󠁳󠁣󠁴󠁿', self::$ref::reverse('🏴󠁧󠁢󠁳󠁣󠁴󠁿あbc'));
     }
 
+    public function test_split(): void
+    {
+        $this->assertSame(['', ''], self::$ref::split(' ', ' '), 'empty');
+        $this->assertSame(['abc'], self::$ref::split('abc', '_'), 'no match');
+        $this->assertSame(['a', 'c', 'd'], self::$ref::split('abcbd', 'b'), 'match');
+        $this->assertSame(['あ', 'う'], self::$ref::split('あいう', 'い'), 'match utf-8');
+        $this->assertSame(['a', 'cbd'], self::$ref::split('abcbd', 'b', 2), 'match with limit');
+        $this->assertSame(['a', 'b', 'c'], self::$ref::split('abc', ''), 'match with limit');
+        $this->assertSame(['👨‍👨‍👧‍👦'], self::$ref::split('👨‍👨‍👧‍👦', '‍👦'), 'match emoji');
+    }
+
+    public function test_split_with_negative_limit(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Expected: $limit >= 0. Got: -1.');
+        self::$ref::split('a', 'b', -1);
+    }
+
     public function test_startsWith(): void
     {
         $this->assertTrue(self::$ref::startsWith('', ''));
@@ -888,24 +856,6 @@ class Utf8Test extends TestCase
         $this->assertTrue(self::$ref::startsWithNone('abc', ['d', 'e']));
         $this->assertFalse(self::$ref::startsWithNone('abc', ['d', 'a']));
         $this->assertTrue(self::$ref::startsWithNone('👋🏿', ['👋', 'a']));
-    }
-
-    public function test_split(): void
-    {
-        $this->assertSame(['', ''], self::$ref::split(' ', ' '), 'empty');
-        $this->assertSame(['abc'], self::$ref::split('abc', '_'), 'no match');
-        $this->assertSame(['a', 'c', 'd'], self::$ref::split('abcbd', 'b'), 'match');
-        $this->assertSame(['あ', 'う'], self::$ref::split('あいう', 'い'), 'match utf-8');
-        $this->assertSame(['a', 'cbd'], self::$ref::split('abcbd', 'b', 2), 'match with limit');
-        $this->assertSame(['a', 'b', 'c'], self::$ref::split('abc', ''), 'match with limit');
-        $this->assertSame(['👨‍👨‍👧‍👦'], self::$ref::split('👨‍👨‍👧‍👦', '‍👦'), 'match emoji');
-    }
-
-    public function test_split_with_negative_limit(): void
-    {
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Expected: $limit >= 0. Got: -1.');
-        self::$ref::split('a', 'b', -1);
     }
 
     public function test_substring(): void
@@ -963,6 +913,56 @@ class Utf8Test extends TestCase
         } finally {
             ini_set('intl.use_exceptions', '1');
         }
+    }
+
+    public function test_substringAfter(): void
+    {
+        $this->assertSame('est', self::$ref::substringAfter('test', 't'), 'match first');
+        $this->assertSame('', self::$ref::substringAfter('test1', '1'), 'match last');
+        $this->assertSame('test', self::$ref::substringAfter('test', ''), 'match empty string');
+        $this->assertSame('test', self::$ref::substringAfter('test', 'test2'), 'no match');
+        $this->assertSame('うえ', self::$ref::substringAfter('ああいうえ', 'い'), 'multi byte');
+        $this->assertSame('def', self::$ref::substringAfter('abc🏴󠁧󠁢󠁳󠁣󠁴󠁿def', '🏴󠁧󠁢󠁳󠁣󠁴󠁿'), 'grapheme');
+        $this->assertSame('👋🏿', self::$ref::substringAfter('👋🏿', '👋'), 'grapheme cluster');
+    }
+
+    public function test_substringAfterLast(): void
+    {
+        $this->assertSame('bc', self::$ref::substringAfterLast('abc', 'a'), 'match first (single occurrence)');
+        $this->assertSame('1', self::$ref::substringAfterLast('test1', 't'), 'match first (multiple occurrence)');
+        $this->assertSame('', self::$ref::substringAfterLast('test1', '1'), 'match last');
+        $this->assertSame('Foo', self::$ref::substringAfterLast('----Foo', '---'), 'should match the last string');
+        $this->assertSame('test', self::$ref::substringAfterLast('test', ''), 'match empty string');
+        $this->assertSame('test', self::$ref::substringAfterLast('test', 'a'), 'no match');
+        $this->assertSame('え', self::$ref::substringAfterLast('ああいういえ', 'い'), 'multi byte');
+        $this->assertSame('🏴󠁧󠁢󠁳󠁣󠁴󠁿f', self::$ref::substringAfterLast('abc🏴󠁧󠁢󠁳󠁣󠁴󠁿d🏴󠁧󠁢󠁳󠁣󠁴󠁿e🏴󠁧󠁢󠁳󠁣󠁴󠁿f', 'e'), 'grapheme');
+        $this->assertSame('👋🏿', self::$ref::substringAfterLast('👋🏿', '👋'), 'grapheme cluster');
+    }
+
+    public function test_substringBefore(): void
+    {
+        $this->assertSame('a', self::$ref::substringBefore('abc', 'b'), 'match first (single occurrence)');
+        $this->assertSame('a', self::$ref::substringBefore('abc-abc', 'b'), 'match first (multiple occurrence)');
+        $this->assertSame('test', self::$ref::substringBefore('test1', '1'), 'match last');
+        $this->assertSame('test', self::$ref::substringBefore('test123', '12'), 'match multiple chars');
+        $this->assertSame('test', self::$ref::substringBefore('test', ''), 'match empty string');
+        $this->assertSame('test', self::$ref::substringBefore('test', 'a'), 'no match');
+        $this->assertSame('ああ', self::$ref::substringBefore('ああいういえ', 'い'), 'multi byte');
+        $this->assertSame('abc', self::$ref::substringBefore('abc🏴󠁧󠁢󠁳󠁣󠁴󠁿d🏴󠁧󠁢󠁳󠁣󠁴󠁿e🏴󠁧󠁢󠁳󠁣󠁴󠁿f', '🏴󠁧󠁢󠁳󠁣󠁴󠁿'), 'grapheme');
+        $this->assertSame('abc🏴󠁧󠁢󠁳󠁣󠁴󠁿d🏴󠁧󠁢󠁳󠁣󠁴󠁿', self::$ref::substringBefore('abc🏴󠁧󠁢󠁳󠁣󠁴󠁿d🏴󠁧󠁢󠁳󠁣󠁴󠁿e🏴󠁧󠁢󠁳󠁣󠁴󠁿f', 'e'), 'grapheme');
+        $this->assertSame('👋🏿', self::$ref::substringBefore('👋🏿', '🏿'), 'grapheme cluster');
+    }
+
+    public function test_substringBeforeLast(): void
+    {
+        $this->assertSame('a', self::$ref::substringBeforeLast('abc', 'b'), 'match first (single occurrence)');
+        $this->assertSame('abc-a', self::$ref::substringBeforeLast('abc-abc', 'b'), 'match first (multiple occurrence)');
+        $this->assertSame('test', self::$ref::substringBeforeLast('test1', '1'), 'match last');
+        $this->assertSame('test', self::$ref::substringBeforeLast('test', ''), 'match empty string');
+        $this->assertSame('test', self::$ref::substringBeforeLast('test', 'a'), 'no match');
+        $this->assertSame('ああいう', self::$ref::substringBeforeLast('ああいういえ', 'い'), 'multi byte');
+        $this->assertSame('abc🏴󠁧󠁢󠁳󠁣󠁴󠁿d🏴󠁧󠁢󠁳󠁣󠁴󠁿e', self::$ref::substringBeforeLast('abc🏴󠁧󠁢󠁳󠁣󠁴󠁿d🏴󠁧󠁢󠁳󠁣󠁴󠁿e🏴󠁧󠁢󠁳󠁣󠁴󠁿f', '🏴󠁧󠁢󠁳󠁣󠁴󠁿'), 'grapheme');
+        $this->assertSame('👋🏿', self::$ref::substringBeforeLast('👋🏿', '🏿'), 'grapheme cluster');
     }
 
     public function test_takeFirst(): void
@@ -1251,20 +1251,11 @@ class Utf8Test extends TestCase
 
     public function test_toLowerCase(): void
     {
-        // empty (nothing happens)
-        $this->assertSame('', self::$ref::toLowerCase(''));
-
-        // basic
-        $this->assertSame('abc', self::$ref::toLowerCase('ABC'));
-
-        // utf-8 chars (nothing happens)
-        $this->assertSame('あいう', self::$ref::toLowerCase('あいう'));
-
-        // utf-8 special chars
-        $this->assertSame('çği̇öşü', self::$ref::toLowerCase('ÇĞİÖŞÜ'));
-
-        // grapheme (nothing happens)
-        $this->assertSame('👨‍👨‍👧‍👦🏴󠁧󠁢󠁳󠁣󠁴󠁿', self::$ref::toLowerCase('👨‍👨‍👧‍👦🏴󠁧󠁢󠁳󠁣󠁴󠁿'));
+        $this->assertSame('', self::$ref::toLowerCase(''), 'empty (nothing happens)');
+        $this->assertSame('abc', self::$ref::toLowerCase('ABC'), 'basic');
+        $this->assertSame('あいう', self::$ref::toLowerCase('あいう'), 'utf-8 chars (nothing happens)');
+        $this->assertSame('çği̇öşü', self::$ref::toLowerCase('ÇĞİÖŞÜ'), 'utf-8 special chars');
+        $this->assertSame('👨‍👨‍👧‍👦🏴󠁧󠁢󠁳󠁣󠁴󠁿', self::$ref::toLowerCase('👨‍👨‍👧‍👦🏴󠁧󠁢󠁳󠁣󠁴󠁿'), 'grapheme (nothing happens)');
     }
 
     public function test_toPascalCase(): void
