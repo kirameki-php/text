@@ -76,7 +76,7 @@ class StrTest extends TestCase
         $this->assertSame('_', self::$ref::betweenFurthest('ab_ba', 'ab', 'ba'), 'multi char');
         $this->assertSame('い', self::$ref::betweenFurthest('あいう', 'あ', 'う'), 'utf8');
         $this->assertSame('😃', self::$ref::betweenFurthest('👋🏿😃👋🏿😃', '👋🏿', '👋🏿'), 'grapheme');
-        $this->assertSame('', self::$ref::between('👋🏿', '👋', '🏿'), 'grapheme between codepoints');
+        $this->assertSame('', self::$ref::betweenFurthest('👋🏿', '👋', '🏿'), 'grapheme between codepoints');
     }
 
     public function test_betweenFurthest_empty_from(): void
