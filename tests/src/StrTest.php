@@ -54,13 +54,13 @@ class StrTest extends TestCase
 
     public function test_between_empty_to(): void
     {
-        $this->expectExceptionMessage('$to must not be empty.');
+        $this->expectExceptionMessage('Str::between() $to must not be empty.');
         self::$ref::between('test)', '(', '');
     }
 
     public function test_between_empty_from_and_to(): void
     {
-        $this->expectExceptionMessage('$from must not be empty.');
+        $this->expectExceptionMessage('Str::between() $from must not be empty.');
         self::$ref::between('test)', '', '');
     }
 
@@ -81,13 +81,13 @@ class StrTest extends TestCase
 
     public function test_betweenFurthest_empty_from(): void
     {
-        $this->expectExceptionMessage('$from must not be empty.');
+        $this->expectExceptionMessage('Str::betweenFurthest() $from must not be empty.');
         self::$ref::betweenFurthest('test)', '', ')');
     }
 
     public function test_betweenFurthest_empty_to(): void
     {
-        $this->expectExceptionMessage('$to must not be empty.');
+        $this->expectExceptionMessage('Str::betweenFurthest() $to must not be empty.');
         self::$ref::betweenFurthest('test)', '(', '');
     }
 
