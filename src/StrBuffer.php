@@ -45,7 +45,8 @@ class StrBuffer implements Stringable
      */
     public function append(string ...$string): static
     {
-        return new static(static::$ref::concat($this->value, ...$string));
+        $this->value = static::$ref::concat($this->value, ...$string);
+        return $this;
     }
 
     /**
@@ -58,7 +59,8 @@ class StrBuffer implements Stringable
      */
     public function appendFormat(string $format, float|int|string ...$values): static
     {
-        return new static($this->value . sprintf($format, ...$values));
+        $this->value = $this->value . sprintf($format, ...$values);
+        return $this;
     }
 
     /**
@@ -71,7 +73,8 @@ class StrBuffer implements Stringable
      */
     public function basename(string $suffix = ''): static
     {
-        return new static(basename($this->value, $suffix));
+        $this->value = basename($this->value, $suffix);
+        return $this;
     }
 
     /**
@@ -83,7 +86,8 @@ class StrBuffer implements Stringable
      */
     public function between(string $from, string $to): static
     {
-        return new static(static::$ref::between($this->value, $from, $to));
+        $this->value = static::$ref::between($this->value, $from, $to);
+        return $this;
     }
 
     /**
@@ -95,7 +99,8 @@ class StrBuffer implements Stringable
      */
     public function betweenFurthest(string $from, string $to): static
     {
-        return new static(static::$ref::betweenFurthest($this->value, $from, $to));
+        $this->value = static::$ref::betweenFurthest($this->value, $from, $to);
+        return $this;
     }
 
     /**
@@ -107,7 +112,8 @@ class StrBuffer implements Stringable
      */
     public function betweenLast(string $from, string $to): static
     {
-        return new static(static::$ref::betweenLast($this->value, $from, $to));
+        $this->value = static::$ref::betweenLast($this->value, $from, $to);
+        return $this;
     }
 
     /**
@@ -117,7 +123,8 @@ class StrBuffer implements Stringable
      */
     public function capitalize(): static
     {
-        return new static(static::$ref::capitalize($this->value));
+        $this->value = static::$ref::capitalize($this->value);
+        return $this;
     }
 
     /**
@@ -183,7 +190,8 @@ class StrBuffer implements Stringable
      */
     public function decapitalize(): static
     {
-        return new static(static::$ref::decapitalize($this->value));
+        $this->value = static::$ref::decapitalize($this->value);
+        return $this;
     }
 
     /**
@@ -192,7 +200,8 @@ class StrBuffer implements Stringable
      */
     public function dirname(int $levels = 1): static
     {
-        return new static(dirname($this->value, $levels));
+        $this->value = dirname($this->value, $levels);
+        return $this;
     }
 
     /**
@@ -228,7 +237,8 @@ class StrBuffer implements Stringable
      */
     public function dropFirst(int $amount): static
     {
-        return new static(static::$ref::dropFirst($this->value, $amount));
+        $this->value = static::$ref::dropFirst($this->value, $amount);
+        return $this;
     }
 
     /**
@@ -237,7 +247,8 @@ class StrBuffer implements Stringable
      */
     public function dropLast(int $amount): static
     {
-        return new static(static::$ref::dropLast($this->value, $amount));
+        $this->value = static::$ref::dropLast($this->value, $amount);
+        return $this;
     }
 
     /**
@@ -314,7 +325,8 @@ class StrBuffer implements Stringable
      */
     public function insertAt(string $insert, int $position): static
     {
-        return new static(static::$ref::insertAt($this->value, $insert, $position));
+        $this->value = static::$ref::insertAt($this->value, $insert, $position);
+        return $this;
     }
 
     /**
@@ -325,7 +337,8 @@ class StrBuffer implements Stringable
      */
     public function interpolate(iterable $replace, string $delimiterStart = '{', string $delimiterEnd = '}'): static
     {
-        return new static(static::$ref::interpolate($this->value, $replace, $delimiterStart, $delimiterEnd));
+        $this->value = static::$ref::interpolate($this->value, $replace, $delimiterStart, $delimiterEnd);
+        return $this;
     }
 
     /**
@@ -404,7 +417,8 @@ class StrBuffer implements Stringable
      */
     public function padBoth(int $length, string $pad = ' '): static
     {
-        return new static(static::$ref::padBoth($this->value, $length, $pad));
+        $this->value = static::$ref::padBoth($this->value, $length, $pad);
+        return $this;
     }
 
     /**
@@ -414,7 +428,8 @@ class StrBuffer implements Stringable
      */
     public function padStart(int $length, string $pad = ' '): static
     {
-        return new static(static::$ref::padStart($this->value, $length, $pad));
+        $this->value = static::$ref::padStart($this->value, $length, $pad);
+        return $this;
     }
 
     /**
@@ -424,7 +439,8 @@ class StrBuffer implements Stringable
      */
     public function padEnd(int $length, string $pad = ' '): static
     {
-        return new static(static::$ref::padEnd($this->value, $length, $pad));
+        $this->value = static::$ref::padEnd($this->value, $length, $pad);
+        return $this;
     }
 
     /**
@@ -449,7 +465,8 @@ class StrBuffer implements Stringable
     public function prepend(string ...$string): static
     {
         $string[] = $this->value;
-        return new static(static::$ref::concat(...$string));
+        $this->value = static::$ref::concat(...$string);
+        return $this;
     }
 
     /**
@@ -459,7 +476,8 @@ class StrBuffer implements Stringable
      */
     public function range(int $start, int $end): static
     {
-        return new static(static::$ref::range($this->value, $start, $end));
+        $this->value = static::$ref::range($this->value, $start, $end);
+        return $this;
     }
 
     /**
@@ -470,7 +488,8 @@ class StrBuffer implements Stringable
      */
     public function remove(string $substring, ?int $limit = null, int &$count = 0): static
     {
-        return new static(static::$ref::remove($this->value, $substring, $limit ?? -1, $count));
+        $this->value = static::$ref::remove($this->value, $substring, $limit ?? -1, $count);
+        return $this;
     }
 
     /**
@@ -479,7 +498,8 @@ class StrBuffer implements Stringable
      */
     public function removeFirst(string $substring): static
     {
-        return new static(static::$ref::removeFirst($this->value, $substring));
+        $this->value = static::$ref::removeFirst($this->value, $substring);
+        return $this;
     }
 
     /**
@@ -488,7 +508,8 @@ class StrBuffer implements Stringable
      */
     public function removeLast(string $substring): static
     {
-        return new static(static::$ref::removeLast($this->value, $substring));
+        $this->value = static::$ref::removeLast($this->value, $substring);
+        return $this;
     }
 
     /**
@@ -497,7 +518,8 @@ class StrBuffer implements Stringable
      */
     public function repeat(int $times): static
     {
-        return new static(static::$ref::repeat($this->value, $times));
+        $this->value = static::$ref::repeat($this->value, $times);
+        return $this;
     }
 
     /**
@@ -507,7 +529,8 @@ class StrBuffer implements Stringable
      */
     public function replace(string $search, string $replace): static
     {
-        return new static(static::$ref::replace($this->value, $search, $replace));
+        $this->value = static::$ref::replace($this->value, $search, $replace);
+        return $this;
     }
 
     /**
@@ -517,7 +540,8 @@ class StrBuffer implements Stringable
      */
     public function replaceFirst(string $search, string $replace): static
     {
-        return new static(static::$ref::replaceFirst($this->value, $search, $replace));
+        $this->value = static::$ref::replaceFirst($this->value, $search, $replace);
+        return $this;
     }
 
     /**
@@ -527,7 +551,8 @@ class StrBuffer implements Stringable
      */
     public function replaceLast(string $search, string $replace): static
     {
-        return new static(static::$ref::replaceLast($this->value, $search, $replace));
+        $this->value = static::$ref::replaceLast($this->value, $search, $replace);
+        return $this;
     }
 
     /**
@@ -540,7 +565,8 @@ class StrBuffer implements Stringable
      */
     public function replaceMatch(string $pattern, string $replacement, ?int $limit = null): static
     {
-        return new static(static::$ref::replaceMatch($this->value, $pattern, $replacement, $limit));
+        $this->value = static::$ref::replaceMatch($this->value, $pattern, $replacement, $limit);
+        return $this;
     }
 
     /**
@@ -553,7 +579,8 @@ class StrBuffer implements Stringable
      */
     public function replaceMatchWithCallback(string $pattern, Closure $callback, ?int $limit = null): static
     {
-        return new static(static::$ref::replaceMatchWithCallback($this->value, $pattern, $callback, $limit));
+        $this->value = static::$ref::replaceMatchWithCallback($this->value, $pattern, $callback, $limit);
+        return $this;
     }
 
     /**
@@ -561,7 +588,8 @@ class StrBuffer implements Stringable
      */
     public function reverse(): static
     {
-        return new static(static::$ref::reverse($this->value));
+        $this->value = static::$ref::reverse($this->value);
+        return $this;
     }
 
     /**
@@ -618,7 +646,8 @@ class StrBuffer implements Stringable
      */
     public function substring(int $offset, ?int $length = null): static
     {
-        return new static(static::$ref::substring($this->value, $offset, $length));
+        $this->value = static::$ref::substring($this->value, $offset, $length);
+        return $this;
     }
 
     /**
@@ -630,7 +659,8 @@ class StrBuffer implements Stringable
      */
     public function substringAfter(string $search): static
     {
-        return new static(static::$ref::substringAfter($this->value, $search));
+        $this->value = static::$ref::substringAfter($this->value, $search);
+        return $this;
     }
 
     /**
@@ -642,7 +672,8 @@ class StrBuffer implements Stringable
      */
     public function substringAfterLast(string $search): static
     {
-        return new static(static::$ref::substringAfterLast($this->value, $search));
+        $this->value = static::$ref::substringAfterLast($this->value, $search);
+        return $this;
     }
 
     /**
@@ -654,7 +685,8 @@ class StrBuffer implements Stringable
      */
     public function substringBefore(string $search): static
     {
-        return new static(static::$ref::substringBefore($this->value, $search));
+        $this->value = static::$ref::substringBefore($this->value, $search);
+        return $this;
     }
 
     /**
@@ -666,7 +698,8 @@ class StrBuffer implements Stringable
      */
     public function substringBeforeLast(string $search): static
     {
-        return new static(static::$ref::substringBeforeLast($this->value, $search));
+        $this->value = static::$ref::substringBeforeLast($this->value, $search);
+        return $this;
     }
 
     /**
@@ -676,7 +709,8 @@ class StrBuffer implements Stringable
      */
     public function surround(string $prefix, string $suffix): static
     {
-        return new static(static::$ref::surround($this->value, $prefix, $suffix));
+        $this->value = static::$ref::surround($this->value, $prefix, $suffix);
+        return $this;
     }
 
     /**
@@ -685,7 +719,8 @@ class StrBuffer implements Stringable
      */
     public function takeFirst(int $position): static
     {
-        return new static(static::$ref::takeFirst($this->value, $position));
+        $this->value = static::$ref::takeFirst($this->value, $position);
+        return $this;
     }
 
     /**
@@ -694,7 +729,8 @@ class StrBuffer implements Stringable
      */
     public function takeLast(int $position): static
     {
-        return new static(static::$ref::takeLast($this->value, $position));
+        $this->value = static::$ref::takeLast($this->value, $position);
+        return $this;
     }
 
     /**
@@ -731,7 +767,8 @@ class StrBuffer implements Stringable
      */
     public function toCamelCase(): static
     {
-        return new static(static::$ref::toCamelCase($this->value));
+        $this->value = static::$ref::toCamelCase($this->value);
+        return $this;
     }
 
     /**
@@ -771,7 +808,8 @@ class StrBuffer implements Stringable
      */
     public function toKebabCase(): static
     {
-        return new static(static::$ref::toKebabCase($this->value));
+        $this->value = static::$ref::toKebabCase($this->value);
+        return $this;
     }
 
     /**
@@ -779,7 +817,8 @@ class StrBuffer implements Stringable
      */
     public function toLowerCase(): static
     {
-        return new static(static::$ref::toLowerCase($this->value));
+        $this->value = static::$ref::toLowerCase($this->value);
+        return $this;
     }
 
     /**
@@ -796,7 +835,8 @@ class StrBuffer implements Stringable
      */
     public function toSnakeCase(): static
     {
-        return new static(static::$ref::toSnakeCase($this->value));
+        $this->value = static::$ref::toSnakeCase($this->value);
+        return $this;
     }
 
     /**
@@ -812,7 +852,8 @@ class StrBuffer implements Stringable
      */
     public function toUpperCase(): static
     {
-        return new static(static::$ref::toUpperCase($this->value));
+        $this->value = static::$ref::toUpperCase($this->value);
+        return $this;
     }
 
     /**
@@ -821,7 +862,8 @@ class StrBuffer implements Stringable
      */
     public function trim(?string $characters = null): static
     {
-        return new static(static::$ref::trim($this->value, $characters));
+        $this->value = static::$ref::trim($this->value, $characters);
+        return $this;
     }
 
     /**
@@ -830,7 +872,8 @@ class StrBuffer implements Stringable
      */
     public function trimStart(?string $characters = null): static
     {
-        return new static(static::$ref::trimStart($this->value, $characters));
+        $this->value = static::$ref::trimStart($this->value, $characters);
+        return $this;
     }
 
     /**
@@ -839,6 +882,7 @@ class StrBuffer implements Stringable
      */
     public function trimEnd(?string $characters = null): static
     {
-        return new static(static::$ref::trimEnd($this->value, $characters));
+        $this->value = static::$ref::trimEnd($this->value, $characters);
+        return $this;
     }
 }

@@ -33,6 +33,7 @@ class Utf8Buffer extends StrBuffer
      */
     public function cut(int $position, string $ellipsis = ''): static
     {
-        return new static(Utf8::cut($this->value, $position, $ellipsis));
+        $this->value = Utf8::cut($this->value, $position, $ellipsis);
+        return $this;
     }
 }

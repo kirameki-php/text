@@ -41,9 +41,9 @@ class StrBufferTest extends TestCase
 
     public function test_basename(): void
     {
-        $sb = $this->buffer('/test/path/of.php');
-        $after = $sb->basename();
-        $afterSuffix = $sb->basename('.php');
+        $string = '/test/path/of.php';
+        $after = $this->buffer($string)->basename();
+        $afterSuffix = $this->buffer($string)->basename('.php');
         $this->assertInstanceOf(StrBuffer::class, $after);
         $this->assertInstanceOf(StrBuffer::class, $afterSuffix);
         $this->assertSame('of.php', $after->toString());
@@ -159,9 +159,9 @@ class StrBufferTest extends TestCase
 
     public function test_dirname(): void
     {
-        $sb = $this->buffer('/test/path/of.php');
-        $after1 = $sb->dirname();
-        $after2 = $sb->dirname(2);
+        $string = '/test/path/of.php';
+        $after1 = $this->buffer($string)->dirname();
+        $after2 = $this->buffer($string)->dirname(2);
 
         $this->assertInstanceOf(StrBuffer::class, $after1);
         $this->assertInstanceOf(StrBuffer::class, $after2);
