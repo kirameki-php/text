@@ -88,19 +88,11 @@ class Str
     public static function between(string $string, string $from, string $to): string
     {
         if ($from === '') {
-            throw new InvalidArgumentException(static::class . "::between() \$from must not be empty.", [
-                'string' => $string,
-                'from' => $from,
-                'to' => $to,
-            ]);
+            throw new InvalidArgumentException("\$from must not be empty.", compact('string', 'from', 'to'));
         }
 
         if ($to === '') {
-            throw new InvalidArgumentException(static::class . "::between() \$to must not be empty.", [
-                'string' => $string,
-                'from' => $from,
-                'to' => $to,
-            ]);
+            throw new InvalidArgumentException("\$to must not be empty.", compact('string', 'from', 'to'));
         }
 
         $startPos = static::indexOfFirst($string, $from);
@@ -138,19 +130,11 @@ class Str
     public static function betweenFurthest(string $string, string $from, string $to): string
     {
         if ($from === '') {
-            throw new InvalidArgumentException(static::class . "::betweenFurthest() \$from must not be empty.", [
-                'string' => $string,
-                'from' => $from,
-                'to' => $to,
-            ]);
+            throw new InvalidArgumentException("\$from must not be empty.", compact('string', 'from', 'to'));
         }
 
         if ($to === '') {
-            throw new InvalidArgumentException(static::class . "::betweenFurthest() \$to must not be empty.", [
-                'string' => $string,
-                'from' => $from,
-                'to' => $to,
-            ]);
+            throw new InvalidArgumentException("\$to must not be empty.", compact('string', 'from', 'to'));
         }
 
         $startPos = static::indexOfFirst($string, $from);
