@@ -25,6 +25,12 @@ class StrObjectTest extends TestCase
         $this->assertSame('a', (string) $sb);
     }
 
+    public function test_jsonSerialize(): void
+    {
+        $sb = $this->obj('a');
+        $this->assertSame('a', $sb->jsonSerialize());
+    }
+
     public function test_append(): void
     {
         $after = $this->obj('a')->append('1');
