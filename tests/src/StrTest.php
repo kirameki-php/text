@@ -7,7 +7,7 @@ use Kirameki\Core\Testing\TestCase;
 use Kirameki\Text\Exceptions\NoMatchException;
 use Kirameki\Text\Exceptions\ParseException;
 use Kirameki\Text\Str;
-use Kirameki\Text\StrBuffer;
+use Kirameki\Text\StrObject;
 use function array_shift;
 use function str_repeat;
 use function strlen;
@@ -28,7 +28,7 @@ class StrTest extends TestCase
     {
         $this->assertSame('', self::$ref::of('')->toString());
         $this->assertSame('abc', self::$ref::of('abc')->toString());
-        $this->assertInstanceOf(StrBuffer::class, self::$ref::of(''));
+        $this->assertInstanceOf(StrObject::class, self::$ref::of(''));
     }
 
     public function test_between(): void

@@ -2,7 +2,7 @@
 
 namespace Kirameki\Text;
 
-class Utf8Buffer extends StrBuffer
+class Utf8Object extends StrObject
 {
     /**
      * Overridden to cache in this class

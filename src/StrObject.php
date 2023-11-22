@@ -9,7 +9,7 @@ use function basename;
 use function dirname;
 use function sprintf;
 
-class StrBuffer implements JsonSerializable, Stringable
+class StrObject implements JsonSerializable, Stringable
 {
     protected static Str $ref;
 

@@ -60,11 +60,11 @@ class Str
 
     /**
      * @param string $string
-     * @return StrBuffer
+     * @return StrObject
      */
-    public static function of(string $string): StrBuffer
+    public static function of(string $string): StrObject
     {
-        return StrBuffer::from($string);
+        return StrObject::from($string);
     }
 
     /**
