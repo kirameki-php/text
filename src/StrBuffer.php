@@ -3,12 +3,13 @@
 namespace Kirameki\Text;
 
 use Closure;
+use JsonSerializable;
 use Stringable;
 use function basename;
 use function dirname;
 use function sprintf;
 
-class StrBuffer implements Stringable
+class StrBuffer implements JsonSerializable, Stringable
 {
     protected static Str $ref;
 
@@ -27,6 +28,14 @@ class StrBuffer implements Stringable
     public function __construct(protected string $value = '')
     {
         static::$ref ??= new Str();
+    }
+
+    /**
+     * @return string
+     */
+    public function jsonSerialize(): string
+    {
+        return $this->toString();
     }
 
     /**
