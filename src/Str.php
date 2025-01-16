@@ -18,6 +18,7 @@ use function bcpow;
 use function compact;
 use function filter_var;
 use function implode;
+use function is_numeric;
 use function iterator_to_array;
 use function ltrim;
 use function preg_match;
@@ -2137,10 +2138,13 @@ class Str
         // https://www.json.org/img/number.png
         if (preg_match("/^(?<mantissa>-?([1-9][0-9]*|[0-9])(\.(?<dec>[0-9]*))?)([eE](?<sign>[+\-]?)(?<exponent>[0-9]+))?$/", $string, $match)) {
             $mantissa = $match['mantissa'];
+            assert(is_numeric($mantissa));
             if (array_key_exists('exponent', $match)) {
                 $exponent = $match['exponent'];
+                /** @phpstan-ignore offsetAccess.notFound */
                 $direction = $match['sign'] ?: '+';
                 $power = bcpow('10', $exponent);
+                /** @phpstan-ignore offsetAccess.notFound */
                 $decimals = strlen($match['dec']);
                 $scale = (int)$exponent;
                 $mantissa = $direction === '+'

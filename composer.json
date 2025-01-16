@@ -12,8 +12,8 @@
   },
   "require-dev": {
     "kirameki/dumper": "dev-main",
-    "phpstan/phpstan": "^1.10",
-    "phpunit/phpunit": "~10.0",
+    "phpstan/phpstan": "^2",
+    "phpunit/phpunit": "^11",
     "roave/security-advisories": "dev-latest"
   },
   "autoload": {
